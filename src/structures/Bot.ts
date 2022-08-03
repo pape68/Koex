@@ -1,11 +1,7 @@
 import { REST } from '@discordjs/rest';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Client, ClientOptions, Collection, ComponentType } from 'discord.js';
-import {
-    ApplicationCommandType,
-    InteractionType,
-    Routes
-} from 'discord-api-types/v10';
+import { ApplicationCommandType, InteractionType, Routes } from 'discord-api-types/v10';
 import { sync } from 'glob';
 import { join } from 'path';
 import { Logger } from 'pino';
@@ -72,17 +68,12 @@ export default class Bot extends Client {
     public async registerCommands(commands: any[]) {
         if (!this.isReady()) return;
 
-        const rest = new REST({ version: '10' }).setToken(
-            process.env.DISCORD_TOKEN!
-        );
+        const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN!);
 
         try {
-            await rest.put(
-                Routes.applicationGuildCommands(this.user!.id, HOME_GUILD_ID),
-                {
-                    body: commands
-                }
-            );
+            await rest.put(Routes.applicationCommands(this.user!.id), {
+                body: commands
+            });
 
             this.logger.info('Loaded application (/) commands.');
         } catch (error) {

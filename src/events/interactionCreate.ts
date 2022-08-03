@@ -12,12 +12,17 @@ import Bot from '../structures/Bot';
 
 const execute: Event = async (client: Bot, interaction: Interaction) => {
     if (
-        (!interaction.isChatInputCommand() &&
-            !interaction.isButton() &&
-            interaction.type !== InteractionType.ModalSubmit) ||
-        !interaction.guild
+        !interaction.isChatInputCommand() &&
+        !interaction.isButton() &&
+        interaction.type !== InteractionType.ModalSubmit
     )
         return;
+
+    if (interaction.guild)
+        return interaction.reply({
+            content: 'This command can only be used in DMs.',
+            ephemeral: true
+        });
 
     try {
         interaction.isChatInputCommand()
