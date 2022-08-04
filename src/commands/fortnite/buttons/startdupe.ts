@@ -13,6 +13,8 @@ const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
         .eq('user_id', interaction.user.id)
         .single();
 
+    if (!data) return interaction.reply("You can't use this while not logged in.");
+
     const params = {
         profileId: 'theater0'
     };
