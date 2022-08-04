@@ -12,7 +12,7 @@ const execute: Event = async (client: Bot) => {
         {
             type: ComponentType.ActionRow,
             components: [
-                // client.interactions.get('startDupe')!.options,
+                client.interactions.get('startDupe')!.options,
                 client.interactions.get('stopDupe')!.options,
                 client.interactions.get('logout')!.options
             ]
@@ -20,11 +20,11 @@ const execute: Event = async (client: Bot) => {
         {
             type: ComponentType.ActionRow,
             components: [getAuthCodeButton, client.interactions.get('switchAccounts')!.options]
+        },
+        {
+            type: ComponentType.ActionRow,
+            components: [client.interactions.get('toggleReminder')!.options]
         }
-        // {
-        //     type: ComponentType.ActionRow,
-        //     components: [client.interactions.get('toggleReminder')!.options]
-        // }
     );
     menuComponents.loggedOut.push({
         type: ComponentType.ActionRow,
