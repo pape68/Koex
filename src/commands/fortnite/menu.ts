@@ -41,7 +41,7 @@ const execute: Command = async (client: Bot, interaction: ChatInputCommandIntera
     if (loggedIn) {
         if (selectError) {
             client.logger.error(selectError);
-            return interaction.reply(
+            return interaction.editReply(
                 'An error occurred while trying to retrieve your account data.'
             );
         }
@@ -65,11 +65,11 @@ const execute: Command = async (client: Bot, interaction: ChatInputCommandIntera
             })
             .catch((err) => {
                 client.logger.error(err);
-                return interaction.reply('Failed to log you back in.');
+                return interaction.editReply('Failed to log you back in.');
             });
     }
 
-    interaction.reply({
+    interaction.editReply({
         embeds: [embed],
         components: loggedIn ? menuComponents.loggedIn : menuComponents.loggedOut
     });
