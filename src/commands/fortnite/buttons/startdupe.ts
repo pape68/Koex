@@ -73,17 +73,17 @@ const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
                     if (err.response) {
                         switch (err.response.data.numericErrorCode) {
                             case 12821:
-                                interaction.reply(
+                                interaction.editReply(
                                     "Profile locked, make sure you're running commands in the lobby.\nIf so wait 2-3 minutes and try again."
                                 );
                                 break;
                             case 16098:
-                                interaction.reply(
+                                interaction.editReply(
                                     'Not enough storage space. Please have at least 5 slots free.'
                                 );
                                 break;
                             default:
-                                interaction.reply(
+                                interaction.editReply(
                                     'An error occurred while transferring items to storage.'
                                 );
                                 break;
