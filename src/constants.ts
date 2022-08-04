@@ -43,7 +43,7 @@ export const fortniteIOSGameClient = {
 export const getAuthCodeButton: LinkButtonComponentData = {
     label: 'Get Auth Code',
     style: ButtonStyle.Link,
-    url: `https://www.epicgames.com/id/api/redirect?clientId=${fortniteIOSGameClient.id}&responseType=code`,
+    url: `https://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fredirect%3FclientId%3D${fortniteIOSGameClient.id}%26responseType%3Dcode%0A`,
     type: ComponentType.Button
 };
 
