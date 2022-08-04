@@ -8,9 +8,9 @@ const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
 };
 
 execute.options = {
-    label: 'Login',
-    style: ButtonStyle.Primary,
-    customId: 'login',
+    label: 'Switch Accounts',
+    style: ButtonStyle.Secondary,
+    customId: 'switchAccounts',
     type: ComponentType.Button
 };
 

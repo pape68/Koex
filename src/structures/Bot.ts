@@ -11,7 +11,6 @@ import { Command } from '../interfaces/Command';
 import { Event } from '../interfaces/Event';
 
 import * as utils from '../utils';
-import { HOME_GUILD_ID } from '../constants';
 
 export default class Bot extends Client {
     public interactions: Collection<string, Command & Button>;

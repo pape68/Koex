@@ -1,19 +1,12 @@
-import {
-    ComponentType,
-    MessageComponentInteraction,
-    ModalSubmitInteraction,
-    TextInputStyle
-} from 'discord.js';
+import { ComponentType, ModalSubmitInteraction, TextInputStyle } from 'discord.js';
 
 import Bot from '../../../structures/Bot';
 import { Modal } from '../../../interfaces/Modal';
 import axios from 'axios';
-import { fortniteIOSGameClient } from '../../../constants';
+import { fortniteIOSGameClient, menuComponents, menuEmbed } from '../../../constants';
 
 const execute: Modal = async (client: Bot, interaction: ModalSubmitInteraction) => {
-    interaction.deferReply({
-        ephemeral: true
-    });
+    interaction.deferReply({ ephemeral: true });
 
     const code = interaction.fields.getTextInputValue('code');
 
@@ -22,7 +15,7 @@ const execute: Modal = async (client: Bot, interaction: ModalSubmitInteraction) 
         method: 'POST'
     };
 
-    const instance = axios.create({
+    const basicInstance = axios.create({
         ...baseInstance,
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -37,21 +30,21 @@ const execute: Modal = async (client: Bot, interaction: ModalSubmitInteraction) 
         code
     });
 
-    await instance
+    await basicInstance
         .post('/account/api/oauth/token', params.toString())
         .then(async (res) => {
             const access_token = res.data.access_token;
             const account_id = res.data.account_id;
             const displayName = res.data.displayName;
 
-            const instance2 = axios.create({
+            const bearerInstance = axios.create({
                 ...baseInstance,
                 headers: {
                     Authorization: `Bearer ${access_token}`
                 }
             });
 
-            const deviceAuthRes = await instance2.post(
+            const deviceAuthRes = await bearerInstance.post(
                 `/account/api/public/account/${account_id}/deviceAuth`,
                 {}
             );
@@ -66,7 +59,7 @@ const execute: Modal = async (client: Bot, interaction: ModalSubmitInteraction) 
                 secret
             });
 
-            const tokenRes = await instance.post(
+            const tokenRes = await basicInstance.post(
                 `/account/api/oauth/token`,
                 deviceAuthParams.toString()
             );
@@ -87,28 +80,39 @@ const execute: Modal = async (client: Bot, interaction: ModalSubmitInteraction) 
                 return interaction.editReply('An interal occurred. Please try again.');
             }
 
-            interaction.editReply(`You have been logged in as **${displayName}**.`);
-
-            const filter = (i: MessageComponentInteraction) =>
-                i.customId === 'login' && i.user.id === interaction.user.id;
-
-            const collector = interaction.channel!.createMessageComponentCollector({
-                filter,
-                time: 15000
+            const newLoginUrl = `https://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fredirect%3FclientId%${fortniteIOSGameClient.id}%26responseType%3Dcode%0A&prompt=login`;
+            interaction.editReply({
+                content: `You have been logged in as **${displayName}**. [Click here to switch accounts](${newLoginUrl}).`,
+                components: [
+                    {
+                        type: ComponentType.ActionRow,
+                        components: [client.interactions.get('login')!.options]
+                    }
+                ]
             });
 
-            collector.on('collect', async (i) => {
-                await i.editReply({ content: 'A button was clicked!', components: [] });
+            const embed = menuEmbed.setAuthor({
+                name: displayName,
+                iconURL: interaction.user.avatarURL() ?? undefined
             });
 
-            collector.on('end', (collected) => console.log(`Collected ${collected.size} items`));
+            interaction.user.createDM().then(() => {
+                interaction.message?.edit({
+                    embeds: [embed],
+                    components: menuComponents.loggedIn
+                });
+            });
         })
         .catch((err) => {
-            if (err.response.data.numericErrorCode === 18059) {
+            if (err.response && err.response.data.numericErrorCode === 18059) {
                 return interaction.editReply(
                     'You have entered an invalid code. Please try again as it may have expired.'
                 );
             }
+        })
+        .catch((err) => {
+            client.logger.error(err);
+            return interaction.editReply(`Authentication failed.`);
         });
 };
 

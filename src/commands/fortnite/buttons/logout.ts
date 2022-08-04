@@ -1,29 +1,31 @@
 import { ButtonInteraction, ButtonStyle, ComponentType } from 'discord.js';
 
 import { Button } from '../../../interfaces/Button';
+import { menuComponents, menuEmbed } from '../../../constants';
 import Bot from '../../../structures/Bot';
 
 const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
-    interaction.deferReply({
-        ephemeral: true
+    await interaction.deferReply({ ephemeral: true });
+
+    const { error: deleteError } = await client.supabase.from('fortnite').delete().match({
+        user_id: interaction.user.id
     });
 
-    const { error } = await client.supabase
-        .from('fortnite')
-        .delete()
-        .match({
-            user_id: interaction.user.id
-        })
-        .single();
-
-    if (error) {
-        client.logger.error(error);
+    if (deleteError) {
+        client.logger.error(deleteError);
         return interaction.editReply('An internal error occurred. Please try again.');
     }
 
-    return interaction.message.delete().then(() => {
-        interaction.editReply('Successfully logged out.');
+    const embed = menuEmbed.setAuthor({ name: 'Not Logged In' });
+
+    interaction.user.createDM().then(() => {
+        interaction.message?.edit({
+            embeds: [embed],
+            components: menuComponents.loggedOut
+        });
     });
+
+    return interaction.editReply('Successfully logged out.');
 };
 
 execute.options = {

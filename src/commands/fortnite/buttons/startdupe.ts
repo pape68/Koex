@@ -5,16 +5,12 @@ import { Button } from '../../../interfaces/Button';
 import Bot from '../../../structures/Bot';
 
 const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
-    interaction.deferReply({
-        ephemeral: true
-    });
-
-    const { user } = interaction;
+    interaction.deferReply({ ephemeral: true });
 
     const { data } = await client.supabase
         .from('fortnite')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', interaction.user.id)
         .single();
 
     const params = {
@@ -73,7 +69,7 @@ const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
                 .catch((err) => {
                     console.log(err);
                     return interaction.editReply(
-                        `Dupe failed, make sure you have 5 free storage slots and try again.`
+                        `Dupe failed, make sure you have 5 free storage slots, wait 2-3 minutes, and try again.`
                     );
                 })
                 .finally(() => {
@@ -81,12 +77,21 @@ const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
                     return interaction.editReply(`Dupe successful!`);
                 });
         });
+
+    if (!data.no_reminders) {
+        setTimeout(() => {
+            interaction.followUp({
+                content: `Make sure to press "Stop Dupe" when you're done!`,
+                ephemeral: true
+            });
+        }, 15 * 60 * 1000);
+    }
 };
 
 execute.options = {
     label: 'Start Dupe',
     style: ButtonStyle.Success,
-    customId: 'startdupe',
+    customId: 'startDupe',
     type: ComponentType.Button
 };
 

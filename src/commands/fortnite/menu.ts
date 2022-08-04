@@ -1,15 +1,6 @@
-import { setTimeout } from 'timers/promises';
-
 import axios from 'axios';
-import {
-    ApplicationCommandType,
-    ButtonStyle,
-    ChatInputCommandInteraction,
-    ComponentType,
-    EmbedBuilder,
-    MessageComponentInteraction
-} from 'discord.js';
-import { COLORS } from '../../constants';
+import { ApplicationCommandType, ChatInputCommandInteraction } from 'discord.js';
+import { menuComponents, menuEmbed } from '../../constants';
 
 import { Command } from '../../interfaces/Command';
 import Bot from '../../structures/Bot';
@@ -25,7 +16,7 @@ const execute: Command = async (client: Bot, interaction: ChatInputCommandIntera
         method: 'POST'
     };
 
-    const instance = axios.create({
+    const basicInstance = axios.create({
         ...baseInstance,
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -35,65 +26,50 @@ const execute: Command = async (client: Bot, interaction: ChatInputCommandIntera
         }
     });
 
-    const { data, error } = await client.supabase
+    const { data, error: selectError } = await client.supabase
         .from('fortnite')
         .select('*')
         .eq('user_id', interaction.user.id)
         .single();
 
-    const loggedOut = !data;
+    const loggedIn = data && data.account_id;
 
-    const embed = new EmbedBuilder()
-        .setAuthor({ name: 'Not Signed In' })
-        .setColor(COLORS.blue)
-        .addFields({
-            name: 'Main Menu',
-            value: 'Use the buttons below to navigate the menu and performs actions.'
-        });
+    const embed = menuEmbed.setAuthor({ name: 'Not Logged In' });
 
-    if (data) {
+    if (loggedIn) {
+        if (selectError) {
+            client.logger.error(selectError);
+            return interaction.reply(
+                'An error occurred while trying to retrieve your account data.'
+            );
+        }
+
         const { account_id, device_id, secret } = data;
 
-        const params2 = new URLSearchParams({
+        const deviceAuthParams = new URLSearchParams({
             grant_type: 'device_auth',
             account_id,
             device_id,
             secret
         });
 
-        const res = await instance.post(`/account/api/oauth/token`, params2.toString());
-
-        embed.setAuthor({
-            name: res.data.displayName,
-            iconURL: interaction.user.avatarURL() ?? undefined
-        });
+        await basicInstance
+            .post(`/account/api/oauth/token`, deviceAuthParams.toString())
+            .then((res) => {
+                embed.setAuthor({
+                    name: res.data.displayName,
+                    iconURL: interaction.user.avatarURL() ?? undefined
+                });
+            })
+            .catch((err) => {
+                client.logger.error(err);
+                return interaction.reply('Failed to log you back in.');
+            });
     }
 
     interaction.reply({
         embeds: [embed],
-        components: [
-            !loggedOut
-                ? {
-                      type: ComponentType.ActionRow,
-                      components: [
-                          client.interactions.get('startdupe')!.options,
-                          client.interactions.get('stopdupe')!.options,
-                          client.interactions.get('logout')!.options
-                      ]
-                  }
-                : {
-                      type: ComponentType.ActionRow,
-                      components: [
-                          {
-                              label: 'Get Auth Code',
-                              style: ButtonStyle.Link,
-                              url: `https://www.epicgames.com/id/api/redirect?clientId=${fortniteIOSGameClient.id}&responseType=code`,
-                              type: ComponentType.Button
-                          },
-                          client.interactions.get('login')!.options
-                      ]
-                  }
-        ]
+        components: loggedIn ? menuComponents.loggedIn : menuComponents.loggedOut
     });
 };
 

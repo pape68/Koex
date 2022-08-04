@@ -5,16 +5,12 @@ import { Button } from '../../../interfaces/Button';
 import Bot from '../../../structures/Bot';
 
 const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
-    interaction.deferReply({
-        ephemeral: true
-    });
-
-    const { user } = interaction;
+    interaction.deferReply({ ephemeral: true });
 
     const { data: current } = await client.supabase
         .from('fortnite')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', interaction.user.id)
         .single();
 
     const baseInstace = {
@@ -92,13 +88,17 @@ const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
                     if (interaction.replied) return;
                     return interaction.editReply(`Dupe stopped!`);
                 });
+        })
+        .catch((err) => {
+            client.logger.error(err);
+            return interaction.editReply(`Stopping dupe failed.`);
         });
 };
 
 execute.options = {
     label: 'Stop Dupe',
     style: ButtonStyle.Secondary,
-    customId: 'stopdupe',
+    customId: 'stopDupe',
     type: ComponentType.Button
 };
 
