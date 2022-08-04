@@ -15,7 +15,7 @@ const execute: Event = async (client: Bot, interaction: Interaction) => {
         (!interaction.isChatInputCommand() &&
             !interaction.isButton() &&
             interaction.type !== InteractionType.ModalSubmit) ||
-        !interaction.guild
+        interaction.guild
     )
         return;
 
