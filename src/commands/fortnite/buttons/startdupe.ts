@@ -76,6 +76,10 @@ const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
                     if (interaction.replied) return;
                     return interaction.editReply(`Dupe successful!`);
                 });
+        })
+        .catch((err) => {
+            client.logger.error(err);
+            return interaction.editReply(`Dupe failed for magical reasons.`);
         });
 
     if (!data.no_reminders) {
