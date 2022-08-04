@@ -84,7 +84,7 @@ const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
                 content: `Make sure to press "Stop Dupe" when you're done!`,
                 ephemeral: true
             });
-        }, 15 * 60 * 1000);
+        }, 10 * 60 * 1000);
     }
 };
 
