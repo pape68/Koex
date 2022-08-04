@@ -78,10 +78,26 @@ const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
                     transferOperations
                 })
                 .catch((err) => {
-                    console.log(err);
-                    return interaction.editReply(
-                        `Stopping dupe failed, make sure you have 5 free inventory slots and try again.`
-                    );
+                    client.logger.error(err);
+                    if (err.response) {
+                        switch (err.response.data.numericErrorCode) {
+                            case 12821:
+                                interaction.reply(
+                                    "Profile locked, make sure you're running commands in the lobby.\nIf so wait 2-3 minutes and try again."
+                                );
+                                break;
+                            case 16098:
+                                interaction.reply(
+                                    'Not enough inventory space. Please have at least 5 slots free.'
+                                );
+                                break;
+                            default:
+                                interaction.reply(
+                                    'An error occurred while transferring items to your inventory.'
+                                );
+                                break;
+                        }
+                    }
                 })
                 .finally(() => {
                     if (interaction.replied) return;
