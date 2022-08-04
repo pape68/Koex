@@ -5,7 +5,7 @@ import { Button } from '../../../interfaces/Button';
 import Bot from '../../../structures/Bot';
 
 const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
-    interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ ephemeral: true });
 
     const { data: current } = await client.supabase
         .from('fortnite')

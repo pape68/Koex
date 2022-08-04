@@ -11,6 +11,8 @@ const fortniteIOSGameClient = {
 };
 
 const execute: Command = async (client: Bot, interaction: ChatInputCommandInteraction) => {
+    await interaction.deferReply();
+
     const baseInstance = {
         baseURL: 'https://account-public-service-prod.ol.epicgames.com',
         method: 'POST'

@@ -87,10 +87,8 @@ const execute: Event = async (client: Bot, interaction: Interaction) => {
                 .catch(async (err) => {
                     client.logger.error(err);
 
-                    if (!interaction.replied)
-                        interaction.deferReply({
-                            ephemeral: true
-                        });
+                    if (!interaction.deferred || !interaction.replied)
+                        await interaction.deferReply({ ephemeral: true });
 
                     const { error: deleteError } = await client.supabase
                         .from('fortnite')

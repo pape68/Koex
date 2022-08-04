@@ -1,4 +1,5 @@
 import { ComponentType, ModalSubmitInteraction, TextInputStyle } from 'discord.js';
+import { setTimeout as wait } from 'timers/promises';
 
 import Bot from '../../../structures/Bot';
 import { Modal } from '../../../interfaces/Modal';
@@ -6,7 +7,7 @@ import axios from 'axios';
 import { fortniteIOSGameClient, menuComponents, menuEmbed } from '../../../constants';
 
 const execute: Modal = async (client: Bot, interaction: ModalSubmitInteraction) => {
-    interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ ephemeral: true });
 
     const code = interaction.fields.getTextInputValue('code');
 
