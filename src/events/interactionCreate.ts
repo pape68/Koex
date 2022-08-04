@@ -111,7 +111,9 @@ const execute: Event = async (client: Bot, interaction: Interaction) => {
                         });
                     });
 
-                    interaction.reply('Failed to refresh your credentials, please log back in.');
+                    interaction.editReply(
+                        'Failed to refresh your credentials, please log back in.'
+                    );
                 });
         }
     }
