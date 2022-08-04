@@ -7,17 +7,19 @@ import Bot from '../../../structures/Bot';
 const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
     await interaction.deferReply({ ephemeral: true });
 
-    const { data: current } = await client.supabase
+    const { data } = await client.supabase
         .from('fortnite')
         .select('*')
         .eq('user_id', interaction.user.id)
         .single();
 
+    if (!data) return interaction.reply("You can't use this while not logged in.");
+
     const baseInstace = {
         baseURL: 'https://fortnite-public-service-prod11.ol.epicgames.com',
         headers: {
             'Content-Type': 'application/json',
-            Authorization: `bearer ${current.access_token}`
+            Authorization: `bearer ${data.access_token}`
         }
     };
 
@@ -29,7 +31,7 @@ const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
     });
 
     await queryInstance
-        .post(`/fortnite/api/game/v2/profile/${current.account_id}/client/QueryProfile`, {})
+        .post(`/fortnite/api/game/v2/profile/${data.account_id}/client/QueryProfile`, {})
         .then(async (res) => {
             const transferInstance = axios.create({
                 ...baseInstace,
@@ -72,12 +74,9 @@ const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
                 }));
 
             await transferInstance
-                .post(
-                    `/fortnite/api/game/v2/profile/${current.account_id}/client/StorageTransfer`,
-                    {
-                        transferOperations
-                    }
-                )
+                .post(`/fortnite/api/game/v2/profile/${data.account_id}/client/StorageTransfer`, {
+                    transferOperations
+                })
                 .catch((err) => {
                     console.log(err);
                     return interaction.editReply(
