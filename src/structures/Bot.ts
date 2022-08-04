@@ -70,7 +70,7 @@ export default class Bot extends Client {
         const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN!);
 
         try {
-            await rest.put(Routes.applicationGuildCommands(this.user!.id, '1004858701305368617'), {
+            await rest.put(Routes.applicationCommands(this.user!.id), {
                 body: commands
             });
 
