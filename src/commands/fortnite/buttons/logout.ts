@@ -13,7 +13,7 @@ const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
 
     if (deleteError) {
         client.logger.error(deleteError);
-        return interaction.editReply('An internal error occurred. Please try again.');
+        return interaction.editReply('An error occurred while logging you out. Please try again.');
     }
 
     const embed = menuEmbed.setAuthor({ name: 'Not Logged In' });

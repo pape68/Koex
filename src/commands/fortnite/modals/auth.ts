@@ -79,7 +79,7 @@ const execute: Modal = async (client: Bot, interaction: ModalSubmitInteraction) 
                                 );
                             }
 
-                            const newLoginUrl = `https://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fredirect%3FclientId%${fortniteIOSGameClient.id}%26responseType%3Dcode%0A&prompt=login`;
+                            const newLoginUrl = `https://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fredirect%3FclientId%3D${fortniteIOSGameClient.id}%26responseType%3Dcode%0A&prompt=login`;
                             interaction.editReply({
                                 content: `You have been logged in as **${displayName}**. [Click here to switch accounts](${newLoginUrl}).`,
                                 components: [

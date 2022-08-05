@@ -1,14 +1,9 @@
 import axios from 'axios';
 import { ApplicationCommandType, ChatInputCommandInteraction } from 'discord.js';
-import { menuComponents, menuEmbed } from '../../constants';
 
 import { Command } from '../../interfaces/Command';
+import { fortniteIOSGameClient, menuComponents, menuEmbed } from '../../constants';
 import Bot from '../../structures/Bot';
-
-const fortniteIOSGameClient = {
-    id: '3446cd72694c4a4485d81b77adbb2141',
-    secret: '9209d4a5e25a457fb9b07489d313b41a'
-};
 
 const execute: Command = async (client: Bot, interaction: ChatInputCommandInteraction) => {
     await interaction.deferReply();
