@@ -41,7 +41,6 @@ const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
             });
 
             const ids = [
-                'Weapon:edittool',
                 'Weapon:buildingitemdata_wall',
                 'Weapon:buildingitemdata_floor',
                 'Weapon:buildingitemdata_stair_w',
@@ -88,7 +87,7 @@ const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
                                 break;
                             case 16098:
                                 interaction.editReply(
-                                    'Not enough inventory space. Please have at least 5 slots free.'
+                                    'Not enough inventory space. Please have at least 4 slots free.'
                                 );
                                 break;
                             default:

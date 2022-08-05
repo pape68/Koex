@@ -32,7 +32,6 @@ const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
         .post(`/fortnite/api/game/v2/profile/${data.account_id}/client/QueryProfile`, {})
         .then(async (res) => {
             const ids = [
-                'Weapon:edittool',
                 'Weapon:buildingitemdata_wall',
                 'Weapon:buildingitemdata_floor',
                 'Weapon:buildingitemdata_stair_w',
@@ -79,7 +78,7 @@ const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
                                 break;
                             case 16098:
                                 interaction.editReply(
-                                    'Not enough storage space. Please have at least 5 slots free.'
+                                    'Not enough storage space. Please have at least 4 slots free.'
                                 );
                                 break;
                             default:
