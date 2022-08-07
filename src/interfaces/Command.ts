@@ -1,8 +1,8 @@
 import { ChatInputApplicationCommandData, ChatInputCommandInteraction } from 'discord.js';
 
-import Bot from '../structures/Bot';
+import { ExtendedClient } from './ExtendedClient';
 
 export interface Command {
     options: ChatInputApplicationCommandData;
-    (client: Bot, interaction: ChatInputCommandInteraction): void;
+    execute: (client: ExtendedClient, interaction: ChatInputCommandInteraction) => Promise<any>;
 }

@@ -1,8 +1,8 @@
-import { ModalComponentData, ModalSubmitInteraction } from 'discord.js';
+import { InteractionType, ModalComponentData, ModalSubmitInteraction } from 'discord.js';
 
-import Bot from '../structures/Bot';
+import { ExtendedClient } from './ExtendedClient';
 
 export interface Modal {
-    options: ModalComponentData;
-    (client: Bot, interaction: ModalSubmitInteraction): void;
+    options: { type: InteractionType.ModalSubmit } & ModalComponentData;
+    execute: (client: ExtendedClient, interaction: ModalSubmitInteraction) => Promise<any>;
 }

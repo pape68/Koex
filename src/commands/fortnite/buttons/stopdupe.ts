@@ -2,17 +2,18 @@ import { ButtonInteraction, ButtonStyle, ComponentType } from 'discord.js';
 
 import { Button } from '../../../interfaces/Button';
 import { toggleDupe } from '../../../utils';
-import Bot from '../../../structures/Bot';
+import { ExtendedClient } from '../../../interfaces/ExtendedClient';
 
-const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
-    await toggleDupe(client, interaction, false);
+const button: Button = {
+    execute: async (client: ExtendedClient, interaction: ButtonInteraction) => {
+        await toggleDupe(client, interaction, false);
+    },
+    options: {
+        label: 'Stop Dupe',
+        style: ButtonStyle.Secondary,
+        customId: 'stopDupe',
+        type: ComponentType.Button
+    }
 };
 
-execute.options = {
-    label: 'Stop Dupe',
-    style: ButtonStyle.Secondary,
-    customId: 'stopDupe',
-    type: ComponentType.Button
-};
-
-export default execute;
+export default button;

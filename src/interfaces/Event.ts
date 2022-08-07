@@ -1,8 +1,9 @@
-import Bot from '../structures/Bot';
+import { ExtendedClient } from './ExtendedClient';
 
 export interface Event {
     options?: {
+        name?: string;
         once?: boolean;
     };
-    (client: Bot, ...args: any[]): void;
+    execute: (client: ExtendedClient, ...args: any[]) => Promise<any>;
 }

@@ -1,17 +1,19 @@
 import { ButtonInteraction, ButtonStyle, ComponentType } from 'discord.js';
 
 import { Button } from '../../../interfaces/Button';
-import Bot from '../../../structures/Bot';
+import { ExtendedClient } from '../../../interfaces/ExtendedClient';
+import { Modal } from '../../../interfaces/Modal';
 
-const execute: Button = async (client: Bot, interaction: ButtonInteraction) => {
-    await interaction.showModal(client.interactions.get('auth')!.options);
+const button: Button = {
+    execute: async (client: ExtendedClient, interaction: ButtonInteraction) => {
+        await interaction.showModal((client.interactions.get('auth') as Modal).options);
+    },
+    options: {
+        label: 'Switch Accounts',
+        style: ButtonStyle.Secondary,
+        customId: 'switchAccounts',
+        type: ComponentType.Button
+    }
 };
 
-execute.options = {
-    label: 'Switch Accounts',
-    style: ButtonStyle.Secondary,
-    customId: 'switchAccounts',
-    type: ComponentType.Button
-};
-
-export default execute;
+export default button;

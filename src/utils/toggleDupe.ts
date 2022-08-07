@@ -1,10 +1,14 @@
 import axios from 'axios';
 import { ButtonInteraction } from 'discord.js';
 
-import Bot from '../structures/Bot';
+import { ExtendedClient } from '../interfaces/ExtendedClient';
 import { Item } from '../types/fortnite';
 
-const toggleDupe = async (client: Bot, interaction: ButtonInteraction, starting: boolean) => {
+const toggleDupe = async (
+    client: ExtendedClient,
+    interaction: ButtonInteraction,
+    starting: boolean
+) => {
     await interaction.deferReply({ ephemeral: true });
 
     const { data } = await client.supabase

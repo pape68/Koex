@@ -1,8 +1,8 @@
-import { ButtonComponentData, ButtonInteraction } from 'discord.js';
+import { ButtonInteraction, InteractionButtonComponentData } from 'discord.js';
 
-import Bot from '../structures/Bot';
+import { ExtendedClient } from './ExtendedClient';
 
 export interface Button {
-    options: ButtonComponentData;
-    (client: Bot, interaction: ButtonInteraction): void;
+    options: InteractionButtonComponentData;
+    execute: (client: ExtendedClient, interaction: ButtonInteraction) => Promise<any>;
 }
