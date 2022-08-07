@@ -2,14 +2,12 @@ import {
     ActionRowData,
     ButtonStyle,
     ClientOptions,
-    ComponentData,
     ComponentType,
     EmbedBuilder,
     GatewayIntentBits,
     LinkButtonComponentData,
     MessageActionRowComponentData
 } from 'discord.js';
-import { bot } from '.';
 import { Colors } from './types/constants';
 
 export const HOME_GUILD_ID = '938428007377403924';
