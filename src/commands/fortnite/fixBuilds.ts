@@ -42,7 +42,7 @@ const command: Command = {
                     return client.logger.error(eqError);
                 }
 
-                const { account_id, device_id, secret } = data;
+                const { account_id, device_id, secret } = dat;
 
                 const baseInstance = {
                     baseURL: 'https://account-public-service-prod.ol.epicgames.com',
