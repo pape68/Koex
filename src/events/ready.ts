@@ -15,7 +15,6 @@ export const event: Event = {
                 type: ComponentType.ActionRow,
                 components: [
                     (client.interactions.get('startDupe') as Button).options,
-                    (client.interactions.get('julesDupe') as Button).options,
                     (client.interactions.get('stopDupe') as Button).options,
                     (client.interactions.get('logout') as Button).options
                 ]
