@@ -1,4 +1,4 @@
-import { ButtonInteraction, ComponentType } from 'discord.js';
+import { ComponentType } from 'discord.js';
 import { getAuthCodeButton, menuComponents } from '../constants';
 import { Button } from '../interfaces/Button';
 import { Event } from '../interfaces/Event';

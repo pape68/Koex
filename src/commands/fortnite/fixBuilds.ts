@@ -69,22 +69,7 @@ const command: Command = {
                 await basicInstance
                     .post(`/account/api/oauth/token`, deviceAuthParams.toString())
                     .then(async (res) => {
-                        const { data: datt, error: upsertError } = await client.supabase
-                            .from('fortnite')
-                            .upsert({
-                                user_id: interaction.user.id,
-                                access_token: res.data.access_token,
-                                account_id,
-                                device_id,
-                                secret
-                            })
-                            .single();
-
-                        data = datt;
-
-                        if (upsertError) {
-                            return client.logger.error(upsertError);
-                        }
+                        data = res.data;
                     })
                     .catch(async (err) => {
                         client.logger.error(err);
