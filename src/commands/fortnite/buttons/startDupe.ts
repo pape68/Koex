@@ -6,8 +6,6 @@ import { ExtendedClient } from '../../../interfaces/ExtendedClient';
 
 const button: Button = {
     execute: async (client: ExtendedClient, interaction: ButtonInteraction) => {
-        if (interaction.user.id === '569212600785567777')
-            return interaction.reply("Sorry, you can't use this command while blacklisted.");
         await toggleDupe(client, interaction, true);
     },
     options: {
