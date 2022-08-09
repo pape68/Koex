@@ -15,58 +15,58 @@ const command: Command = {
 
         return interaction.editReply('This command is currently unavailable.');
 
-        const operation = interaction.options.getString('operation');
-        const profileId = interaction.options.getString('profile-id');
-        const payload = interaction.options.getString('payload');
+        // const operation = interaction.options.getString('operation');
+        // const profileId = interaction.options.getString('profile-id');
+        // const payload = interaction.options.getString('payload');
 
-        const { data } = await client.supabase
-            .from('fortnite')
-            .select('*')
-            .eq('user_id', interaction.user.id)
-            .single();
+        // const { data } = await client.supabase
+        //     .from('fortnite')
+        //     .select('*')
+        //     .eq('user_id', interaction.user.id)
+        //     .single();
 
-        if (!data) return interaction.editReply("You can't use this while not logged in.");
+        // if (!data) return interaction.editReply("You can't use this while not logged in.");
 
-        const baseInstace = {
-            baseURL: 'https://fortnite-public-service-prod11.ol.epicgames.com',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `bearer ${data.access_token}`
-            }
-        };
+        // const baseInstace = {
+        //     baseURL: 'https://fortnite-public-service-prod11.ol.epicgames.com',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         Authorization: `bearer ${data.access_token}`
+        //     }
+        // };
 
-        const compositionInstance = axios.create({
-            ...baseInstace,
-            params: {
-                profileId
-            }
-        });
+        // const compositionInstance = axios.create({
+        //     ...baseInstace,
+        //     params: {
+        //         profileId
+        //     }
+        // });
 
-        let body;
+        // let body;
 
-        try {
-            body = payload ? JSON.parse(payload) : {};
-        } catch (err) {
-            client.logger.error(err);
-            return interaction.editReply('Invalid JSON payload.');
-        }
+        // try {
+        //     body = payload ? JSON.parse(payload) : {};
+        // } catch (err) {
+        //     client.logger.error(err);
+        //     return interaction.editReply('Invalid JSON payload.');
+        // }
 
-        await compositionInstance
-            .post(`/fortnite/api/game/v2/profile/${data.account_id}/client/${operation}`, body)
-            .then(async (res) => {
-                const response = new AttachmentBuilder(
-                    Buffer.from(JSON.stringify(res.data, null, 4)),
-                    { name: 'response.json' }
-                );
+        // await compositionInstance
+        //     .post(`/fortnite/api/game/v2/profile/${data.account_id}/client/${operation}`, body)
+        //     .then(async (res) => {
+        //         const response = new AttachmentBuilder(
+        //             Buffer.from(JSON.stringify(res.data, null, 4)),
+        //             { name: 'response.json' }
+        //         );
 
-                interaction.editReply({
-                    files: [response]
-                });
-            })
-            .catch((err: AxiosError) => {
-                client.logger.error(err);
-                interaction.editReply(err.message);
-            });
+        //         interaction.editReply({
+        //             files: [response]
+        //         });
+        //     })
+        //     .catch((err: AxiosError) => {
+        //         client.logger.error(err);
+        //         interaction.editReply(err.message);
+        //     });
     },
     options: {
         name: 'compose-mcp',
