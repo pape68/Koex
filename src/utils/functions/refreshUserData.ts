@@ -4,23 +4,22 @@ import qs from 'qs';
 import { FORTNITE_BASIC_AUTH } from '../../constants';
 import { ComponentInteraction } from '../../interfaces/Component';
 import { UserData } from '../../typings';
-import { Accounts, AuthData, DeviceAuth } from '../../typings/supabase';
+import { Accounts, DeviceAuth } from '../../typings/supabase';
 import { Endpoints } from '../constants/classes';
-import { EpicServices } from '../constants/enums';
 import createEmbed from './createEmbed';
 import getUserData from './getUserData';
 import request from './request';
 import supabase from './supabase';
 
 const refreshUserData = async (userId: string, interaction?: ChatInputCommandInteraction | ComponentInteraction, deviceAuth?: DeviceAuth) => {
-    const user: AuthData = await getUserData(userId, interaction);
+    const user: Accounts = await getUserData(userId, interaction, false);
 
     const headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: FORTNITE_BASIC_AUTH
     };
 
-    const { accountId, deviceId, secret } = deviceAuth ?? user;
+    const { accountId, deviceId, secret } = deviceAuth ?? user['slot_' + user.active_slot];
 
     const body = qs.stringify({
         grant_type: 'device_auth',
@@ -32,7 +31,7 @@ const refreshUserData = async (userId: string, interaction?: ChatInputCommandInt
     const endpoints = new Endpoints();
     const { data, error } = await request<UserData>(
         'POST',
-        endpoints.oauth,
+        endpoints.oauthTokenCreate,
         null,
         headers,
         body
@@ -47,10 +46,10 @@ const refreshUserData = async (userId: string, interaction?: ChatInputCommandInt
     await supabase.from<Accounts>('accounts').upsert({
         user_id: userId,
         ['slot_' + user.active_slot]: {
+            ...data,
             accountId,
             deviceId,
             secret,
-            ...data
         }
     });
 

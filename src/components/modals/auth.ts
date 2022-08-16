@@ -34,7 +34,7 @@ const modal: Component<ModalSubmitInteraction> = {
             const endpoints = new Endpoints();
             const userDataRes = await request<UserData>(
                 'POST',
-                endpoints.oauth,
+                endpoints.oauthTokenCreate,
                 null,
                 userDataHeaders,
                 userDataBody
@@ -53,7 +53,7 @@ const modal: Component<ModalSubmitInteraction> = {
 
             const deviceAuthRes = await request<DeviceAuth>(
                 'POST',
-                endpoints.oauthDeviceAuth + `/${account_id}/deviceAuth`,
+                `${endpoints.oauthDeviceAuth}/${account_id}/deviceAuth`,
                 null,
                 deviceAuthHeaders
             );
