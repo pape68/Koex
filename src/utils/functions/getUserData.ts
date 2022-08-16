@@ -13,8 +13,7 @@ const getUserData = async(
 ) => {
     const { data, error } = await supabase
         .from<Accounts>('accounts')
-        .select('*')
-        .match({ user_id: userId })
+        .upsert({ user_id: userId })
         .maybeSingle();
 
     const account: Accounts = data!;
