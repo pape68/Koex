@@ -1,21 +1,23 @@
 import { InteractionType, ModalSubmitInteraction } from 'discord.js';
 
+import { Component } from '../../interfaces/Component';
 import { Event } from '../../interfaces/Event';
-import { ExtendedClient } from '../../interfaces/ExtendedClient';
-import { Modal } from '../../interfaces/Modal';
+import createEmbed from '../../utils/functions/createEmbed';
 
 const event: Event = {
-    execute: async (client: ExtendedClient, interaction: ModalSubmitInteraction) => {
-        if (interaction.type !== InteractionType.ModalSubmit || interaction.guild) return;
+    name: 'interactionCreate',
+    execute: async (client, interaction) => {
+        if (interaction.type !== InteractionType.ModalSubmit) return;
 
-        try {
-            (client.interactions.get(interaction.customId) as Modal).execute(client, interaction);
-        } catch (err) {
-            client.logger.error(err);
+        if (interaction.user !== interaction.message.interaction!.user) {
+            return interaction.reply({
+                embeds: [createEmbed('error', "This modal isn't for you.")]
+            });
         }
-    },
-    options: {
-        name: 'interactionCreate'
+
+        (client.interactions.get(interaction.customId) as Component<ModalSubmitInteraction>)
+            .execute(interaction)
+            .catch((error) => console.error(error));
     }
 };
 

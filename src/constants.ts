@@ -1,17 +1,9 @@
-import {
-    ActionRowData,
-    ButtonStyle,
-    ClientOptions,
-    ComponentType,
-    EmbedBuilder,
-    GatewayIntentBits,
-    LinkButtonComponentData,
-    MessageActionRowComponentData
-} from 'discord.js';
-import { Colors } from './types/constants';
+import { ClientOptions, GatewayIntentBits, HexColorString } from 'discord.js';
 
 export const HOME_GUILD_ID = '938428007377403924';
 export const COMMANDS_CHANNEL = '1004260424386093238';
+
+// Discord.JS Options
 
 export const CLIENT_OPTIONS: ClientOptions = {
     intents: [
@@ -23,34 +15,33 @@ export const CLIENT_OPTIONS: ClientOptions = {
     ]
 };
 
-export const COLORS: Colors = {
+// General
+
+export const COLORS: Record<string, HexColorString> = {
     red: '#e62d64',
-    orange: '#e4664d',
-    yellow: '#f0c048',
-    green: '#62CB51',
+    orange: '#fa8444',
+    yellow: '#fadc44',
+    green: '#04d46c',
     blue: '#44a8fa',
     pink: '#f37ffe',
     gray: '#2f3136'
 };
 
-export const fortniteIOSGameClient = {
+export const EMOJIS = {
+    error: '<:KX_Error:1007835165764112394>',
+    info: '<:KX_Info:1007846233198563339>',
+    success: '<:KX_Success:1007848246531608697>'
+};
+
+// Fortnite
+
+// export const WHITELIST = []
+
+export const FORTNITE_GAME_CLIENT = {
     id: '3446cd72694c4a4485d81b77adbb2141',
     secret: '9209d4a5e25a457fb9b07489d313b41a'
 };
 
-export const getAuthCodeButton: LinkButtonComponentData = {
-    label: 'Get Auth Code',
-    style: ButtonStyle.Link,
-    url: `https://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fredirect%3FclientId%3D${fortniteIOSGameClient.id}%26responseType%3Dcode%0A`,
-    type: ComponentType.Button
-};
-
-export const menuEmbed = new EmbedBuilder().setColor(COLORS.blue).addFields({
-    name: 'Main Menu',
-    value: 'Use the buttons below to navigate the menu and performs actions.'
-});
-
-export const menuComponents = {
-    loggedIn: [] as ActionRowData<MessageActionRowComponentData>[],
-    loggedOut: [] as ActionRowData<MessageActionRowComponentData>[]
-};
+export const FORTNITE_BASIC_AUTH = `Basic ${btoa(
+    FORTNITE_GAME_CLIENT.id + ':' + FORTNITE_GAME_CLIENT.secret
+)}`;

@@ -1,24 +1,17 @@
-import { ChatInputCommandInteraction } from 'discord.js';
 import { Command } from '../../interfaces/Command';
-
 import { Event } from '../../interfaces/Event';
-import { ExtendedClient } from '../../interfaces/ExtendedClient';
+import refreshUserData from '../../utils/functions/refreshUserData';
 
 const event: Event = {
-    execute: async (client: ExtendedClient, interaction: ChatInputCommandInteraction) => {
-        if (!interaction.isChatInputCommand() || interaction.guild) return;
+    name: 'interactionCreate',
+    execute: async (client, interaction) => {
+        if (!interaction.isChatInputCommand()) return;
 
-        try {
-            (client.interactions.get(interaction.commandName) as Command).execute(
-                client,
-                interaction
-            );
-        } catch (err) {
-            client.logger.error(err);
-        }
-    },
-    options: {
-        name: 'interactionCreate'
+        if (interaction.commandName !== 'account') await refreshUserData(interaction.user.id);
+
+        (client.interactions.get(interaction.commandName) as Command)
+            .execute(interaction)
+            .catch(error => console.error(error));
     }
 };
 

@@ -2,14 +2,14 @@ import { Client, Collection } from 'discord.js';
 
 import { CLIENT_OPTIONS } from './constants';
 import { ExtendedClient } from './interfaces/ExtendedClient';
-import { loadEvents, logger, supabase } from './utils';
+import logger from './utils/functions/logger';
+import loadEvents from './utils/handlers/loadEvents';
 
 export const bot = new Client(CLIENT_OPTIONS) as ExtendedClient;
 
 bot.interactions = new Collection();
 bot.cooldowns = new Collection();
 bot.logger = logger;
-bot.supabase = supabase;
 
 (async () => {
     await bot.login(process.env.DISCORD_TOKEN);

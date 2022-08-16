@@ -1,40 +1,15 @@
-import { ComponentType } from 'discord.js';
-import { getAuthCodeButton, menuComponents } from '../constants';
-import { Button } from '../interfaces/Button';
 import { Event } from '../interfaces/Event';
 import { ExtendedClient } from '../interfaces/ExtendedClient';
-import loadCommands from '../utils/loadCommands';
+import loadCommands from '../utils/handlers/loadCommands';
+import loadComponents from '../utils/handlers/loadComponents';
 
-export const event: Event = {
+export const event: Event<true> = {
+    name: 'ready',
     execute: async (client: ExtendedClient) => {
         client.logger.info(`Logged in as ${client.user!.tag}!`);
         loadCommands(client);
-
-        menuComponents.loggedIn.push(
-            {
-                type: ComponentType.ActionRow,
-                components: [
-                    (client.interactions.get('startDupe') as Button).options,
-                    (client.interactions.get('stopDupe') as Button).options,
-                    (client.interactions.get('logout') as Button).options
-                ]
-            },
-            {
-                type: ComponentType.ActionRow,
-                components: [
-                    getAuthCodeButton,
-                    (client.interactions.get('switchAccounts') as Button).options
-                ]
-            }
-        );
-        menuComponents.loggedOut.push({
-            type: ComponentType.ActionRow,
-            components: [getAuthCodeButton, (client.interactions.get('login') as Button).options]
-        });
+        loadComponents(client)
     },
-    options: {
-        once: true
-    }
 };
 
 export default event;
