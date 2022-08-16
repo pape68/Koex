@@ -5,6 +5,7 @@ import { FORTNITE_BASIC_AUTH } from '../../constants';
 import { ComponentInteraction } from '../../interfaces/Component';
 import { UserData } from '../../typings';
 import { Accounts, AuthData, DeviceAuth } from '../../typings/supabase';
+import { Endpoints } from '../constants/classes';
 import { EpicServices } from '../constants/enums';
 import createEmbed from './createEmbed';
 import getUserData from './getUserData';
@@ -28,9 +29,10 @@ const refreshUserData = async (userId: string, interaction?: ChatInputCommandInt
         secret
     });
 
+    const endpoints = new Endpoints();
     const { data, error } = await request<UserData>(
         'POST',
-        EpicServices.ACCOUNT_SERVICE + '/account/api/oauth/token',
+        endpoints.oauth,
         null,
         headers,
         body

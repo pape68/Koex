@@ -34,7 +34,7 @@ const modal: Component<ModalSubmitInteraction> = {
             const endpoints = new Endpoints();
             const userDataRes = await request<UserData>(
                 'POST',
-                endpoints.oauthTokenCreate,
+                endpoints.oauth,
                 null,
                 userDataHeaders,
                 userDataBody
