@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 
-interface Result<D> {
+export interface Result<D> {
     data?: D;
     error?: any;
 }

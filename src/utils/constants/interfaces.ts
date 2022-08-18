@@ -1,3 +1,9 @@
+export interface AvatarResponse {
+    accountId: string;
+    namespace: string;
+    avatarId:  string;
+}
+
 export interface FortniteItem {
     itemId: string;
     templateId: string;
@@ -5,7 +11,7 @@ export interface FortniteItem {
     quantity: number;
 }
 
-export interface QueryProfileResult {
+export interface QueryProfileResponse {
     profileRevision: number;
     profileId: string;
     profileChangesBaseRevision: number;

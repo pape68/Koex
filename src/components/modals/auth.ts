@@ -8,6 +8,7 @@ import { Accounts, AuthData, DeviceAuth } from '../../typings/supabase';
 import { Endpoints } from '../../utils/constants/classes';
 import { EpicServices } from '../../utils/constants/enums';
 import createEmbed from '../../utils/functions/createEmbed';
+import getAvatar from '../../utils/functions/getAvatar';
 import getUserData from '../../utils/functions/getUserData';
 import refreshUserData from '../../utils/functions/refreshUserData';
 import request from '../../utils/functions/request';
@@ -66,6 +67,7 @@ const modal: Component<ModalSubmitInteraction> = {
             delete deviceAuthRes.data.created;
 
             const user: Accounts = await getUserData(interaction.user.id, interaction, false);
+            const avatar = await getAvatar(interaction.user.id);
 
             for (let i = 0; i < 5; i++) {
                 if (user['slot_' + i].accountId === deviceAuthRes.data.accountId) {
@@ -98,7 +100,7 @@ const modal: Component<ModalSubmitInteraction> = {
                                 `Added account **${userDataRes.data!.displayName}** on slot ${inlineCode(
                                     (i + 1).toString()
                                 )}.`
-                            )
+                            ).setThumbnail(avatar)
                         ]
                     });
                 }

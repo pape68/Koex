@@ -1,7 +1,7 @@
 import { ButtonInteraction } from 'discord.js';
 import _ from 'lodash';
 
-import { FortniteItem, QueryProfileResult } from '../constants/interfaces';
+import { FortniteItem, QueryProfileResponse } from '../constants/interfaces';
 import createEmbed from '../functions/createEmbed';
 import getUserData from '../functions/getUserData';
 import operationRequest from '../functions/operationRequest';
@@ -16,7 +16,7 @@ const toggleDupe = async (interaction: ButtonInteraction, enable: boolean) => {
             embeds: [createEmbed('error', 'You are not logged in.')]
         });
 
-    const query = await operationRequest<QueryProfileResult>(user, 'QueryProfile', enable ? 'theater0' : 'outpost0');
+    const query = await operationRequest<QueryProfileResponse>(user, 'QueryProfile', enable ? 'theater0' : 'outpost0');
 
     if (!query.data || query.error)
         return interaction.editReply({

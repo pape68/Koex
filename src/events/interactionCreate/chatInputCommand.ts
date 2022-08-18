@@ -1,10 +1,12 @@
+import { ChatInputCommandInteraction } from 'discord.js';
+
 import { Command } from '../../interfaces/Command';
 import { Event } from '../../interfaces/Event';
 import refreshUserData from '../../utils/functions/refreshUserData';
 
 const event: Event = {
     name: 'interactionCreate',
-    execute: async (client, interaction) => {
+    execute: async (client, interaction: ChatInputCommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
 
         if (interaction.commandName !== 'account') await refreshUserData(interaction.user.id);

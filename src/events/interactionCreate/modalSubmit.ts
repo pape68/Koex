@@ -6,12 +6,13 @@ import createEmbed from '../../utils/functions/createEmbed';
 
 const event: Event = {
     name: 'interactionCreate',
-    execute: async (client, interaction) => {
+    execute: async (client, interaction: ModalSubmitInteraction) => {
         if (interaction.type !== InteractionType.ModalSubmit) return;
 
-        if (interaction.user !== interaction.message.interaction!.user) {
+        if (interaction.user !== interaction.message?.interaction!.user) {
             return interaction.reply({
-                embeds: [createEmbed('error', "This modal isn't for you.")]
+                embeds: [createEmbed('error', "This modal isn't for you.")],
+                ephemeral: true
             });
         }
 
