@@ -1,6 +1,6 @@
 import { Component, ComponentInteraction } from '../../interfaces/Component';
 import { Event } from '../../interfaces/Event';
-import createEmbed from '../../utils/functions/createEmbed';
+import createEmbed from '../../utils/commands/createEmbed';
 
 const event: Event = {
     name: 'interactionCreate',

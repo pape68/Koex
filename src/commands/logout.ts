@@ -2,7 +2,7 @@ import { ApplicationCommandType } from 'discord.js';
 
 import { Command } from '../interfaces/Command';
 import { Accounts, AuthData, SlotName } from '../types/supabase';
-import createEmbed from '../utils/functions/createEmbed';
+import createEmbed from '../utils/commands/createEmbed';
 import supabase from '../utils/functions/supabase';
 import defaultResponses from '../utils/helpers/defaultResponses';
 

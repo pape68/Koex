@@ -1,14 +1,14 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
 
-import { Command } from '../interfaces/Command';
-import { Accounts, AuthData, SlotName, DeviceAuth } from '../types/supabase';
-import createEmbed from '../utils/functions/createEmbed';
-import supabase from '../utils/functions/supabase';
-import defaultResponses from '../utils/helpers/defaultResponses';
-import toggleDupe from '../utils/commands/toggleDupe';
+import createDeviceAuth from '../api/auth/createDeviceAuth';
 import createOAuthData from '../api/auth/createOAuthData';
 import { FORTNITE_CLIENT } from '../constants';
-import createDeviceAuth from '../api/auth/createDeviceAuth';
+import { Command } from '../interfaces/Command';
+import { AuthData } from '../types/supabase';
+import createEmbed from '../utils/commands/createEmbed';
+import refreshAuthData from '../utils/commands/refreshAuthData';
+import toggleDupe from '../utils/commands/toggleDupe';
+import defaultResponses from '../utils/helpers/defaultResponses';
 
 const command: Command = {
     name: 'fix-builds',
@@ -40,17 +40,7 @@ const command: Command = {
 
         let auth: AuthData | null = null;
         if (queryDatabase) {
-            const { data: account, error } = await supabase
-                .from<Accounts>('accounts_test')
-                .select('*')
-                .match({ user_id: userId })
-                .maybeSingle();
-
-            if (error) return interaction.editReply(defaultResponses.authError);
-
-            if (!account) return interaction.editReply(defaultResponses.loggedOut);
-
-            auth = account[('slot_' + account.active_slot) as SlotName];
+            auth = await refreshAuthData(interaction.user.id);
 
             if (!auth) return interaction.editReply(defaultResponses.loggedOut);
         }

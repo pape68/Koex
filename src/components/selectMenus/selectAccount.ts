@@ -1,8 +1,8 @@
 import { SelectMenuInteraction } from 'discord.js';
 
 import { Component } from '../../interfaces/Component';
-import { Accounts, AuthData, SlotName } from '../../types/supabase';
-import createEmbed from '../../utils/functions/createEmbed';
+import { Accounts, SlotName } from '../../types/supabase';
+import createEmbed from '../../utils/commands/createEmbed';
 import supabase from '../../utils/functions/supabase';
 import defaultResponses from '../../utils/helpers/defaultResponses';
 
@@ -18,9 +18,9 @@ const selectMenu: Component<SelectMenuInteraction> = {
             .upsert({ user_id: interaction.user.id, active_slot: parseInt(slot) })
             .single();
 
-        if (!account || error) return interaction.editReply(defaultResponses.loggedOut);
+        if (error) return interaction.editReply(defaultResponses.retrievalError);
 
-        const auth: AuthData | null = account[('slot_' + slot) as SlotName];
+        const auth = account[('slot_' + slot) as SlotName];
 
         if (!auth) return interaction.editReply(defaultResponses.loggedOut);
 

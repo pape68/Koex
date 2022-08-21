@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction } from 'discord.js';
 
 import { Command } from '../../interfaces/Command';
 import { Event } from '../../interfaces/Event';
-import createEmbed from '../../utils/functions/createEmbed';
+import createEmbed from '../../utils/commands/createEmbed';
 
 const event: Event = {
     name: 'interactionCreate',

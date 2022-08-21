@@ -5,7 +5,7 @@ import createOAuthData from '../../api/auth/createOAuthData';
 import { FORTNITE_CLIENT } from '../../constants';
 import { Component } from '../../interfaces/Component';
 import { Accounts, SlotName } from '../../types/supabase';
-import createEmbed from '../../utils/functions/createEmbed';
+import createEmbed from '../../utils/commands/createEmbed';
 import supabase from '../../utils/functions/supabase';
 import defaultResponses from '../../utils/helpers/defaultResponses';
 

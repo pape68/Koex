@@ -3,9 +3,8 @@ import { ApplicationCommandOptionType, ApplicationCommandType, AttachmentBuilder
 import createOperationRequest from '../api/mcp/createOperationRequest';
 import { FortniteProfile, MCPOperation } from '../api/types';
 import { Command } from '../interfaces/Command';
-import { Accounts, AuthData, SlotName } from '../types/supabase';
-import createEmbed from '../utils/functions/createEmbed';
-import supabase from '../utils/functions/supabase';
+import createEmbed from '../utils/commands/createEmbed';
+import refreshAuthData from '../utils/commands/refreshAuthData';
 import defaultResponses from '../utils/helpers/defaultResponses';
 
 const command: Command = {
@@ -19,17 +18,7 @@ const command: Command = {
         const profile = interaction.options.getString('profile')! as keyof typeof FortniteProfile;
         const payload = interaction.options.getString('payload');
 
-        const { data: account, error } = await supabase
-            .from<Accounts>('accounts_test')
-            .select('*')
-            .match({ user_id: interaction.user.id })
-            .maybeSingle();
-
-        if (error) return interaction.editReply(defaultResponses.authError);
-
-        if (!account) return interaction.editReply(defaultResponses.loggedOut);
-
-        const auth: AuthData | null = account[('slot_' + account.active_slot) as SlotName];
+        const auth = await refreshAuthData(interaction.user.id);
 
         if (!auth) return interaction.editReply(defaultResponses.loggedOut);
 

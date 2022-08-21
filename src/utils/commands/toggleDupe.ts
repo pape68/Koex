@@ -1,13 +1,13 @@
 import { ChatInputCommandInteraction } from 'discord.js';
 
-import { Accounts, AuthData, SlotName } from '../../types/supabase';
-import supabase from '../functions/supabase';
+import { AuthData } from '../../types/supabase';
 
-import createEmbed from '../functions/createEmbed';
-import defaultResponses from '../helpers/defaultResponses';
 import createOperationRequest from '../../api/mcp/createOperationRequest';
 import { FortniteItem } from '../../api/types';
 import { ComponentInteraction } from '../../interfaces/Component';
+import defaultResponses from '../helpers/defaultResponses';
+import createEmbed from './createEmbed';
+import refreshAuthData from './refreshAuthData';
 
 interface Overrides {
     auth?: AuthData;
@@ -19,31 +19,22 @@ const toggleDupe = async (
     interaction?: ChatInputCommandInteraction | ComponentInteraction,
     overrides?: Overrides
 ) => {
-    if (!interaction && !overrides) {
-        console.error(new Error('Invalid function parameters.'));
+    if ((!interaction && !overrides) || (!overrides?.auth && !overrides?.userId)) {
+        throw new Error('Invalid function parameters.');
     }
 
     if (!interaction?.deferred && !interaction?.replied) await interaction?.deferReply();
 
-    const { data: account, error } = await supabase
-        .from<Accounts>('accounts_test')
-        .select('*')
-        .match({ user_id: overrides?.userId ?? interaction?.user.id })
-        .maybeSingle();
-
-    if (error) return interaction?.editReply(defaultResponses.authError);
-
-    if (!account) return interaction?.editReply(defaultResponses.loggedOut);
-
-    const auth: AuthData | null = account[('slot_' + account.active_slot) as SlotName];
+    let auth: AuthData | null = null;
+    if (!interaction && overrides?.userId) {
+        auth = await refreshAuthData(overrides?.userId);
+    } else if (interaction && !overrides?.userId) {
+        auth = await refreshAuthData(interaction.user.id);
+    }
 
     if (!auth) return interaction?.editReply(defaultResponses.loggedOut);
 
-    const queryProfileRes = await createOperationRequest(
-        overrides?.auth ?? auth,
-        enable ? 'theater0' : 'outpost0',
-        'QueryProfile'
-    );
+    const queryProfileRes = await createOperationRequest(auth, enable ? 'theater0' : 'outpost0', 'QueryProfile');
 
     if (!queryProfileRes.data || queryProfileRes.error)
         return interaction?.editReply({
