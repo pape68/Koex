@@ -40,7 +40,7 @@ const command: Command = {
 
         let auth: AuthData | null = null;
         if (queryDatabase) {
-            auth = await refreshAuthData(interaction.user.id);
+            auth = await refreshAuthData(userId);
 
             if (!auth) return interaction.editReply(defaultResponses.loggedOut);
         }
