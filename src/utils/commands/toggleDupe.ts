@@ -69,8 +69,8 @@ const toggleDupe = async (
             embeds: [createEmbed('error', `An error occurred while ${enable ? 'starting' : 'stopping'} the dupe.`)]
         };
 
-        if (storageTransferRes.error.response) {
-            switch (storageTransferRes.error.response.data.numericErrorCode) {
+        if (storageTransferRes.error) {
+            switch (storageTransferRes.error.numericErrorCode) {
                 case 12821:
                     interaction?.editReply({
                         embeds: [
