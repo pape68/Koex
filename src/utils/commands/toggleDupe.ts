@@ -10,8 +10,8 @@ import createEmbed from './createEmbed';
 import refreshAuthData from './refreshAuthData';
 
 interface Overrides {
-    auth?: AuthData;
-    userId?: string;
+    auth: AuthData;
+    userId: string;
 }
 
 const toggleDupe = async (
