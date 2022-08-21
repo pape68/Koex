@@ -23,7 +23,7 @@ const toggleDupe = async (
         throw new Error('Invalid function parameters.');
     }
 
-    if (!interaction?.deferred && !interaction?.replied) await interaction?.deferReply();
+    if (!interaction?.deferred && !interaction?.replied) await interaction?.deferReply({ ephemeral: true });
 
     let auth: AuthData | null = null;
     if (!interaction && overrides?.userId) {

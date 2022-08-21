@@ -41,8 +41,7 @@ const command: Command = {
         return interaction.reply({
             embeds: [embed],
             components: [row],
-            files: [file],
-            ephemeral: true
+            files: [file]
         });
     }
 };

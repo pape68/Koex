@@ -11,7 +11,7 @@ const command: Command = {
     description: 'Logout from your active Epic Games account.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply();
 
         const { data: account, error } = await supabase
             .from<Accounts>('accounts_test')

@@ -10,7 +10,7 @@ const command: Command = {
     description: 'Display your current account.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply();
 
         const auth = await refreshAuthData(interaction.user.id);
 
