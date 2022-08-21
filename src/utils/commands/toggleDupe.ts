@@ -19,7 +19,7 @@ const toggleDupe = async (
     interaction?: ChatInputCommandInteraction | ComponentInteraction,
     overrides?: Overrides
 ) => {
-    if ((!interaction && !overrides) || (!overrides?.auth && !overrides?.userId)) {
+    if ((!interaction && !overrides) || (overrides?.auth && overrides?.userId)) {
         throw new Error('Invalid function parameters.');
     }
 
