@@ -3,7 +3,7 @@ import { join } from 'path';
 
 import { Command } from '../../interfaces/Command';
 import { ExtendedClient } from '../../interfaces/ExtendedClient';
-import registerCommands from './registerCommands';
+import registerInteractions from './registerInteractions';
 
 const loadCommands = (client: ExtendedClient) => {
     const commands: Command[] = [];
@@ -18,7 +18,7 @@ const loadCommands = (client: ExtendedClient) => {
         commands.push(interaction);
     }
 
-    registerCommands(client, commands);
+    registerInteractions(client, commands);
 };
 
 export default loadCommands;

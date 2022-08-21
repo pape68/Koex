@@ -6,13 +6,14 @@ import {
     TextInputBuilder,
     TextInputStyle
 } from 'discord.js';
+
 import { Component } from '../../interfaces/Component';
 
 const button: Component<ButtonInteraction> = {
-    name: 'signIn',
+    name: 'submitCode',
     execute: async (interaction) => {
         const modal = new ModalBuilder()
-            .setTitle(`${interaction.client.user!.username} - Sign In`)
+            .setTitle(`${interaction.client.user!.username} - Login`)
             .setCustomId('auth')
             .addComponents([
                 new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents([

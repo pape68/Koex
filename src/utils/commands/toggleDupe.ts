@@ -1,25 +1,52 @@
-import { ButtonInteraction } from 'discord.js';
-import _ from 'lodash';
+import { ChatInputCommandInteraction } from 'discord.js';
 
-import { FortniteItem, QueryProfileResponse } from '../constants/interfaces';
+import { Accounts, AuthData, SlotName } from '../../types/supabase';
+import supabase from '../functions/supabase';
+
 import createEmbed from '../functions/createEmbed';
-import getUserData from '../functions/getUserData';
-import operationRequest from '../functions/operationRequest';
+import defaultResponses from '../helpers/defaultResponses';
+import createOperationRequest from '../../api/mcp/createOperationRequest';
+import { FortniteItem } from '../../api/types';
+import { ComponentInteraction } from '../../interfaces/Component';
 
-const toggleDupe = async (interaction: ButtonInteraction, enable: boolean) => {
-    await interaction.deferReply();
+interface Overrides {
+    auth?: AuthData;
+    userId?: string;
+}
 
-    const user = await getUserData(interaction.user.id, interaction, true);
+const toggleDupe = async (
+    enable: boolean,
+    interaction?: ChatInputCommandInteraction | ComponentInteraction,
+    overrides?: Overrides
+) => {
+    if (!interaction && !overrides) {
+        console.error(new Error('Invalid function parameters.'));
+    }
 
-    if (_.isEmpty(user))
-        return interaction.editReply({
-            embeds: [createEmbed('error', 'You are not logged in.')]
-        });
+    if (!interaction?.deferred && !interaction?.replied) await interaction?.deferReply();
 
-    const query = await operationRequest<QueryProfileResponse>(user, 'QueryProfile', enable ? 'theater0' : 'outpost0');
+    const { data: account, error } = await supabase
+        .from<Accounts>('accounts_test')
+        .select('*')
+        .match({ user_id: overrides?.userId ?? interaction?.user.id })
+        .maybeSingle();
 
-    if (!query.data || query.error)
-        return interaction.editReply({
+    if (error) return interaction?.editReply(defaultResponses.authError);
+
+    if (!account) return interaction?.editReply(defaultResponses.loggedOut);
+
+    const auth: AuthData | null = account[('slot_' + account.active_slot) as SlotName];
+
+    if (!auth) return interaction?.editReply(defaultResponses.loggedOut);
+
+    const queryProfileRes = await createOperationRequest(
+        overrides?.auth ?? auth,
+        enable ? 'theater0' : 'outpost0',
+        'QueryProfile'
+    );
+
+    if (!queryProfileRes.data || queryProfileRes.error)
+        return interaction?.editReply({
             embeds: [createEmbed('error', 'Failed to toggle dupe.')]
         });
 
@@ -30,7 +57,7 @@ const toggleDupe = async (interaction: ButtonInteraction, enable: boolean) => {
         'Weapon:buildingitemdata_roofs'
     ];
 
-    const profileItems: FortniteItem[] = query.data.profileChanges[0].profile.items;
+    const profileItems: FortniteItem[] = queryProfileRes.data.profileChanges[0].profile.items;
     const transferData = new Map(Object.entries(profileItems).map(([k, v]) => [v.templateId, k]));
 
     const transferOperations = itemGuids
@@ -42,22 +69,19 @@ const toggleDupe = async (interaction: ButtonInteraction, enable: boolean) => {
             newItemIdHint: 'molleja'
         }));
 
-    const transfer = await operationRequest(user, 'StorageTransfer', 'theater0', { transferOperations });
+    const storageTransferRes = await createOperationRequest(overrides?.auth ?? auth, 'theater0', 'StorageTransfer', {
+        transferOperations
+    });
 
-    if (!transfer.data || transfer.error) {
+    if (!storageTransferRes.data || storageTransferRes.error) {
         const defaultResponse = {
-            embeds: [
-                createEmbed(
-                    'error',
-                    `An error occurred while ${enable ? 'starting' : 'stopping'} the dupe.`
-                )
-            ]
+            embeds: [createEmbed('error', `An error occurred while ${enable ? 'starting' : 'stopping'} the dupe.`)]
         };
 
-        if (transfer.error.response) {
-            switch (transfer.error.response.data.numericErrorCode) {
+        if (storageTransferRes.error.response) {
+            switch (storageTransferRes.error.response.data.numericErrorCode) {
                 case 12821:
-                    interaction.editReply({
+                    interaction?.editReply({
                         embeds: [
                             createEmbed(
                                 'error',
@@ -67,25 +91,21 @@ const toggleDupe = async (interaction: ButtonInteraction, enable: boolean) => {
                     });
                     break;
                 case 16098:
-                    interaction.editReply({
+                    interaction?.editReply({
                         embeds: [
-                            createEmbed(
-                                'error',
-                                `You need at least 4 free ${enable ? 'storage' : 'inventory'} slots.`
-                            )
+                            createEmbed('error', `You need at least 4 free ${enable ? 'storage' : 'inventory'} slots.`)
                         ]
                     });
                     break;
                 default:
-                    interaction.editReply(defaultResponse);
+                    interaction?.editReply(defaultResponse);
                     break;
             }
-
-            return interaction.editReply(defaultResponse);
         }
+        return interaction?.editReply(defaultResponse);
     }
-    
-    return interaction.editReply({
+
+    return interaction?.editReply({
         embeds: [createEmbed('success', `Successfully ${enable ? 'started' : 'stopped'} the dupe.`)]
     });
 };

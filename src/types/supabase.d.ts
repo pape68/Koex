@@ -1,19 +1,7 @@
-export type Created = {
-    location: string;
-    ipAddress: string;
-    dateTime: string;
-};
-
 export type DeviceAuth = {
     accountId: string;
     deviceId: string;
     secret: string;
-    userAgent?: string;
-    created?: Created;
-};
-
-export type StringSignature = {
-    [key: string]: any;
 };
 
 export type UserData = {
@@ -33,16 +21,21 @@ export type UserData = {
     app: string;
     in_app_id: string;
     device_id?: string;
-} & StringSignature;
+};
 
-export type AuthData = UserData & DeviceAuth;
+export type AuthData = DeviceAuth & {
+    accessToken: string;
+    displayName: string;
+};
+
+type SlotName = 'slot_0' | 'slot_1' | 'slot_2' | 'slot_3' | 'slot_4';
 
 export type Accounts = {
     user_id: string;
-    slot_0?: AuthData;
-    slot_1?: AuthData;
-    slot_2?: AuthData;
-    slot_3?: AuthData;
-    slot_4?: AuthData;
-    active_slot?: number;
-} & StringSignature;
+    slot_0: AuthData | null;
+    slot_1: AuthData | null;
+    slot_2: AuthData | null;
+    slot_3: AuthData | null;
+    slot_4: AuthData | null;
+    active_slot: number | 0;
+};

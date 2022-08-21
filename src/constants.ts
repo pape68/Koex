@@ -1,9 +1,7 @@
 import { ClientOptions, GatewayIntentBits, HexColorString } from 'discord.js';
+import { AuthClients } from './api/types';
 
-export const HOME_GUILD_ID = '938428007377403924';
-export const COMMANDS_CHANNEL = '1004260424386093238';
-
-// Discord.JS Options
+// Discord.js Options
 
 export const CLIENT_OPTIONS: ClientOptions = {
     intents: [
@@ -35,13 +33,16 @@ export const EMOJIS = {
 
 // Fortnite
 
-// export const WHITELIST = []
+interface FortniteClient {
+    client: keyof typeof AuthClients;
+    id: string;
+    secret: string;
+}
 
-export const FORTNITE_GAME_CLIENT = {
-    id: '3446cd72694c4a4485d81b77adbb2141',
-    secret: '9209d4a5e25a457fb9b07489d313b41a'
+export const FORTNITE_CLIENT: FortniteClient = {
+    client: 'fortniteIOSGameClient',
+    id: atob(AuthClients.fortniteIOSGameClient).split(':')[0],
+    secret: atob(AuthClients.fortniteIOSGameClient).split(':')[1]
 };
 
-export const FORTNITE_BASIC_AUTH = `Basic ${btoa(
-    FORTNITE_GAME_CLIENT.id + ':' + FORTNITE_GAME_CLIENT.secret
-)}`;
+export const FORTNITE_BASIC_AUTH = `Basic ${AuthClients.fortniteIOSGameClient}`;

@@ -1,28 +1,34 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestHeaders, Method } from 'axios';
 
-export interface Result<D> {
-    data?: D;
-    error?: any;
+export interface Result<T> {
+    data: T | null;
+    error: any | null;
 }
 
-const request = async <D>(
-    method?: AxiosRequestConfig['method'],
-    url?: AxiosRequestConfig['url'],
-    params?: AxiosRequestConfig['params'],
-    headers?: AxiosRequestConfig['headers'],
-    data: AxiosRequestConfig['data'] = {}
-): Promise<Result<D>> => {
-    return await axios({
-        method,
-        url,
-        params,
-        headers,
-        data
-    })
-        .then(({ data }) => ({ data }))
-        .catch((error) => ({
-            error: error.response.data ?? { rawError: error }
-        }));
+export interface RequestData {
+    method: Method;
+    url: string;
+    params?: any;
+    headers?: AxiosRequestHeaders;
+    data?: any;
+}
+
+const request = async <T>(data: RequestData): Promise<Result<T>> => {
+    return axios
+        .request(data)
+        .then(({ data }) => ({ data, error: null }))
+        .catch((error) => {
+            const message: string = error.response.data?.errorMessage ?? error.message;
+            console.error(new Error(message));
+
+            return {
+                data: null,
+                error: {
+                    ...error,
+                    message
+                }
+            };
+        });
 };
 
 export default request;

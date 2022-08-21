@@ -1,27 +1,27 @@
-import {
-    ActionRowBuilder,
-    ApplicationCommandType,
-    ButtonBuilder,
-    ButtonStyle,
-    EmbedBuilder
-} from 'discord.js';
-import _ from 'lodash';
+import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
 
 import { COLORS } from '../constants';
 import { Command } from '../interfaces/Command';
-import createEmbed from '../utils/functions/createEmbed';
-import getUserData from '../utils/functions/getUserData';
+import { Accounts } from '../types/supabase';
+import supabase from '../utils/functions/supabase';
+import defaultResponses from '../utils/helpers/defaultResponses';
 
 const command: Command = {
+    name: 'dupe',
+    description: 'Brings up the dupe menu.',
+    type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply();
 
-        const user = await getUserData(interaction.user.id);
+        const { data: account, error } = await supabase
+            .from<Accounts>('accounts_test')
+            .select('*')
+            .match({ user_id: interaction.user.id })
+            .maybeSingle();
 
-        if (_.isEmpty(user))
-            return interaction.editReply({
-                embeds: [createEmbed('info', 'You must be signed in to use this command.')]
-            });
+        if (error) return interaction.editReply(defaultResponses.authError);
+
+        if (!account) return interaction.editReply(defaultResponses.loggedOut);
 
         const embed = new EmbedBuilder().setColor(COLORS.blue).addFields([
             {
@@ -39,10 +39,7 @@ const command: Command = {
             embeds: [embed],
             components: [row]
         });
-    },
-    name: 'dupe',
-    description: 'Brings up the dupe menu.',
-    type: ApplicationCommandType.ChatInput
+    }
 };
 
 export default command;

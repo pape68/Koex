@@ -1,15 +1,17 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, AttachmentBuilder } from 'discord.js';
-import _ from 'lodash';
 
+import createOperationRequest from '../api/mcp/createOperationRequest';
+import { FortniteProfile, MCPOperation } from '../api/types';
 import { Command } from '../interfaces/Command';
-import { AuthData } from '../typings/supabase';
-import { FortniteProfile, MCPOperation } from '../utils/constants/enums';
+import { Accounts, AuthData, SlotName } from '../types/supabase';
 import createEmbed from '../utils/functions/createEmbed';
-import getUserData from '../utils/functions/getUserData';
-import operationRequest from '../utils/functions/operationRequest';
-import toCommandChoices from '../utils/functions/toCommandChoices';
+import supabase from '../utils/functions/supabase';
+import defaultResponses from '../utils/helpers/defaultResponses';
 
 const command: Command = {
+    name: 'compose-mcp',
+    description: 'Compose an MCP operation.',
+    type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply();
 
@@ -17,30 +19,44 @@ const command: Command = {
         const profile = interaction.options.getString('profile')! as keyof typeof FortniteProfile;
         const payload = interaction.options.getString('payload');
 
-        const user: AuthData = await getUserData(interaction.user.id, interaction);
+        const { data: account, error } = await supabase
+            .from<Accounts>('accounts_test')
+            .select('*')
+            .match({ user_id: interaction.user.id })
+            .maybeSingle();
 
-        if (_.isEmpty(user))
+        if (error) return interaction.editReply(defaultResponses.authError);
+
+        if (!account) return interaction.editReply(defaultResponses.loggedOut);
+
+        const auth: AuthData | null = account[('slot_' + account.active_slot) as SlotName];
+
+        if (!auth) return interaction.editReply(defaultResponses.loggedOut);
+
+        const operationRes = await createOperationRequest(auth, profile, operation, payload ? JSON.parse(payload) : {});
+
+        if (operationRes.error) {
             return interaction.editReply({
-                embeds: [createEmbed('info', 'You must be signed in to use this command.')]
+                embeds: [createEmbed('error', '`' + operationRes.error.message + '`')]
             });
+        }
 
-        const { data, error } = await operationRequest(user, operation, profile, JSON.parse(payload || '{}'));
+        const response = JSON.stringify(operationRes.data, null, 4);
 
-        if (!data || error) return interaction.editReply({
-                embeds: [createEmbed('error', '`' + (error.errorMessage ?? error.rawError.message) + '`')]
-            });
-
-        const file = new AttachmentBuilder(Buffer.from(JSON.stringify(data, null, 4)), {
+        const file = new AttachmentBuilder(Buffer.from(response), {
             name: 'response.json'
         });
 
-        interaction.editReply({
-            files: [file]
-        });
+        interaction.editReply(
+            response.length < 128
+                ? {
+                      embeds: [createEmbed('info', '`' + JSON + '`')]
+                  }
+                : {
+                      files: [file]
+                  }
+        );
     },
-    name: 'compose-mcp',
-    description: 'Compose an MCP operation.',
-    type: ApplicationCommandType.ChatInput,
     options: [
         {
             name: 'operation',
@@ -53,7 +69,12 @@ const command: Command = {
             description: 'The Fortnite MCP profile.',
             required: true,
             type: ApplicationCommandOptionType.String,
-            choices: toCommandChoices(FortniteProfile)
+            choices: Object.values(FortniteProfile)
+                .filter((v) => isNaN(Number(v)))
+                .map((v) => ({
+                    name: v.toString(),
+                    value: v.toString()
+                }))
         },
         {
             name: 'payload',
