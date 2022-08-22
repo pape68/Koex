@@ -69,31 +69,25 @@ const toggleDupe = async (
             embeds: [createEmbed('error', `An error occurred while ${enable ? 'starting' : 'stopping'} the dupe.`)]
         };
 
-        if (storageTransferRes.error) {
-            switch (storageTransferRes.error.numericErrorCode) {
-                case 12821:
-                    interaction?.editReply({
-                        embeds: [
-                            createEmbed(
-                                'error',
-                                "Profile locked, make sure you're in the lobby, wait a few minutes, and try again."
-                            )
-                        ]
-                    });
-                    break;
-                case 16098:
-                    interaction?.editReply({
-                        embeds: [
-                            createEmbed('error', `You need at least 4 free ${enable ? 'storage' : 'inventory'} slots.`)
-                        ]
-                    });
-                    break;
-                default:
-                    interaction?.editReply(defaultResponse);
-                    break;
-            }
+        switch (storageTransferRes.error.numericErrorCode) {
+            case 12821:
+                return interaction?.editReply({
+                    embeds: [
+                        createEmbed(
+                            'error',
+                            "Profile locked, make sure you're in the lobby, wait a few minutes, and try again."
+                        )
+                    ]
+                });
+            case 16098:
+                return interaction?.editReply({
+                    embeds: [
+                        createEmbed('error', `You need at least 4 free ${enable ? 'storage' : 'inventory'} slots.`)
+                    ]
+                });
+            default:
+                return interaction?.editReply(defaultResponse);
         }
-        return interaction?.editReply(defaultResponse);
     }
 
     return interaction?.editReply({

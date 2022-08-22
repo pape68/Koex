@@ -18,15 +18,14 @@ const request = async <T>(data: RequestData): Promise<Result<T>> => {
         .request(data)
         .then(({ data }) => ({ data, error: null }))
         .catch((error) => {
-            const message: string = error.response.data?.errorMessage ?? error.message;
+            const data = error.response.data ?? error;
+            const message: string = data?.errorMessage ?? error.message;
+
             console.error(new Error(message));
 
             return {
                 data: null,
-                error: {
-                    ...error,
-                    message
-                }
+                error: { ...data, message }
             };
         });
 };
