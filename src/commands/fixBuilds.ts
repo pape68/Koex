@@ -41,9 +41,9 @@ const command: Command = {
         let auth: AuthData | null = null;
         if (queryDatabase) {
             auth = await refreshAuthData(userId);
-
-            if (!auth) return interaction.editReply(defaultResponses.loggedOut);
         }
+
+        if (!auth) return interaction.editReply(defaultResponses.loggedOut);
 
         const oAuthData = await createOAuthData(
             FORTNITE_CLIENT.client,

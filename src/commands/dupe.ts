@@ -2,9 +2,10 @@ import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle, E
 
 import { COLORS } from '../constants';
 import { Command } from '../interfaces/Command';
-import { Accounts } from '../types/supabase';
+import { Accounts, DupeBlacklist } from '../types/supabase';
 import supabase from '../utils/functions/supabase';
 import defaultResponses from '../utils/helpers/defaultResponses';
+import createEmbed from '../utils/commands/createEmbed';
 
 const command: Command = {
     name: 'dupe',
@@ -13,15 +14,27 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply();
 
-        const { data: account, error } = await supabase
+        const blacklist = await supabase
+            .from<DupeBlacklist>('dupe_blacklist')
+            .select('*')
+            .match({ user_id: interaction.user.id })
+            .maybeSingle();
+
+        if (blacklist.data) {
+            return interaction.editReply({
+                embeds: [createEmbed('error', 'You are blacklisted from duping.')]
+            });
+        }
+
+        const account = await supabase
             .from<Accounts>('accounts_test')
             .select('*')
             .match({ user_id: interaction.user.id })
             .maybeSingle();
 
-        if (error) return interaction.editReply(defaultResponses.authError);
+        if (account.error) return interaction.editReply(defaultResponses.authError);
 
-        if (!account) return interaction.editReply(defaultResponses.loggedOut);
+        if (!account.data) return interaction.editReply(defaultResponses.loggedOut);
 
         const embed = new EmbedBuilder().setColor(COLORS.blue).addFields([
             {

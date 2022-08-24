@@ -25,6 +25,7 @@ const event: Event = {
 
         return component.execute(interaction).catch((error) => {
             console.error(error);
+            if (interaction.deferred || interaction.replied) return;
             interaction.reply({
                 embeds: [createEmbed('error', 'An error occurred while running this component.')],
                 ephemeral: true

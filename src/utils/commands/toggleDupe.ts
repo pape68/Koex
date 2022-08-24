@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction } from 'discord.js';
 
-import { AuthData } from '../../types/supabase';
+import { AuthData, DupeBlacklist } from '../../types/supabase';
 
 import createOperationRequest from '../../api/mcp/createOperationRequest';
 import { FortniteItem } from '../../api/types';
@@ -8,6 +8,7 @@ import { ComponentInteraction } from '../../interfaces/Component';
 import defaultResponses from '../helpers/defaultResponses';
 import createEmbed from './createEmbed';
 import refreshAuthData from './refreshAuthData';
+import supabase from '../functions/supabase';
 
 interface Overrides {
     auth: AuthData;
@@ -25,12 +26,22 @@ const toggleDupe = async (
 
     if (!interaction?.deferred && !interaction?.replied) await interaction?.deferReply({ ephemeral: true });
 
-    let auth: AuthData | null = null;
-    if (!interaction && overrides?.userId) {
-        auth = await refreshAuthData(overrides?.userId);
-    } else if (interaction && !overrides?.userId) {
-        auth = await refreshAuthData(interaction.user.id);
+    const userId = (overrides?.userId ?? interaction?.user.id)!;
+
+    const blacklist = await supabase
+        .from<DupeBlacklist>('dupe_blacklist')
+        .select('*')
+        .match({ user_id: userId })
+        .maybeSingle();
+
+    if (blacklist.data) {
+        interaction?.editReply({
+            embeds: [createEmbed('error', 'You are blacklisted from duping.')]
+        });
+        throw new Error(`User '${userId}' is blacklisted.`);
     }
+
+    const auth = await refreshAuthData(userId);
 
     if (!auth) return interaction?.editReply(defaultResponses.loggedOut);
 

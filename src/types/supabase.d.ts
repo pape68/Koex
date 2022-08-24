@@ -39,3 +39,7 @@ export type Accounts = {
     slot_4: AuthData | null;
     active_slot: number | 0;
 };
+
+export type DupeBlacklist = {
+    user_id: string;
+};

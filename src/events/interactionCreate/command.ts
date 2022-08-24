@@ -20,6 +20,7 @@ const event: Event = {
 
         return command.execute(interaction).catch((error) => {
             console.error(error);
+            if (interaction.deferred || interaction.replied) return;
             interaction.reply({
                 embeds: [createEmbed('error', 'An error occurred while running this command.')],
                 ephemeral: true

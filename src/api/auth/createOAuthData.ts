@@ -22,19 +22,17 @@ interface GrantData {
 }
 
 const createOAuthData = async (client: keyof typeof AuthClients, grant: GrantData) => {
-    const headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `Basic ${AuthClients[client]}`
-    };
-
     const { data } = await request<UserData>({
         method: 'POST',
         url: Endpoints.oAuthTokenCreate,
-        headers,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: `Basic ${AuthClients[client]}`
+        },
         data: qs.stringify(grant)
     });
 
-    return data ?? null;
+    return data;
 };
 
 export default createOAuthData;
