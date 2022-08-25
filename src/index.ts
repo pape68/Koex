@@ -10,7 +10,7 @@ bot.cooldowns = new Collection();
 bot.interactions = new Collection();
 
 (async () => {
-    await bot.login(process.env.DISCORD_TOKEN);
+    await bot.login();
     loadEvents(bot);
 })();
 
@@ -19,9 +19,5 @@ process
         bot.destroy();
         console.info(`Node.js process exited with code ${code}`);
     })
-    .on('uncaughtException', (err) =>
-        console.error(`Uncaught exception: ${err.stack}`)
-    )
-    .on('unhandledRejection', (err) =>
-        console.error(`Unhandled rejection: ${(err as Error).stack ?? err}`)
-    );
+    .on('uncaughtException', (err) => console.error(`Uncaught exception: ${err.stack}`))
+    .on('unhandledRejection', (err) => console.error(`Unhandled rejection: ${(err as Error).stack ?? err}`));

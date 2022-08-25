@@ -4,7 +4,9 @@ import { sync } from 'glob';
 import { join } from 'path';
 
 const loadEvents = (client: ExtendedClient) => {
-    const files = sync('src/events/**/*.ts');
+    const isProd = process.env.NODE_ENV === 'production';
+
+    const files = sync(`${isProd ? 'dist' : 'src'}/events/**/*.{js,ts}`);
 
     for (const file of files) {
         const path = join(process.cwd(), file);

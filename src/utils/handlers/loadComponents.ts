@@ -5,7 +5,9 @@ import { Component, ComponentInteraction } from '../../interfaces/Component';
 import { ExtendedClient } from '../../interfaces/ExtendedClient';
 
 const loadComponents = (client: ExtendedClient) => {
-    const files = sync('src/components/**/*.ts');
+    const isProd = process.env.NODE_ENV === 'production';
+
+    const files = sync(`${isProd ? 'dist' : 'src'}/components/**/*.{js,ts}`);
 
     for (const file of files) {
         const path = join(process.cwd(), file);

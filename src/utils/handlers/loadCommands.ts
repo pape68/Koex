@@ -7,7 +7,9 @@ import registerInteractions from './registerInteractions';
 
 const loadCommands = (client: ExtendedClient) => {
     const commands: Command[] = [];
-    const files = sync('src/commands/**/*.ts');
+    const isProd = process.env.NODE_ENV === 'production';
+
+    const files = sync(`${isProd ? 'dist' : 'src'}/commands/**/*.{js,ts}`);
 
     for (const file of files) {
         const path = join(process.cwd(), file);
