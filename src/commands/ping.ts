@@ -5,7 +5,7 @@ import createEmbed from '../utils/commands/createEmbed';
 
 const command: Command = {
     name: 'ping',
-    description: 'Generates a direct link to your account page.',
+    description: "Retrieve's the bots latency.",
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         const reply = await interaction.deferReply({ fetchReply: true });
@@ -14,7 +14,7 @@ const command: Command = {
         const wsLatency = interaction.client.ws.ping;
 
         await interaction.editReply({
-            embeds: [createEmbed('info', `Pong! Latency is \`${latency}ms\`. API latency is \`${wsLatency}ms\``)]
+            embeds: [createEmbed('info', `Pong! Latency is \`${latency}ms\`. API latency is \`${wsLatency}ms\`.`)]
         });
     }
 };
