@@ -95,13 +95,6 @@ export interface FortniteItem {
     quantity: number;
 }
 
-export interface QueryProfileResponse {
-    profileRevision: number;
-    profileId: string;
-    profileChangesBaseRevision: number;
-    profileChanges: any[];
-}
-
 const OAuthEndpoint = `${EpicServices.ACCOUNT_SERVICE}/account/api/oauth`;
 
 interface Endpoints {
@@ -167,10 +160,10 @@ export const Endpoints = {
     // Fortnite Party
     fortniteParty: `${EpicServices.PARTY_SERVICE}/party/api/v1/Fortnite`,
     // Friends
-    friends: `${EpicServices.FORTNITE_SERVICE}/friends/api/v1`,
-    addFriend: `${EpicServices.FORTNITE_SERVICE}/friends/api/public/friends`,
-    removeFriend: `${EpicServices.FORTNITE_SERVICE}/friends/api/v1`,
-    blockFriend: `${EpicServices.FORTNITE_SERVICE}/friends/api/public/blocklist`
+    friends: `${EpicServices.FRIEND_SERVICE}/friends/api/v1`,
+    addFriend: `${EpicServices.FRIEND_SERVICE}/friends/api/v1`,
+    removeFriend: `${EpicServices.FRIEND_SERVICE}/friends/api/v1`,
+    blockFriend: `${EpicServices.FRIEND_SERVICE}/friends/api/public/blocklist`
 };
 
 interface AuthClients {

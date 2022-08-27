@@ -1,17 +1,17 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@discordjs/rest': ^1.0.1
+  '@discordjs/rest': ^1.1.0
   '@supabase/supabase-js': ^1.35.6
   '@types/glob': ^7.2.0
-  '@types/lodash': ^4.14.182
+  '@types/lodash': ^4.14.184
   '@types/ms': ^0.7.31
-  '@types/node': ^18.7.2
+  '@types/node': ^18.7.13
   '@types/qs': ^6.9.7
   axios: ^0.27.2
   cross-env: ^7.0.3
   discord-api-types: ^0.36.3
-  discord.js: ^14.2.0
+  discord.js: ^14.3.0
   dotenv: ^16.0.1
   glob: ^8.0.3
   ms: ^2.1.3
@@ -20,7 +20,7 @@ specifiers:
   qs: ^6.11.0
   ts-node: ^10.9.1
   tslib: ^2.4.0
-  typescript: ^4.7.4
+  typescript: ^4.8.2
 
 dependencies:
   '@discordjs/rest': 1.1.0
@@ -36,15 +36,15 @@ devDependencies:
   '@types/glob': 7.2.0
   '@types/lodash': 4.14.184
   '@types/ms': 0.7.31
-  '@types/node': 18.7.11
+  '@types/node': 18.7.13
   '@types/qs': 6.9.7
   cross-env: 7.0.3
   dotenv: 16.0.1
   glob: 8.0.3
   nodemon: 2.0.19
-  ts-node: 10.9.1_yuzmdm4dwbtqx7oi4ad7vmtwja
+  ts-node: 10.9.1_hwinnrf7y5nyyzygpj45jmvjia
   tslib: 2.4.0
-  typescript: 4.7.4
+  typescript: 4.8.2
 
 packages:
 
@@ -60,7 +60,7 @@ packages:
     engines: {node: '>=16.9.0'}
     dependencies:
       '@sapphire/shapeshift': 3.5.1
-      discord-api-types: 0.37.4
+      discord-api-types: 0.37.5
       fast-deep-equal: 3.1.3
       ts-mixer: 6.0.1
       tslib: 2.4.0
@@ -78,7 +78,7 @@ packages:
       '@discordjs/collection': 1.1.0
       '@sapphire/async-queue': 1.5.0
       '@sapphire/snowflake': 3.2.2
-      discord-api-types: 0.37.4
+      discord-api-types: 0.37.5
       file-type: 17.1.6
       tslib: 2.4.0
       undici: 5.10.0
@@ -195,24 +195,24 @@ packages:
   /@types/glob/7.2.0:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
     dependencies:
-      '@types/minimatch': 3.0.5
-      '@types/node': 18.7.11
+      '@types/minimatch': 5.1.0
+      '@types/node': 18.7.13
     dev: true
 
   /@types/lodash/4.14.184:
     resolution: {integrity: sha512-RoZphVtHbxPZizt4IcILciSWiC6dcn+eZ8oX9IWEYfDMcocdd42f7NPI6fQj+6zI8y4E0L7gu2pcZKLGTRaV9Q==}
     dev: true
 
-  /@types/minimatch/3.0.5:
-    resolution: {integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==}
+  /@types/minimatch/5.1.0:
+    resolution: {integrity: sha512-0RJHq5FqDWo17kdHe+SMDJLfxmLaqHbWnqZ6gNKzDvStUlrmx/eKIY17+ifLS1yybo7X86aUshQMlittDOVNnw==}
     dev: true
 
   /@types/ms/0.7.31:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
     dev: true
 
-  /@types/node/18.7.11:
-    resolution: {integrity: sha512-KZhFpSLlmK/sdocfSAjqPETTMd0ug6HIMIAwkwUpU79olnZdQtMxpQP+G1wDzCH7na+FltSIhbaZuKdwZ8RDrw==}
+  /@types/node/18.7.13:
+    resolution: {integrity: sha512-46yIhxSe5xEaJZXWdIBP7GU4HDTG8/eo0qd9atdiL+lFpA03y8KS+lkTN834TWJj5767GbWv4n/P6efyTFt1Dw==}
 
   /@types/phoenix/1.5.4:
     resolution: {integrity: sha512-L5eZmzw89eXBKkiqVBcJfU1QGx9y+wurRIEgt0cuLH0hwNtVUxtx+6cu0R2STwWj468sjXyBYPYDtGclUd1kjQ==}
@@ -225,7 +225,7 @@ packages:
   /@types/ws/8.5.3:
     resolution: {integrity: sha512-6YOoWjruKj1uLf3INHH7D3qTXwFfEsg1kf3c0uDdSBJwfa/llkwIjrAGV7j7mVgGNbzTQ3HiHKKDXl6bJPD97w==}
     dependencies:
-      '@types/node': 18.7.11
+      '@types/node': 18.7.13
     dev: false
 
   /abbrev/1.1.1:
@@ -411,8 +411,8 @@ packages:
     resolution: {integrity: sha512-bz/NDyG0KBo/tY14vSkrwQ/n3HKPf87a0WFW/1M9+tXYK+vp5Z5EksawfCWo2zkAc6o7CClc0eff1Pjrqznlwg==}
     dev: false
 
-  /discord-api-types/0.37.4:
-    resolution: {integrity: sha512-QgqYlUokWM++hdwvAtgVNLjmFumPBzFy+uWnnfVDiwBXKm+5jXHJPk2lx2eilkv/706UpAJPLSk/uVCY9NocjA==}
+  /discord-api-types/0.37.5:
+    resolution: {integrity: sha512-RhzoX02jw2M+n/AU5K74KTM4J8Sn3ZImUJvoA4lh+SDcrqi1ddSjrafciF4bECj4rPc2vHwoyyTNgbUwE8vbpA==}
     dev: false
 
   /discord.js/14.3.0:
@@ -424,7 +424,7 @@ packages:
       '@discordjs/rest': 1.1.0
       '@sapphire/snowflake': 3.2.2
       '@types/ws': 8.5.3
-      discord-api-types: 0.37.4
+      discord-api-types: 0.37.5
       fast-deep-equal: 3.1.3
       lodash.snakecase: 4.1.1
       tslib: 2.4.0
@@ -869,7 +869,7 @@ packages:
     resolution: {integrity: sha512-hvE+ZYXuINrx6Ei6D6hz+PTim0Uf++dYbK9FFifLNwQj+RwKquhQpn868yZsCtJYiclZF1u8l6WZxxKi+vv7Rg==}
     dev: false
 
-  /ts-node/10.9.1_yuzmdm4dwbtqx7oi4ad7vmtwja:
+  /ts-node/10.9.1_hwinnrf7y5nyyzygpj45jmvjia:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -888,14 +888,14 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.3
-      '@types/node': 18.7.11
+      '@types/node': 18.7.13
       acorn: 8.8.0
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      typescript: 4.7.4
+      typescript: 4.8.2
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     dev: true
@@ -917,8 +917,8 @@ packages:
       is-typedarray: 1.0.0
     dev: false
 
-  /typescript/4.7.4:
-    resolution: {integrity: sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==}
+  /typescript/4.8.2:
+    resolution: {integrity: sha512-C0I1UsrrDHo2fYI5oaCGbSejwX4ch+9Y5jTQELvovfmFkK3HHSZJB8MSJcWLmCUBzQBchCrZ9rMRV6GuNrvGtw==}
     engines: {node: '>=4.2.0'}
     hasBin: true
     dev: true
