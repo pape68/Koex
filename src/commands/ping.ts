@@ -14,7 +14,7 @@ const command: Command = {
         const wsLatency = interaction.client.ws.ping;
 
         await interaction.editReply({
-            embeds: [createEmbed('info', `Pong! Latency is \`${latency}ms\`. API latency is \`${wsLatency}ms\`.`)]
+            embeds: [createEmbed('info', `Pong! Latency is \`${latency}ms\`. Gateway latency is \`${wsLatency}ms\`.`)]
         });
     }
 };
