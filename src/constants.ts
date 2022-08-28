@@ -9,7 +9,8 @@ export const CLIENT_OPTIONS: ClientOptions = {
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildVoiceStates
     ]
 };
 
