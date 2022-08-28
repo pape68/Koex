@@ -3,6 +3,7 @@ import { ApplicationCommandType } from 'discord.js';
 import { Command } from '../interfaces/Command';
 import { Accounts, AuthData, SlotName } from '../types/supabase';
 import createEmbed from '../utils/commands/createEmbed';
+import getCosmetic from '../utils/commands/getCosmetic';
 import supabase from '../utils/functions/supabase';
 import defaultResponses from '../utils/helpers/defaultResponses';
 
@@ -39,6 +40,8 @@ const command: Command = {
 
         if (!auth) return interaction.editReply(defaultResponses.loggedOut);
 
+        const cosmeticUrl = await getCosmetic(interaction.user.id);
+
         try {
             await supabase.from<Accounts>('accounts_test').upsert({
                 user_id: interaction.user.id,
@@ -51,7 +54,7 @@ const command: Command = {
             });
         } finally {
             return interaction.editReply({
-                embeds: [createEmbed('success', `Logged out of **${auth.displayName}**.`)]
+                embeds: [createEmbed('success', `Logged out of **${auth.displayName}**.`).setThumbnail(cosmeticUrl)]
             });
         }
     }

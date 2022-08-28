@@ -6,6 +6,7 @@ import { FORTNITE_CLIENT } from '../../constants';
 import { Component } from '../../interfaces/Component';
 import { Accounts, SlotName } from '../../types/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
+import getCosmetic from '../../utils/commands/getCosmetic';
 import supabase from '../../utils/functions/supabase';
 import defaultResponses from '../../utils/helpers/defaultResponses';
 
@@ -59,8 +60,12 @@ const modal: Component<ModalSubmitInteraction> = {
                     active_slot: i
                 });
 
+                const cosmeticUrl = await getCosmetic(interaction.user.id);
+
                 return interaction.editReply({
-                    embeds: [createEmbed('success', `Logged in as **${oAuthData.displayName}**.`)]
+                    embeds: [
+                        createEmbed('info', `Logged in as **${oAuthData.displayName}**.`).setThumbnail(cosmeticUrl)
+                    ]
                 });
             }
 
