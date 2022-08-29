@@ -8,6 +8,7 @@ export const bot = new Client(CLIENT_OPTIONS) as ExtendedClient;
 
 bot.cooldowns = new Collection();
 bot.interactions = new Collection();
+bot.queue = new Collection();
 
 (async () => {
     await bot.login();

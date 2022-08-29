@@ -1,16 +1,11 @@
-import {
-    createAudioPlayer,
-    createAudioResource,
-    DiscordGatewayAdapterCreator,
-    joinVoiceChannel,
-    NoSubscriberBehavior
-} from '@discordjs/voice';
 import { ApplicationCommandType, ApplicationCommandOptionType } from 'discord.js';
 
 import { Command } from '../interfaces/Command';
-import ytdl from 'ytdl-core';
-import { join } from 'path';
 import createEmbed from '../utils/commands/createEmbed';
+import play from '../utils/music/play';
+import { ExtendedClient } from '../interfaces/ExtendedClient';
+import { DiscordGatewayAdapterCreator } from '@discordjs/voice';
+import ytdl from 'ytdl-core';
 
 const command: Command = {
     name: 'play',
@@ -19,7 +14,9 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply();
 
-        const name = interaction.options.getString('song')!;
+        const client = interaction.client as ExtendedClient;
+
+        const url = interaction.options.getString('song-url')!;
 
         const member = interaction.guild!.members.cache.get(interaction.user.id);
 
@@ -27,35 +24,31 @@ const command: Command = {
 
         if (!channel) return interaction.editReply('no vc');
 
-        const songInfo = await ytdl.getInfo(name);
+        const { videoDetails } = await ytdl.getInfo(url);
+
         const song = {
-            title: songInfo.videoDetails.title,
-            url: songInfo.videoDetails.video_url
+            title: videoDetails.title,
+            url: videoDetails.video_url
         };
 
-        const connection = joinVoiceChannel({
+        const oldQueue = client.queue.get(channel.guildId);
+
+        const songs = oldQueue?.songs ?? [];
+
+        songs.push(song);
+
+        const queue = client.queue.set(channel.guildId, {
             channelId: channel.id,
-            guildId: channel.guild.id,
-            adapterCreator: channel.guild.voiceAdapterCreator as DiscordGatewayAdapterCreator
+            guildId: interaction.guild!.id,
+            adapterCreator: channel.guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
+            volume: 5,
+            playing: oldQueue?.playing ?? false,
+            songs
         });
 
-        const player = createAudioPlayer({
-            behaviors: {
-                noSubscriber: NoSubscriberBehavior.Pause
-            }
-        });
-
-        const resource = createAudioResource(ytdl(song.url, { filter: 'audioonly' }));
-
-        player.play(resource);
-
-        connection.subscribe(player);
-
-        await interaction.editReply({
-            embeds: [createEmbed('info', `Now Playing: **${song.title}**`)]
-        });
+        await play(queue, interaction);
     },
-    options: [{ name: 'song', description: 'song', type: ApplicationCommandOptionType.String }]
+    options: [{ name: 'song-url', description: 'song', type: ApplicationCommandOptionType.String }]
 };
 
 export default command;
