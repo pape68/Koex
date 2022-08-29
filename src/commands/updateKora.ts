@@ -24,9 +24,8 @@ const command: Command = {
 
         await exec('cd /home/ubuntu/Kora');
         await exec('git pull');
-        await exec('pnpm stop');
-        await exec('pnpm start');
-        const { stdout } = await exec('pm2 save');
+        await exec('pnpm stop kora');
+        const { stdout } = await exec('pnpm start kora');
 
         interaction.editReply({ content: codeBlock(stdout) });
     }
