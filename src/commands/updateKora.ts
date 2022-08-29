@@ -24,7 +24,7 @@ const command: Command = {
 
         await exec('cd /home/ubuntu/Kora');
         await exec('git pull');
-        await exec('pm2 delete kora');
+        await exec('pnpm stop');
         await exec('pnpm start');
         const { stdout } = await exec('pm2 save');
 
