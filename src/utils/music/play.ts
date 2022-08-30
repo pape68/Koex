@@ -6,14 +6,15 @@ import {
     joinVoiceChannel,
     NoSubscriberBehavior
 } from '@discordjs/voice';
-import { ChatInputCommandInteraction, Collection, MessagePayload, WebhookEditMessageOptions } from 'discord.js';
+import { ChatInputCommandInteraction, Collection } from 'discord.js';
 import ytdl from 'ytdl-core';
 
 import { ComponentInteraction } from '../../interfaces/Component';
 import { Queue } from '../../types/index';
 import createEmbed from '../commands/createEmbed';
 
-const createYTDLResource = (url: string) => createAudioResource(ytdl(url, { filter: 'audioonly' }));
+const createYTDLResource = (url: string) =>
+    createAudioResource(ytdl(url, { filter: 'audioonly', quality: 'lowestaudio' }));
 
 const play = async (
     queue: Collection<string, Queue>,
@@ -61,6 +62,7 @@ const play = async (
 
     if (!serverQueue.playing && serverQueue.songs) {
         if (!serverQueue.songs.length) {
+            connection.disconnect();
             return interaction.editReply({ embeds: [createEmbed('info', 'Reached the end of the queue.')] });
         }
         player.play(createYTDLResource(serverQueue.songs[0].url));

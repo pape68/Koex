@@ -1,11 +1,11 @@
-import { ApplicationCommandType, ApplicationCommandOptionType } from 'discord.js';
-
-import { Command } from '../interfaces/Command';
-import createEmbed from '../utils/commands/createEmbed';
-import play from '../utils/music/play';
-import { ExtendedClient } from '../interfaces/ExtendedClient';
+import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
 import { DiscordGatewayAdapterCreator } from '@discordjs/voice';
 import ytdl from 'ytdl-core';
+
+import { Command } from '../interfaces/Command';
+import { ExtendedClient } from '../interfaces/ExtendedClient';
+import createEmbed from '../utils/commands/createEmbed';
+import play from '../utils/music/play';
 
 const command: Command = {
     name: 'play',
@@ -22,7 +22,9 @@ const command: Command = {
 
         const { channel } = member!.voice;
 
-        if (!channel) return interaction.editReply('no vc');
+        if (!channel) {
+            return interaction.editReply({ embeds: [createEmbed('error', "Couldn't find your voice channel.")] });
+        }
 
         const { videoDetails } = await ytdl.getInfo(url);
 
@@ -48,7 +50,14 @@ const command: Command = {
 
         await play(queue, interaction);
     },
-    options: [{ name: 'song-url', description: 'song', type: ApplicationCommandOptionType.String }]
+    options: [
+        {
+            name: 'song-url',
+            description: 'song',
+            required: true,
+            type: ApplicationCommandOptionType.String
+        }
+    ]
 };
 
 export default command;
