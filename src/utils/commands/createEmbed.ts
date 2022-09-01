@@ -15,10 +15,10 @@ const emojis: Record<embedType, string> = {
     success: EMOJIS.success
 };
 
-const createEmbed = (type: embedType, description?: string | null) => {
+const createEmbed = (type: embedType, description?: string | null, emoji = true) => {
     return new EmbedBuilder()
         .setColor(colors[type])
-        .setDescription(`${emojis[type]} ${description ?? 'No description provided.'}`);
+        .setDescription(`${emoji ? emojis[type] + ' ' : ''}${description ?? 'No description provided.'}`);
 };
 
 export default createEmbed;

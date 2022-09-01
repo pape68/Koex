@@ -9,6 +9,7 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "importHelpers": true,
+        "resolveJsonModule": true,
         "typeRoots": ["node_modules/@types", "src/typings"]
     },
     "exclude": ["node_modules"],
