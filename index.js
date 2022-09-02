@@ -9,7 +9,6 @@ const rest = new REST({ version: '10' }).setToken(token);
 rest.get(Routes.applicationCommands('1004507554677796984')).then((data) => {
     const promises = [];
     for (const command of data) {
-        if (command.name !== 'restart-kora') return;
         const deleteUrl = `${Routes.applicationCommands('1004507554677796984')}/${command.id}`;
         promises.push(rest.delete(deleteUrl));
         console.log(command);
