@@ -17,7 +17,7 @@ export const event: Event<true> = {
         loadCommands(client);
         loadComponents(client);
 
-        const userCount = client.users.cache.size;
+        const userCount = client.guilds.cache.map((g) => g.memberCount).reduce((a, c) => a + c);
 
         client.user!.setActivity(`${userCount} Members`, { type: ActivityType.Watching });
     }
