@@ -19,7 +19,7 @@ export const event: Event<true> = {
 
         const userCount = client.guilds.cache.map((g) => g.memberCount).reduce((a, c) => a + c);
 
-        client.user!.setActivity(`${userCount} Members`, { type: ActivityType.Watching });
+        client.user!.setActivity(`${userCount} Users`, { type: ActivityType.Watching });
     }
 };
 
