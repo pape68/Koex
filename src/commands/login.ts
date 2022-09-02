@@ -35,14 +35,13 @@ const command: Command = {
 
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
             new ButtonBuilder().setLabel('Epic Games').setStyle(ButtonStyle.Link).setURL(baseUrl),
-            new ButtonBuilder().setLabel('Submit Code').setStyle(ButtonStyle.Primary).setCustomId('submitCode')
+            new ButtonBuilder()
+                .setLabel('Submit Code')
+                .setStyle(ButtonStyle.Primary)
+                .setCustomId('submitCode')
         );
 
-        return interaction.reply({
-            embeds: [embed],
-            components: [row],
-            files: [file]
-        });
+        return interaction.reply({ embeds: [embed], components: [row], files: [file] });
     }
 };
 

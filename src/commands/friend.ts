@@ -35,26 +35,46 @@ const command: Command = {
                 case 1041:
                     return interaction.editReply({
                         embeds: [
-                            createEmbed('error', `You've sent too many friend requests in a short amount of time.`)
+                            createEmbed(
+                                'error',
+                                `You've sent too many friend requests in a short amount of time.`
+                            )
                         ]
                     });
                 // Common Errors
                 case 14009:
                     return interaction.editReply({
-                        embeds: [createEmbed('info', `You already have **${displayName}** on your friends list.`)]
+                        embeds: [
+                            createEmbed(
+                                'info',
+                                `You already have **${displayName}** on your friends list.`
+                            )
+                        ]
                     });
                 case 14014:
                     return interaction.editReply({
-                        embeds: [createEmbed('info', `You already sent a friend request to **${displayName}**.`)]
+                        embeds: [
+                            createEmbed(
+                                'info',
+                                `You already sent a friend request to **${displayName}**.`
+                            )
+                        ]
                     });
                 case 14131:
                     return interaction.editReply({
-                        embeds: [createEmbed('error', `User **${displayName}** has too many incoming friend requests.`)]
+                        embeds: [
+                            createEmbed(
+                                'error',
+                                `User **${displayName}** has too many incoming friend requests.`
+                            )
+                        ]
                     });
             }
 
             return interaction.editReply({
-                embeds: [createEmbed('error', `Failed to send friend request to user **${displayName}**`)]
+                embeds: [
+                    createEmbed('error', `Failed to send friend request to user **${displayName}**`)
+                ]
             });
         }
 

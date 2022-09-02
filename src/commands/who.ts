@@ -20,7 +20,11 @@ const command: Command = {
         const cosmeticUrl = await getCosmetic(interaction.user.id);
 
         interaction.editReply({
-            embeds: [createEmbed('info', `Logged in as **${auth.displayName}**.`).setThumbnail(cosmeticUrl)]
+            embeds: [
+                createEmbed('info', `Logged in as **${auth.displayName}**.`).setThumbnail(
+                    cosmeticUrl
+                )
+            ]
         });
     }
 };

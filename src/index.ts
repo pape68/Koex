@@ -21,4 +21,6 @@ process
         console.info(`Node.js process exited with code ${code}`);
     })
     .on('uncaughtException', (err) => console.error(`Uncaught exception: ${err.stack}`))
-    .on('unhandledRejection', (err) => console.error(`Unhandled rejection: ${(err as Error).stack ?? err}`));
+    .on('unhandledRejection', (err) =>
+        console.error(`Unhandled rejection: ${(err as Error).stack ?? err}`)
+    );

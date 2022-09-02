@@ -45,7 +45,9 @@ const modal: Component<ModalSubmitInteraction> = {
 
             if (auth?.accountId === deviceAuth.accountId) {
                 return interaction.editReply({
-                    embeds: [createEmbed('info', `Already logged into **${oAuthData.displayName}**.`)]
+                    embeds: [
+                        createEmbed('info', `Already logged into **${oAuthData.displayName}**.`)
+                    ]
                 });
             }
 
@@ -64,7 +66,10 @@ const modal: Component<ModalSubmitInteraction> = {
 
                 return interaction.editReply({
                     embeds: [
-                        createEmbed('info', `Logged in as **${oAuthData.displayName}**.`).setThumbnail(cosmeticUrl)
+                        createEmbed(
+                            'info',
+                            `Logged in as **${oAuthData.displayName}**.`
+                        ).setThumbnail(cosmeticUrl)
                     ]
                 });
             }

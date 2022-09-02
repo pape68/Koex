@@ -1,14 +1,14 @@
 import { ChatInputCommandInteraction } from 'discord.js';
 
-import { AuthData, DupeBlacklist } from '../../types/supabase';
+import { AuthData, DupeWhitelist } from '../../types/supabase';
 
 import createOperationRequest from '../../api/mcp/createOperationRequest';
 import { FortniteItem } from '../../api/types';
 import { ComponentInteraction } from '../../interfaces/Component';
+import supabase from '../functions/supabase';
 import defaultResponses from '../helpers/defaultResponses';
 import createEmbed from './createEmbed';
 import refreshAuthData from './refreshAuthData';
-import supabase from '../functions/supabase';
 
 interface Overrides {
     auth: AuthData;
@@ -24,28 +24,33 @@ const toggleDupe = async (
         throw new Error('Invalid function parameters.');
     }
 
-    if (!interaction?.deferred && !interaction?.replied) await interaction?.deferReply({ ephemeral: true });
+    if (!interaction?.deferred && !interaction?.replied)
+        await interaction?.deferReply({ ephemeral: true });
 
     const userId = (overrides?.userId ?? interaction?.user.id)!;
 
-    const blacklist = await supabase
-        .from<DupeBlacklist>('dupe_blacklist')
+    const whitelist = await supabase
+        .from<DupeWhitelist>('dupe_whitelist')
         .select('*')
         .match({ user_id: userId })
         .maybeSingle();
 
-    if (blacklist.data) {
+    if (!whitelist.data) {
         interaction?.editReply({
-            embeds: [createEmbed('error', 'You are blacklisted from duping.')]
+            embeds: [createEmbed('error', `You must be whitelisted to use this command.`)]
         });
-        throw new Error(`User '${userId}' is blacklisted.`);
+        throw new Error(`User '${userId}' not whitelisted.`);
     }
 
     const auth = await refreshAuthData(userId);
 
     if (!auth) return interaction?.editReply(defaultResponses.loggedOut);
 
-    const queryProfileRes = await createOperationRequest(auth, enable ? 'theater0' : 'outpost0', 'QueryProfile');
+    const queryProfileRes = await createOperationRequest(
+        auth,
+        enable ? 'theater0' : 'outpost0',
+        'QueryProfile'
+    );
 
     if (!queryProfileRes.data || queryProfileRes.error)
         return interaction?.editReply({
@@ -71,13 +76,23 @@ const toggleDupe = async (
             newItemIdHint: 'molleja'
         }));
 
-    const storageTransferRes = await createOperationRequest(overrides?.auth ?? auth, 'theater0', 'StorageTransfer', {
-        transferOperations
-    });
+    const storageTransferRes = await createOperationRequest(
+        overrides?.auth ?? auth,
+        'theater0',
+        'StorageTransfer',
+        {
+            transferOperations
+        }
+    );
 
     if (!storageTransferRes.data || storageTransferRes.error) {
         const defaultResponse = {
-            embeds: [createEmbed('error', `An error occurred while ${enable ? 'starting' : 'stopping'} the dupe.`)]
+            embeds: [
+                createEmbed(
+                    'error',
+                    `An error occurred while ${enable ? 'starting' : 'stopping'} the dupe.`
+                )
+            ]
         };
 
         switch (storageTransferRes.error.numericErrorCode) {
@@ -93,7 +108,10 @@ const toggleDupe = async (
             case 16098:
                 return interaction?.editReply({
                     embeds: [
-                        createEmbed('error', `You need at least 4 free ${enable ? 'storage' : 'inventory'} slots.`)
+                        createEmbed(
+                            'error',
+                            `You need at least 4 free ${enable ? 'storage' : 'inventory'} slots.`
+                        )
                     ]
                 });
             default:

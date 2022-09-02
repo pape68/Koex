@@ -54,7 +54,11 @@ const command: Command = {
             });
         } finally {
             return interaction.editReply({
-                embeds: [createEmbed('success', `Logged out of **${auth.displayName}**.`).setThumbnail(cosmeticUrl)]
+                embeds: [
+                    createEmbed('success', `Logged out of **${auth.displayName}**.`).setThumbnail(
+                        cosmeticUrl
+                    )
+                ]
             });
         }
     }

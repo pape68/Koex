@@ -18,7 +18,9 @@ const emojis: Record<embedType, string> = {
 const createEmbed = (type: embedType, description?: string | null, emoji = true) => {
     return new EmbedBuilder()
         .setColor(colors[type])
-        .setDescription(`${emoji ? emojis[type] + ' ' : ''}${description ?? 'No description provided.'}`);
+        .setDescription(
+            `${emoji ? emojis[type] + ' ' : ''}${description ?? 'No description provided.'}`
+        );
 };
 
 export default createEmbed;

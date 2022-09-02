@@ -40,6 +40,6 @@ export type Accounts = {
     active_slot: number | 0;
 };
 
-export type DupeBlacklist = {
+export type DupeWhitelist = {
     user_id: string;
 };

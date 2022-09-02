@@ -8,7 +8,11 @@ import loadComponents from '../utils/handlers/loadComponents';
 export const event: Event<true> = {
     name: 'ready',
     execute: async (client: ExtendedClient) => {
-        console.info(`Logged in as ${pc.bold(client.user!.username) + pc.gray('#' + client.user!.discriminator)}. ✅`);
+        console.info(
+            `Logged in as ${
+                pc.bold(client.user!.username) + pc.gray('#' + client.user!.discriminator)
+            }. ✅`
+        );
         loadCommands(client);
         loadComponents(client);
     }

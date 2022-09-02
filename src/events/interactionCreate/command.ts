@@ -22,7 +22,9 @@ const event: Event = {
             console.error(error);
             if (interaction.deferred || interaction.replied) return;
             interaction.reply({
-                embeds: [createEmbed('error', 'An error occurred while running this command.', false)],
+                embeds: [
+                    createEmbed('error', 'An error occurred while running this command.', false)
+                ],
                 ephemeral: true
             });
         });

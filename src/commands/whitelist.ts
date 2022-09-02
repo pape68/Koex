@@ -3,12 +3,12 @@ import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
 import supabase from '../utils/functions/supabase';
-import { DupeBlacklist } from '../types/supabase';
+import { DupeWhitelist } from '../types/supabase';
 import { PostgrestResponse } from '@supabase/supabase-js';
 
 const command: Command = {
-    name: 'blacklist',
-    description: 'Adds a user to the dupe blacklist.',
+    name: 'whitelist',
+    description: 'Adds a user to the dupe whitelist.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
@@ -22,36 +22,36 @@ const command: Command = {
         const userId = interaction.options.getString('user-id')!;
         const state = interaction.options.getString('change')!;
 
-        let blacklist: PostgrestResponse<DupeBlacklist>;
+        let whitelist: PostgrestResponse<DupeWhitelist>;
 
         switch (state) {
             case 'add':
-                blacklist = await supabase.from<DupeBlacklist>('dupe_blacklist').upsert({
+                whitelist = await supabase.from<DupeWhitelist>('dupe_whitelist').upsert({
                     user_id: userId
                 });
 
-                if (blacklist.error) {
+                if (whitelist.error) {
                     return interaction.editReply({
-                        embeds: [createEmbed('error', 'Failed to update blacklist.')]
+                        embeds: [createEmbed('error', 'Failed to update whitelist.')]
                     });
                 }
 
                 return interaction.editReply({
-                    embeds: [createEmbed('info', `Added ID \`${userId}\` to the blacklist.`)]
+                    embeds: [createEmbed('info', `Added ID \`${userId}\` to the whitelist.`)]
                 });
             case 'remove':
-                blacklist = await supabase.from<DupeBlacklist>('dupe_blacklist').delete().match({
+                whitelist = await supabase.from<DupeWhitelist>('dupe_whitelist').delete().match({
                     user_id: userId
                 });
 
-                if (blacklist.error) {
+                if (whitelist.error) {
                     return interaction.editReply({
-                        embeds: [createEmbed('error', 'Failed to update blacklist.')]
+                        embeds: [createEmbed('error', 'Failed to update whitelist.')]
                     });
                 }
 
                 return interaction.editReply({
-                    embeds: [createEmbed('info', `Removed ID \`${userId}\` from the blacklist.`)]
+                    embeds: [createEmbed('info', `Removed ID \`${userId}\` from the whitelist.`)]
                 });
         }
     },
@@ -64,7 +64,7 @@ const command: Command = {
         },
         {
             name: 'change',
-            description: 'Add or remove the blacklist.',
+            description: 'Add or remove the whitelist.',
             required: true,
             type: ApplicationCommandOptionType.String,
             choices: [

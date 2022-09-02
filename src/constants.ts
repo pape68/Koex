@@ -34,6 +34,8 @@ export const EMOJIS = {
 
 // Fortnite
 
+export const WHITELISTED_SERVERS = ['1004858701305368617', '1011405334516092928'];
+
 interface FortniteClient {
     client: keyof typeof AuthClients;
     id: string;

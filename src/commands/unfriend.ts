@@ -36,17 +36,29 @@ const command: Command = {
                 // Common Errors
                 case 14004:
                     return interaction.editReply({
-                        embeds: [createEmbed('info', `You don't have user **${displayName}** on your friends list.`)]
+                        embeds: [
+                            createEmbed(
+                                'info',
+                                `You don't have user **${displayName}** on your friends list.`
+                            )
+                        ]
                     });
             }
 
             return interaction.editReply({
-                embeds: [createEmbed('error', `Failed to remove user **${displayName}** from your friends list.`)]
+                embeds: [
+                    createEmbed(
+                        'error',
+                        `Failed to remove user **${displayName}** from your friends list.`
+                    )
+                ]
             });
         }
 
         interaction.editReply({
-            embeds: [createEmbed('success', `Removed user **${displayName}** from your friends list.`)]
+            embeds: [
+                createEmbed('success', `Removed user **${displayName}** from your friends list.`)
+            ]
         });
     },
     options: [

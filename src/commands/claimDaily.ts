@@ -59,7 +59,8 @@ const command: Command = {
             });
         }
 
-        const info = (data as LoginRewardResponse).profileChanges[0].profile.stats.attributes.daily_rewards;
+        const info = (data as LoginRewardResponse).profileChanges[0].profile.stats.attributes
+            .daily_rewards;
 
         const claimDate = new Date(info.lastClaimDate);
 

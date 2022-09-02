@@ -1,4 +1,8 @@
-import { ApplicationCommandOptionType, ApplicationCommandType, AttachmentBuilder } from 'discord.js';
+import {
+    ApplicationCommandOptionType,
+    ApplicationCommandType,
+    AttachmentBuilder
+} from 'discord.js';
 
 import createOperationRequest from '../api/mcp/createOperationRequest';
 import { FortniteProfile, MCPOperation } from '../api/types';
@@ -22,7 +26,12 @@ const command: Command = {
 
         if (!auth) return interaction.editReply(defaultResponses.loggedOut);
 
-        const operationRes = await createOperationRequest(auth, profile, operation, payload ? JSON.parse(payload) : {});
+        const operationRes = await createOperationRequest(
+            auth,
+            profile,
+            operation,
+            payload ? JSON.parse(payload) : {}
+        );
 
         if (operationRes.error) {
             return interaction.editReply({

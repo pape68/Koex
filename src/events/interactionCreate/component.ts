@@ -14,7 +14,9 @@ const event: Event = {
             });
         }
 
-        const component = client.interactions.get(interaction.customId) as Component<ComponentInteraction> | undefined;
+        const component = client.interactions.get(interaction.customId) as
+            | Component<ComponentInteraction>
+            | undefined;
 
         if (!component) {
             return interaction.reply({
@@ -27,7 +29,9 @@ const event: Event = {
             console.error(error);
             if (interaction.deferred || interaction.replied) return;
             interaction.reply({
-                embeds: [createEmbed('error', 'An error occurred while running this component.', false)],
+                embeds: [
+                    createEmbed('error', 'An error occurred while running this component.', false)
+                ],
                 ephemeral: true
             });
         });

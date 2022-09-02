@@ -1,8 +1,14 @@
-import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
+import {
+    ActionRowBuilder,
+    ApplicationCommandType,
+    ButtonBuilder,
+    ButtonStyle,
+    EmbedBuilder
+} from 'discord.js';
 
-import { COLORS } from '../constants';
+import { COLORS, WHITELISTED_SERVERS } from '../constants';
 import { Command } from '../interfaces/Command';
-import { Accounts, DupeBlacklist } from '../types/supabase';
+import { Accounts, DupeWhitelist } from '../types/supabase';
 import supabase from '../utils/functions/supabase';
 import defaultResponses from '../utils/helpers/defaultResponses';
 import createEmbed from '../utils/commands/createEmbed';
@@ -14,15 +20,20 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply();
 
-        const blacklist = await supabase
-            .from<DupeBlacklist>('dupe_blacklist')
+        const whitelist = await supabase
+            .from<DupeWhitelist>('dupe_whitelist')
             .select('*')
             .match({ user_id: interaction.user.id })
             .maybeSingle();
 
-        if (blacklist.data) {
+        if (!whitelist.data) {
             return interaction.editReply({
-                embeds: [createEmbed('error', 'You are blacklisted from duping.')]
+                embeds: [
+                    createEmbed(
+                        'error',
+                        `You must be whitelisted to use \`${interaction.commandName}\`.`
+                    )
+                ]
             });
         }
 
@@ -44,14 +55,17 @@ const command: Command = {
         ]);
 
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-            new ButtonBuilder().setLabel('Start Dupe').setStyle(ButtonStyle.Primary).setCustomId('startDupe'),
-            new ButtonBuilder().setLabel('Stop Dupe').setStyle(ButtonStyle.Danger).setCustomId('stopDupe')
+            new ButtonBuilder()
+                .setLabel('Start Dupe')
+                .setStyle(ButtonStyle.Primary)
+                .setCustomId('startDupe'),
+            new ButtonBuilder()
+                .setLabel('Stop Dupe')
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId('stopDupe')
         );
 
-        interaction.editReply({
-            embeds: [embed],
-            components: [row]
-        });
+        interaction.editReply({ embeds: [embed], components: [row] });
     }
 };
 

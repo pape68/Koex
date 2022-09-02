@@ -1,4 +1,9 @@
-import { ActionRowBuilder, ApplicationCommandType, EmbedBuilder, SelectMenuBuilder } from 'discord.js';
+import {
+    ActionRowBuilder,
+    ApplicationCommandType,
+    EmbedBuilder,
+    SelectMenuBuilder
+} from 'discord.js';
 
 import { COLORS } from '../constants';
 import { Command } from '../interfaces/Command';
@@ -52,10 +57,7 @@ const command: Command = {
                 .setOptions(options)
         );
 
-        return interaction.editReply({
-            embeds: [embed],
-            components: [row]
-        });
+        return interaction.editReply({ embeds: [embed], components: [row] });
     }
 };
 

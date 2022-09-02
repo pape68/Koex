@@ -17,7 +17,11 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
 
-        if (!['951989622236397590', '569212600785567777', '970421067543871491'].includes(interaction.user.id)) {
+        if (
+            !['951989622236397590', '569212600785567777', '970421067543871491'].includes(
+                interaction.user.id
+            )
+        ) {
             return interaction.editReply({
                 embeds: [createEmbed('info', 'You do not have permission to use this command.')]
             });
