@@ -23,7 +23,7 @@ export const event: Event<true> = {
         setInterval(() => {
             const userCount = getUsers();
             client.user!.setActivity(`${userCount} Users`, { type: ActivityType.Watching });
-        }, 10 * 60 * 100);
+        }, 10 * 1000);
     }
 };
 
