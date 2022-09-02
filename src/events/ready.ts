@@ -17,9 +17,8 @@ export const event: Event<true> = {
         loadCommands(client);
         loadComponents(client);
 
-        const getUsers = () => {
+        const getUsers = () =>
             client.guilds.cache.map((g) => g.memberCount).reduce((a, c) => a + c);
-        };
 
         setInterval(() => {
             const userCount = getUsers();
