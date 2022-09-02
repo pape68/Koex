@@ -1,3 +1,4 @@
+import { ActivityType } from 'discord.js';
 import pc from 'picocolors';
 
 import { Event } from '../interfaces/Event';
@@ -15,6 +16,10 @@ export const event: Event<true> = {
         );
         loadCommands(client);
         loadComponents(client);
+
+        const userCount = client.users.cache.size;
+
+        client.user!.setActivity(`${userCount} Members`, { type: ActivityType.Watching });
     }
 };
 
