@@ -17,9 +17,10 @@ export const event: Event<true> = {
         loadCommands(client);
         loadComponents(client);
 
-        const userCount = client.guilds.cache.map((g) => g.memberCount).reduce((a, c) => a + c);
-
-        client.user!.setActivity(`${userCount} Users`, { type: ActivityType.Watching });
+        setInterval(() => {
+            const userCount = client.guilds.cache.map((g) => g.memberCount).reduce((a, c) => a + c);
+            client.user!.setActivity(`${userCount} Users`, { type: ActivityType.Watching });
+        }, 10 * 60 * 1000);
     }
 };
 
