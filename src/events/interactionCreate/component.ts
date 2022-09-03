@@ -20,7 +20,7 @@ const event: Event = {
 
         if (!component) {
             return interaction.reply({
-                embeds: [createEmbed('error', "Couldn't find this component.")],
+                embeds: [createEmbed('error', "Couldn't find this component.", false)],
                 ephemeral: true
             });
         }

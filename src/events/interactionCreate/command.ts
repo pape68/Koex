@@ -13,7 +13,7 @@ const event: Event = {
 
         if (!command) {
             return interaction.reply({
-                embeds: [createEmbed('error', "Couldn't find this command.")],
+                embeds: [createEmbed('error', "Couldn't find this command.", false)],
                 ephemeral: true
             });
         }
