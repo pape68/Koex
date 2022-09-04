@@ -20,9 +20,15 @@ const command: Command = {
             .match({ user_id: interaction.user.id })
             .maybeSingle();
 
-        if (!account) return interaction.editReply(defaultResponses.loggedOut);
+        if (!account) {
+            await interaction.editReply(defaultResponses.loggedOut);
+            return;
+        }
 
-        if (error) return authErrorResponse();
+        if (error) {
+            await interaction.editReply(defaultResponses.retrievalError);
+            return;
+        }
 
         let activeSlotIndex = 0;
         for (let i = 0; i < 5; i++) {
@@ -38,7 +44,10 @@ const command: Command = {
 
         const auth: AuthData | null = account[('slot_' + activeSlotIndex) as SlotName];
 
-        if (!auth) return interaction.editReply(defaultResponses.loggedOut);
+        if (!auth) {
+            await interaction.editReply(defaultResponses.loggedOut);
+            return;
+        }
 
         const cosmeticUrl = await getCosmetic(interaction.user.id);
 
@@ -49,22 +58,17 @@ const command: Command = {
                 active_slot: activeSlotIndex
             });
         } catch (error) {
-            return interaction.editReply({
-                embeds: [createEmbed('error', `Failed to logout of **${auth.displayName}**.`)]
+            await interaction.editReply({
+                embeds: [createEmbed('error', `Failed to logout of "${auth.displayName}".`)]
             });
+            return;
         } finally {
-            return interaction.editReply({
+            await interaction.editReply({
                 embeds: [
-                    createEmbed('success', `Logged out of **${auth.displayName}**.`).setThumbnail(
-                        cosmeticUrl
-                    )
+                    createEmbed('success', `Logged out of "${auth.displayName}".`, cosmeticUrl)
                 ]
             });
+            return;
         }
     }
 };
-
-export default command;
-function authErrorResponse(): any {
-    throw new Error('Function not implemented.');
-}

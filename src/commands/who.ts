@@ -15,16 +15,15 @@ const command: Command = {
 
         const auth = await refreshAuthData(interaction.user.id);
 
-        if (!auth) return interaction.editReply(defaultResponses.loggedOut);
+        if (!auth) {
+            await interaction.editReply(defaultResponses.loggedOut);
+            return;
+        }
 
         const cosmeticUrl = await getCosmetic(interaction.user.id);
 
-        interaction.editReply({
-            embeds: [
-                createEmbed('info', `Logged in as **${auth.displayName}**.`).setThumbnail(
-                    cosmeticUrl
-                )
-            ]
+        await interaction.editReply({
+            embeds: [createEmbed('info', `Logged in as "${auth.displayName}".`, cosmeticUrl)]
         });
     }
 };

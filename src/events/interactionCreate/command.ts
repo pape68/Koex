@@ -12,19 +12,18 @@ const event: Event = {
         const command = client.interactions.get(interaction.commandName) as Command | undefined;
 
         if (!command) {
-            return interaction.reply({
-                embeds: [createEmbed('error', "Couldn't find this command.", false)],
+            await interaction.reply({
+                embeds: [createEmbed('error', "Couldn't find this command.")],
                 ephemeral: true
             });
+            return;
         }
 
         return command.execute(interaction).catch((error) => {
             console.error(error);
             if (interaction.deferred || interaction.replied) return;
             interaction.reply({
-                embeds: [
-                    createEmbed('error', 'An error occurred while running this command.', false)
-                ],
+                embeds: [createEmbed('error', 'An error occurred while running this command.')],
                 ephemeral: true
             });
         });

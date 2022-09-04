@@ -1,4 +1,4 @@
-import { ClientOptions, GatewayIntentBits, HexColorString } from 'discord.js';
+import { ClientOptions, GatewayIntentBits, HexColorString, ShardingManagerMode } from 'discord.js';
 import { AuthClients } from './api/types';
 
 // Discord.js Options
@@ -11,14 +11,20 @@ export const CLIENT_OPTIONS: ClientOptions = {
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildVoiceStates
-    ]
+    ],
+    shards: 'auto'
 };
 
 // General
 
+export const SHARD_COUNT: number | 'auto' = 'auto';
+export const SHARDING_MODE: ShardingManagerMode = 'worker';
+
+export const IS_PROD = process.env.NODE_ENV === 'production';
+
 export const COLORS: Record<string, HexColorString> = {
     red: '#e62d64',
-    orange: '#fa8444',
+    orange: '#F8602C',
     yellow: '#fadc44',
     green: '#04d46c',
     blue: '#44a8fa',
@@ -30,6 +36,13 @@ export const EMOJIS = {
     error: '<:KX_Error:1007835165764112394>',
     info: '<:KX_Info:1007846233198563339>',
     success: '<:KX_Success:1007848246531608697>'
+};
+
+const emojiBaseUrl = 'https://cdn.discordapp.com/emojis/';
+export const EMOJI_URLS = {
+    error: emojiBaseUrl + '1007835165764112394',
+    info: emojiBaseUrl + '1007846233198563339',
+    success: emojiBaseUrl + '1007848246531608697'
 };
 
 // Fortnite

@@ -16,7 +16,7 @@ const command: Command = {
     description: 'Switch your active Epic Games account.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
-        await interaction.deferReply();
+        await interaction.deferReply({ ephemeral: true });
 
         const { data: account, error } = await supabase
             .from<Accounts>('accounts_test')
@@ -24,11 +24,13 @@ const command: Command = {
             .match({ user_id: interaction.user.id })
             .maybeSingle();
 
-        if (error) return interaction.editReply(defaultResponses.authError);
+        if (error) {
+            await interaction.editReply(defaultResponses.authError);
+            return;
+        }
 
         const options = Object.entries(account ?? {})
-            .filter(([k]) => k.startsWith('slot_'))
-            .filter(([, v]) => !!v)
+            .filter(([k, v]) => k.startsWith('slot_') && !!v)
             .map(([k, v]) => {
                 const { displayName, accountId } = v as AuthData;
 
@@ -39,7 +41,10 @@ const command: Command = {
                 };
             });
 
-        if (!account || !options.length) return interaction.editReply(defaultResponses.loggedOut);
+        if (!account || !options.length) {
+            await interaction.editReply(defaultResponses.loggedOut);
+            return;
+        }
 
         const embed = new EmbedBuilder().setColor(COLORS.blue).addFields([
             {
@@ -57,7 +62,7 @@ const command: Command = {
                 .setOptions(options)
         );
 
-        return interaction.editReply({ embeds: [embed], components: [row] });
+        await interaction.editReply({ embeds: [embed], components: [row] });
     }
 };
 

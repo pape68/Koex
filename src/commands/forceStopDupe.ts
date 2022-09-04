@@ -11,8 +11,8 @@ import toggleDupe from '../utils/commands/toggleDupe';
 import defaultResponses from '../utils/helpers/defaultResponses';
 
 const command: Command = {
-    name: 'fix-builds',
-    description: "Fix a user's building tools.",
+    name: 'force-stop-dupe',
+    description: "Force stop a user's dupe.",
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
@@ -22,9 +22,10 @@ const command: Command = {
                 interaction.user.id
             )
         ) {
-            return interaction.editReply({
+            await interaction.editReply({
                 embeds: [createEmbed('info', 'You do not have permission to use this command.')]
             });
+            return;
         }
 
         const userId = interaction.options.getString('user-id')!;
@@ -32,7 +33,7 @@ const command: Command = {
         const code = interaction.options.getString('auth-code');
 
         if ((code && queryDatabase) || (!code && !queryDatabase)) {
-            return interaction.editReply({
+            await interaction.editReply({
                 embeds: [
                     createEmbed(
                         'error',
@@ -40,6 +41,7 @@ const command: Command = {
                     )
                 ]
             });
+            return;
         }
 
         let auth: AuthData | null = null;
@@ -47,7 +49,10 @@ const command: Command = {
             auth = await refreshAuthData(userId);
         }
 
-        if (!auth) return interaction.editReply(defaultResponses.loggedOut);
+        if (!auth) {
+            await interaction.editReply(defaultResponses.loggedOut);
+            return;
+        }
 
         const oAuthData = await createOAuthData(
             FORTNITE_CLIENT.client,
@@ -64,11 +69,17 @@ const command: Command = {
                   }
         );
 
-        if (!oAuthData) return interaction.editReply(defaultResponses.authError);
+        if (!oAuthData) {
+            await interaction.editReply(defaultResponses.authError);
+            return;
+        }
 
         const deviceAuth = await createDeviceAuth(oAuthData.access_token, oAuthData.account_id);
 
-        if (!deviceAuth) return interaction.editReply(defaultResponses.authError);
+        if (!deviceAuth) {
+            await interaction.editReply(defaultResponses.authError);
+            return;
+        }
 
         await toggleDupe(false, interaction, {
             userId,

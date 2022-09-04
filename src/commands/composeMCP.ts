@@ -24,7 +24,10 @@ const command: Command = {
 
         const auth = await refreshAuthData(interaction.user.id);
 
-        if (!auth) return interaction.editReply(defaultResponses.loggedOut);
+        if (!auth) {
+            await interaction.editReply(defaultResponses.loggedOut);
+            return;
+        }
 
         const operationRes = await createOperationRequest(
             auth,
@@ -34,9 +37,10 @@ const command: Command = {
         );
 
         if (operationRes.error) {
-            return interaction.editReply({
+            await interaction.editReply({
                 embeds: [createEmbed('error', '`' + operationRes.error.message + '`')]
             });
+            return;
         }
 
         const response = JSON.stringify(operationRes.data, null, 4);

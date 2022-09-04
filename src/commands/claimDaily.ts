@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
+import { ApplicationCommandType, EmbedBuilder } from 'discord.js';
 import createOperationRequest from '../api/mcp/createOperationRequest';
 
 import { Command } from '../interfaces/Command';
@@ -6,26 +6,10 @@ import createEmbed from '../utils/commands/createEmbed';
 import refreshAuthData from '../utils/commands/refreshAuthData';
 import defaultResponses from '../utils/helpers/defaultResponses';
 
-import rewardData from '../utils/helpers/rewards.json';
 import { MCPResponse } from '../api/mcp/createOperationRequest';
-import getCosmetic from '../utils/commands/getCosmetic';
 import { COLORS } from '../constants';
-
-export interface LoginRewardResponse extends MCPResponse {
-    profileChanges: ProfileChange[];
-}
-
-export interface ProfileChange {
-    profile: Profile;
-}
-
-export interface Profile {
-    stats: Stats;
-}
-
-export interface Stats {
-    attributes: Attributes;
-}
+import getCosmetic from '../utils/commands/getCosmetic';
+import rewardData from '../utils/helpers/rewards.json';
 
 export interface Attributes {
     daily_rewards: DailyRewards;
@@ -40,7 +24,7 @@ export interface DailyRewards {
 
 const command: Command = {
     name: 'claim-daily',
-    description: "Claim's today's Fortnite Login Reward.",
+    description: 'Claim your Save the World daily login reward.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply();
@@ -49,22 +33,43 @@ const command: Command = {
 
         const auth = await refreshAuthData(interaction.user.id);
 
-        if (!auth) return interaction.editReply(defaultResponses.loggedOut);
-
-        const { data, error } = await createOperationRequest(auth, 'campaign', 'ClaimLoginReward');
-
-        if (error) {
-            return interaction.editReply({
-                embeds: [createEmbed('error', '`' + error.message + '`')]
-            });
+        if (!auth) {
+            await interaction.editReply(defaultResponses.loggedOut);
+            return;
         }
 
-        const info = (data as LoginRewardResponse).profileChanges[0].profile.stats.attributes
-            .daily_rewards;
+        const queryProfileRes = await createOperationRequest(auth, 'campaign', 'QueryProfile');
 
-        const claimDate = new Date(info.lastClaimDate);
+        if (queryProfileRes.error) {
+            await interaction.editReply({
+                embeds: [createEmbed('error', '`' + queryProfileRes.error.message + '`')]
+            });
+            return;
+        }
 
-        let currentReward = info.nextDefaultReward;
+        const oldInfo = (queryProfileRes.data as MCPResponse<Attributes>).profileChanges[0].profile
+            .stats.attributes.daily_rewards;
+
+        const claimLoginRewardRes = await createOperationRequest(
+            auth,
+            'campaign',
+            'ClaimLoginReward'
+        );
+
+        if (claimLoginRewardRes.error) {
+            await interaction.editReply({
+                embeds: [createEmbed('error', '`' + claimLoginRewardRes.error.message + '`')]
+            });
+            return;
+        }
+
+        const newInfo = (claimLoginRewardRes.data as MCPResponse<Attributes>).profileChanges[0]
+            .profile.stats.attributes.daily_rewards;
+
+        const oldClaimDate = new Date(oldInfo.lastClaimDate);
+        const newClaimDate = new Date(newInfo.lastClaimDate);
+
+        let currentReward = newInfo.nextDefaultReward;
 
         const rewards = [`\`${currentReward}\` **${(rewardData as any)[currentReward]}**`];
 
@@ -80,7 +85,7 @@ const command: Command = {
             .addFields([
                 {
                     name: `Today's Reward ${
-                        dateNow.getUTCDate() === claimDate.getUTCDate() ? '(Already Claimed)' : ''
+                        oldClaimDate.getTime() === newClaimDate.getTime() ? '(Already Claimed)' : ''
                     }`,
                     value: rewards[0]
                 },
@@ -94,7 +99,7 @@ const command: Command = {
                 }
             ])
             .setFooter({ text: auth.displayName, iconURL: cosmeticUrl ?? undefined })
-            .setTimestamp(claimDate);
+            .setTimestamp(newClaimDate);
 
         await interaction.editReply({ embeds: [embed] });
     }

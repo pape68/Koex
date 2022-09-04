@@ -44,7 +44,10 @@ const toggleDupe = async (
 
     const auth = await refreshAuthData(userId);
 
-    if (!auth) return interaction?.editReply(defaultResponses.loggedOut);
+    if (!auth) {
+        await interaction?.editReply(defaultResponses.loggedOut);
+        return;
+    }
 
     const queryProfileRes = await createOperationRequest(
         auth,
@@ -52,10 +55,12 @@ const toggleDupe = async (
         'QueryProfile'
     );
 
-    if (!queryProfileRes.data || queryProfileRes.error)
-        return interaction?.editReply({
-            embeds: [createEmbed('error', 'Failed to toggle dupe.')]
+    if (!queryProfileRes.data || queryProfileRes.error) {
+        await interaction?.editReply({
+            embeds: [createEmbed('error', `Failed to ${enable ? 'start' : 'stop'} the dupe.`)]
         });
+        return;
+    }
 
     const itemGuids = [
         'Weapon:buildingitemdata_wall',
@@ -76,6 +81,13 @@ const toggleDupe = async (
             newItemIdHint: 'molleja'
         }));
 
+    if (!transferOperations.length) {
+        await interaction?.editReply({
+            embeds: [createEmbed('error', `The dupe is already ${enable ? 'started' : 'stopped'}.`)]
+        });
+        return;
+    }
+
     const storageTransferRes = await createOperationRequest(
         overrides?.auth ?? auth,
         'theater0',
@@ -87,17 +99,12 @@ const toggleDupe = async (
 
     if (!storageTransferRes.data || storageTransferRes.error) {
         const defaultResponse = {
-            embeds: [
-                createEmbed(
-                    'error',
-                    `An error occurred while ${enable ? 'starting' : 'stopping'} the dupe.`
-                )
-            ]
+            embeds: [createEmbed('error', `Failed to ${enable ? 'start' : 'stop'} the dupe.`)]
         };
 
         switch (storageTransferRes.error.numericErrorCode) {
             case 12821:
-                return interaction?.editReply({
+                await interaction?.editReply({
                     embeds: [
                         createEmbed(
                             'error',
@@ -105,8 +112,9 @@ const toggleDupe = async (
                         )
                     ]
                 });
+                return;
             case 16098:
-                return interaction?.editReply({
+                await interaction?.editReply({
                     embeds: [
                         createEmbed(
                             'error',
@@ -114,12 +122,14 @@ const toggleDupe = async (
                         )
                     ]
                 });
+                return;
             default:
-                return interaction?.editReply(defaultResponse);
+                await interaction?.editReply(defaultResponse);
+                return;
         }
     }
 
-    return interaction?.editReply({
+    await interaction?.editReply({
         embeds: [createEmbed('success', `Successfully ${enable ? 'started' : 'stopped'} the dupe.`)]
     });
 };

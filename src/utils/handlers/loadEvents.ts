@@ -1,16 +1,17 @@
-import { ExtendedClient } from '../../interfaces/ExtendedClient';
+import { join } from 'node:path';
+
+import glob from 'glob';
+
+import { IS_PROD } from '../../constants';
 import { Event } from '../../interfaces/Event';
-import { sync } from 'glob';
-import { join } from 'path';
+import { ExtendedClient } from '../../interfaces/ExtendedClient';
 
-const loadEvents = (client: ExtendedClient) => {
-    const isProd = process.env.NODE_ENV === 'production';
-
-    const files = sync(`${isProd ? 'dist' : 'src'}/events/**/*.{js,ts}`);
+const loadEvents = async (client: ExtendedClient) => {
+    const files = glob.sync(`${IS_PROD ? 'dist' : 'src'}/events/**/*.{js,ts}`);
 
     for (const file of files) {
         const path = join(process.cwd(), file);
-        const event: Event = require(path).default;
+        const event: Event = (await import(path)).default;
         const name = event.name ?? file.split('/').pop()!.split('.')[0];
 
         client[event.once ? 'once' : 'on'](name, event.execute.bind(null, client));

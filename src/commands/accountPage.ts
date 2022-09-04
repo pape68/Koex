@@ -14,7 +14,10 @@ const command: Command = {
 
         const auth = await refreshAuthData(interaction.user.id);
 
-        if (!auth) return interaction.editReply(defaultResponses.loggedOut);
+        if (!auth) {
+            interaction.editReply(defaultResponses.loggedOut);
+            return;
+        }
 
         const exchangeCode = await createExchangeCode(auth.accessToken);
 

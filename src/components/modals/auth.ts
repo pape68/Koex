@@ -22,33 +22,46 @@ const modal: Component<ModalSubmitInteraction> = {
             code
         });
 
-        if (!oAuthData) return interaction.editReply(defaultResponses.authError);
+        if (!oAuthData) {
+            await interaction.editReply(defaultResponses.authError);
+            return;
+        }
 
         const accessToken = oAuthData.access_token;
         const accountId = oAuthData.account_id;
 
         const deviceAuth = await createDeviceAuth(accessToken, accountId);
 
-        if (!deviceAuth) return interaction.editReply(defaultResponses.authError);
+        if (!deviceAuth) {
+            await interaction.editReply(defaultResponses.authError);
+            return;
+        }
 
         const { data: account, error } = await supabase
             .from<Accounts>('accounts_test')
             .upsert({ user_id: interaction.user.id })
             .single();
 
-        if (!account) return interaction.editReply(defaultResponses.loggedOut);
+        if (!account) {
+            await interaction.editReply(
+                "This shouldn't be possible, so some weird shit happened. (Probably not the llama you're looking for.)"
+            );
+            return;
+        }
 
-        if (error) return interaction.editReply(defaultResponses.authError);
+        if (error) {
+            await interaction.editReply(defaultResponses.retrievalError);
+            return;
+        }
 
         for (let i = 0; i < 5; i++) {
             const auth = account[('slot_' + i) as SlotName];
 
             if (auth?.accountId === deviceAuth.accountId) {
-                return interaction.editReply({
-                    embeds: [
-                        createEmbed('info', `Already logged into **${oAuthData.displayName}**.`)
-                    ]
+                await interaction.editReply({
+                    embeds: [createEmbed('info', `Already logged into "${oAuthData.displayName}".`)]
                 });
+                return;
             }
 
             if (!auth) {
@@ -64,20 +77,19 @@ const modal: Component<ModalSubmitInteraction> = {
 
                 const cosmeticUrl = await getCosmetic(interaction.user.id);
 
-                return interaction.editReply({
+                await interaction.editReply({
                     embeds: [
-                        createEmbed(
-                            'info',
-                            `Logged in as **${oAuthData.displayName}**.`
-                        ).setThumbnail(cosmeticUrl)
+                        createEmbed('info', `Logged in as "${oAuthData.displayName}".`, cosmeticUrl)
                     ]
                 });
+                return;
             }
 
             if (i === 4) {
-                return interaction.editReply({
+                await interaction.editReply({
                     embeds: [createEmbed('info', "Can't login to more than 5 accounts.")]
                 });
+                return;
             }
         }
     }

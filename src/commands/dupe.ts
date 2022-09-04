@@ -6,12 +6,13 @@ import {
     EmbedBuilder
 } from 'discord.js';
 
-import { COLORS, WHITELISTED_SERVERS } from '../constants';
+import { COLORS } from '../constants';
 import { Command } from '../interfaces/Command';
-import { Accounts, DupeWhitelist } from '../types/supabase';
+import { Accounts, DupeWhitelist, SlotName } from '../types/supabase';
+import createEmbed from '../utils/commands/createEmbed';
+import getCosmetic from '../utils/commands/getCosmetic';
 import supabase from '../utils/functions/supabase';
 import defaultResponses from '../utils/helpers/defaultResponses';
-import createEmbed from '../utils/commands/createEmbed';
 
 const command: Command = {
     name: 'dupe',
@@ -27,7 +28,7 @@ const command: Command = {
             .maybeSingle();
 
         if (!whitelist.data) {
-            return interaction.editReply({
+            await interaction.editReply({
                 embeds: [
                     createEmbed(
                         'error',
@@ -35,24 +36,38 @@ const command: Command = {
                     )
                 ]
             });
+            return;
         }
 
-        const account = await supabase
+        const { data: account, error } = await supabase
             .from<Accounts>('accounts_test')
             .select('*')
             .match({ user_id: interaction.user.id })
             .maybeSingle();
 
-        if (account.error) return interaction.editReply(defaultResponses.authError);
+        if (!account || error) {
+            await interaction.editReply(defaultResponses.retrievalError);
+            return;
+        }
 
-        if (!account.data) return interaction.editReply(defaultResponses.loggedOut);
+        const cosmeticUrl = await getCosmetic(interaction.user.id);
+        const auth = account[('slot_' + account.active_slot) as SlotName];
 
-        const embed = new EmbedBuilder().setColor(COLORS.blue).addFields([
-            {
-                name: 'Dupe Menu',
-                value: 'Click the buttons below to toggle the dupe.'
-            }
-        ]);
+        if (!auth) {
+            await interaction.editReply(defaultResponses.loggedOut);
+            return;
+        }
+
+        const embed = new EmbedBuilder()
+            .setColor(COLORS.gray)
+            .addFields([
+                {
+                    name: 'Dupe Menu',
+                    value: 'Click the buttons below to toggle the dupe.'
+                }
+            ])
+            .setFooter({ text: auth!.displayName, iconURL: cosmeticUrl ?? undefined })
+            .setTimestamp();
 
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
             new ButtonBuilder()
@@ -61,11 +76,11 @@ const command: Command = {
                 .setCustomId('startDupe'),
             new ButtonBuilder()
                 .setLabel('Stop Dupe')
-                .setStyle(ButtonStyle.Danger)
+                .setStyle(ButtonStyle.Secondary)
                 .setCustomId('stopDupe')
         );
 
-        interaction.editReply({ embeds: [embed], components: [row] });
+        await interaction.editReply({ embeds: [embed], components: [row] });
     }
 };
 

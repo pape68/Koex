@@ -18,14 +18,18 @@ const command: Command = {
 
         const auth = await refreshAuthData(interaction.user.id);
 
-        if (!auth) return interaction.editReply(defaultResponses.loggedOut);
+        if (!auth) {
+            await interaction.editReply(defaultResponses.loggedOut);
+            return;
+        }
 
         const friendData = await getFromDisplayName(auth.accessToken, displayName);
 
         if (!friendData) {
-            return interaction.editReply({
-                embeds: [createEmbed('error', `Failed to retrieve user **${displayName}**.`)]
+            await interaction.editReply({
+                embeds: [createEmbed('error', `Failed to retrieve user "${displayName}".`)]
             });
+            return;
         }
 
         const error = await addFriendFromId(auth.accessToken, auth.accountId, friendData.id);
@@ -33,7 +37,7 @@ const command: Command = {
         if (error) {
             switch (error.numericErrorCode) {
                 case 1041:
-                    return interaction.editReply({
+                    await interaction.editReply({
                         embeds: [
                             createEmbed(
                                 'error',
@@ -41,45 +45,49 @@ const command: Command = {
                             )
                         ]
                     });
+                    return;
                 // Common Errors
                 case 14009:
-                    return interaction.editReply({
+                    await interaction.editReply({
                         embeds: [
                             createEmbed(
                                 'info',
-                                `You already have **${displayName}** on your friends list.`
+                                `You already have "${displayName}" on your friends list.`
                             )
                         ]
                     });
+                    return;
                 case 14014:
-                    return interaction.editReply({
+                    await interaction.editReply({
                         embeds: [
                             createEmbed(
                                 'info',
-                                `You already sent a friend request to **${displayName}**.`
+                                `You already sent a friend request to "${displayName}".`
                             )
                         ]
                     });
+                    return;
                 case 14131:
-                    return interaction.editReply({
+                    await interaction.editReply({
                         embeds: [
                             createEmbed(
                                 'error',
-                                `User **${displayName}** has too many incoming friend requests.`
+                                `User "${displayName}" has too many incoming friend requests.`
                             )
                         ]
                     });
+                    return;
             }
 
-            return interaction.editReply({
+            await interaction.editReply({
                 embeds: [
-                    createEmbed('error', `Failed to send friend request to user **${displayName}**`)
+                    createEmbed('error', `Failed to send friend request to user "${displayName}".`)
                 ]
             });
         }
 
         interaction.editReply({
-            embeds: [createEmbed('success', `Sent friend request to user **${displayName}**.`)]
+            embeds: [createEmbed('success', `Sent friend request to user "${displayName}".`)]
         });
     },
     options: [

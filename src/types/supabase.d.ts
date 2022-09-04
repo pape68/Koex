@@ -43,3 +43,19 @@ export type Accounts = {
 export type DupeWhitelist = {
     user_id: string;
 };
+
+export type PresetData = {
+    name: string | null;
+    characterIds: string[];
+    squadIds: string[];
+    slotIndices: number[];
+};
+
+export type SurvivorPresets = {
+    user_id: string;
+    slot_0: PresetData | null;
+    slot_1: PresetData | null;
+    slot_2: PresetData | null;
+    slot_3: PresetData | null;
+    slot_4: PresetData | null;
+};

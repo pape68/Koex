@@ -18,14 +18,18 @@ const command: Command = {
 
         const auth = await refreshAuthData(interaction.user.id);
 
-        if (!auth) return interaction.editReply(defaultResponses.loggedOut);
+        if (!auth) {
+            await interaction.editReply(defaultResponses.loggedOut);
+            return;
+        }
 
         const friendData = await getFromDisplayName(auth.accessToken, displayName);
 
         if (!friendData) {
-            return interaction.editReply({
-                embeds: [createEmbed('error', `Failed to retrieve user **${displayName}**.`)]
+            await interaction.editReply({
+                embeds: [createEmbed('error', `Failed to retrieve user "${displayName}".`)]
             });
+            return;
         }
 
         const error = await deleteFriendFromId(auth.accessToken, auth.accountId, friendData.id);
@@ -35,29 +39,31 @@ const command: Command = {
             switch (error.numericErrorCode) {
                 // Common Errors
                 case 14004:
-                    return interaction.editReply({
+                    await interaction.editReply({
                         embeds: [
                             createEmbed(
                                 'info',
-                                `You don't have user **${displayName}** on your friends list.`
+                                `You don't have user "${displayName}" on your friends list.`
                             )
                         ]
                     });
+                    return;
             }
 
-            return interaction.editReply({
+            await interaction.editReply({
                 embeds: [
                     createEmbed(
                         'error',
-                        `Failed to remove user **${displayName}** from your friends list.`
+                        `Failed to remove user "${displayName}" from your friends list.`
                     )
                 ]
             });
+            return;
         }
 
-        interaction.editReply({
+        await interaction.editReply({
             embeds: [
-                createEmbed('success', `Removed user **${displayName}** from your friends list.`)
+                createEmbed('success', `Removed user "${displayName}" from your friends list.`)
             ]
         });
     },

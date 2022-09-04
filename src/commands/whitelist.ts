@@ -14,9 +14,10 @@ const command: Command = {
         await interaction.deferReply({ ephemeral: true });
 
         if (!['951989622236397590', '569212600785567777'].includes(interaction.user.id)) {
-            return interaction.editReply({
+            await interaction.editReply({
                 embeds: [createEmbed('info', 'You do not have permission to use this command.')]
             });
+            return;
         }
 
         const userId = interaction.options.getString('user-id')!;
@@ -31,26 +32,29 @@ const command: Command = {
                 });
 
                 if (whitelist.error) {
-                    return interaction.editReply({
+                    await interaction.editReply({
                         embeds: [createEmbed('error', 'Failed to update whitelist.')]
                     });
+                    return;
                 }
 
-                return interaction.editReply({
+                await interaction.editReply({
                     embeds: [createEmbed('info', `Added ID \`${userId}\` to the whitelist.`)]
                 });
+                return;
             case 'remove':
                 whitelist = await supabase.from<DupeWhitelist>('dupe_whitelist').delete().match({
                     user_id: userId
                 });
 
                 if (whitelist.error) {
-                    return interaction.editReply({
+                    await interaction.editReply({
                         embeds: [createEmbed('error', 'Failed to update whitelist.')]
                     });
+                    return;
                 }
 
-                return interaction.editReply({
+                await interaction.editReply({
                     embeds: [createEmbed('info', `Removed ID \`${userId}\` from the whitelist.`)]
                 });
         }

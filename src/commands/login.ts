@@ -41,7 +41,7 @@ const command: Command = {
                 .setCustomId('submitCode')
         );
 
-        return interaction.reply({ embeds: [embed], components: [row], files: [file] });
+        await interaction.reply({ embeds: [embed], components: [row], files: [file] });
     }
 };
 

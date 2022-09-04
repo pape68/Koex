@@ -8,6 +8,6 @@ export default {
         embeds: [createEmbed('error', 'An error occurred while authenticating.')]
     },
     retrievalError: {
-        embeds: [createEmbed('error', 'An error occurred while retrieving your account data.')]
+        embeds: [createEmbed('error', 'An error occurred while retrieving your data.')]
     }
 };

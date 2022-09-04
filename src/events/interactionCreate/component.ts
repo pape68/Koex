@@ -7,11 +7,12 @@ const event: Event = {
     execute: async (client, interaction: ComponentInteraction) => {
         if (interaction.isChatInputCommand()) return;
 
-        if (interaction.user !== interaction.message?.interaction?.user) {
-            return interaction.reply({
+        if (interaction.isButton() && interaction.user !== interaction.message?.interaction?.user) {
+            await interaction.reply({
                 embeds: [createEmbed('error', "This isn't for you.")],
                 ephemeral: true
             });
+            return;
         }
 
         const component = client.interactions.get(interaction.customId) as
@@ -19,19 +20,18 @@ const event: Event = {
             | undefined;
 
         if (!component) {
-            return interaction.reply({
-                embeds: [createEmbed('error', "Couldn't find this component.", false)],
+            await interaction.reply({
+                embeds: [createEmbed('error', "Couldn't find this component.")],
                 ephemeral: true
             });
+            return;
         }
 
         return component.execute(interaction).catch((error) => {
             console.error(error);
             if (interaction.deferred || interaction.replied) return;
             interaction.reply({
-                embeds: [
-                    createEmbed('error', 'An error occurred while running this component.', false)
-                ],
+                embeds: [createEmbed('error', 'An error occurred while running this component.')],
                 ephemeral: true
             });
         });

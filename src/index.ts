@@ -12,7 +12,7 @@ bot.queue = new Collection();
 
 (async () => {
     await bot.login();
-    loadEvents(bot);
+    await loadEvents(bot);
 })();
 
 process

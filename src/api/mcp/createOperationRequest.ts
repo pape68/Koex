@@ -3,11 +3,36 @@ import request from '../../utils/functions/request';
 import { FortniteProfile, MCPOperation } from '../types';
 import createMCPUrl from './createMCPUrl';
 
-export interface MCPResponse {
+export interface MCPResponse<T = any> {
     profileRevision: number;
     profileId: string;
     profileChangesBaseRevision: number;
-    profileChanges: any[];
+    profileChanges: ProfileChange<T>[];
+    profileCommandRevision: number;
+    serverTime: Date;
+    responseVersion: number;
+}
+
+export interface ProfileChange<T> {
+    changeType: string;
+    profile: Profile<T>;
+}
+
+export interface Profile<T> {
+    _id: string;
+    created: string;
+    updated: string;
+    rvn: number;
+    wipeNumber: number;
+    accountId: string;
+    profileId: string;
+    version: string;
+    items: any;
+    stats: Stats<T>;
+}
+
+export interface Stats<T> {
+    attributes: T;
 }
 
 const createOperationRequest = async (

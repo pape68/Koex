@@ -3,6 +3,7 @@ import { SelectMenuInteraction } from 'discord.js';
 import { Component } from '../../interfaces/Component';
 import { Accounts, SlotName } from '../../types/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
+import getCosmetic from '../../utils/commands/getCosmetic';
 import supabase from '../../utils/functions/supabase';
 import defaultResponses from '../../utils/helpers/defaultResponses';
 
@@ -11,6 +12,14 @@ const selectMenu: Component<SelectMenuInteraction> = {
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
 
+        if (interaction.user !== interaction.message?.interaction?.user) {
+            await interaction.reply({
+                embeds: [createEmbed('error', "This isn't for you.")],
+                ephemeral: true
+            });
+            return;
+        }
+
         const slot = interaction.values[0];
 
         const { data: account, error } = await supabase
@@ -18,14 +27,22 @@ const selectMenu: Component<SelectMenuInteraction> = {
             .upsert({ user_id: interaction.user.id, active_slot: parseInt(slot) })
             .single();
 
-        if (error) return interaction.editReply(defaultResponses.retrievalError);
+        if (error) {
+            await interaction.editReply(defaultResponses.retrievalError);
+            return;
+        }
 
         const auth = account[('slot_' + slot) as SlotName];
 
-        if (!auth) return interaction.editReply(defaultResponses.loggedOut);
+        if (!auth) {
+            await interaction.editReply(defaultResponses.loggedOut);
+            return;
+        }
+
+        const cosmeticUrl = await getCosmetic(interaction.user.id);
 
         interaction.editReply({
-            embeds: [createEmbed('info', `Logged in as **${auth.displayName}**.`)]
+            embeds: [createEmbed('info', `Logged in as "${auth.displayName}".`, cosmeticUrl)]
         });
     }
 };
