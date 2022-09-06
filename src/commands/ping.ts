@@ -17,7 +17,7 @@ const command: Command = {
             embeds: [
                 createEmbed(
                     'info',
-                    `Pong! Latency is \`${latency}ms\`. Gateway latency is \`${wsLatency}ms\`.`
+                    `Pong! Latency is ${latency}ms. Gateway latency is ${wsLatency}ms.`
                 )
             ]
         });
