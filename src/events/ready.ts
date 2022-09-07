@@ -23,7 +23,6 @@ export const event: Event<true> = {
         const getUsers = () =>
             client.guilds.cache.map((g) => g.memberCount).reduce((a, c) => a + c);
 
-        let i = 0;
         setInterval(() => {
             const userCount = getUsers();
 
