@@ -39,14 +39,14 @@ const command: Command = {
             return;
         }
 
-        const { data: account, error } = await supabase
+        const { data: account } = await supabase
             .from<Accounts>('accounts_test')
             .select('*')
             .match({ user_id: interaction.user.id })
             .maybeSingle();
 
-        if (!account || error) {
-            await interaction.editReply(defaultResponses.retrievalError);
+        if (!account) {
+            await interaction.followUp(defaultResponses.loggedOut);
             return;
         }
 

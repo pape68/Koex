@@ -17,8 +17,10 @@ export const CLIENT_OPTIONS: ClientOptions = {
 
 // General
 
-export const SHARD_COUNT: number | 'auto' = 'auto';
-export const SHARDING_MODE: ShardingManagerMode = 'worker';
+export const AUTODAILY_WH = {
+    id: '1016879424395817010',
+    token: '1ZM5-D8a4dYxYu3uaybKZPCbgutd6GYZGbahPqt2udUn5qdFcMRhS68Rk80JDhfwriG-'
+};
 
 export const IS_PROD = process.env.NODE_ENV === 'production';
 

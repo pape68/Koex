@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle } from 'discord.js';
 
 import createExchangeCode from '../api/auth/createExchangeCode';
 import { Command } from '../interfaces/Command';

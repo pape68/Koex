@@ -2,29 +2,20 @@ import { ActionRowBuilder, ButtonInteraction, EmbedBuilder, SelectMenuBuilder } 
 
 import { COLORS } from '../../constants';
 import { Component } from '../../interfaces/Component';
-import { PresetData, SurvivorPresets } from '../../types/supabase';
-import supabase from '../../utils/functions/supabase';
+import { PresetData } from '../../types/supabase';
 import defaultResponses from '../../utils/helpers/defaultResponses';
 import createEmbed from '../../utils/commands/createEmbed';
+import refreshAuthData from '../../utils/commands/refreshAuthData';
 
 const button: Component<ButtonInteraction> = {
     name: 'switchSurvivorPreset',
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
 
-        const { data: presets, error } = await supabase
-            .from<SurvivorPresets>('survivor_presets')
-            .select('*')
-            .match({ user_id: interaction.user.id })
-            .maybeSingle();
-
-        if (error) {
-            await interaction.editReply(defaultResponses.retrievalError);
-            return;
-        }
+        const auth = await refreshAuthData(interaction.user.id);
 
         let n = -1;
-        const options = Object.entries(presets ?? {})
+        const options = Object.entries(auth?.survivorPresets ?? {})
             .filter(([k, v]) => k.startsWith('slot_') && !!v && (v as PresetData).name)
             .map(([, v]) => {
                 const { name } = v as PresetData;
@@ -33,7 +24,7 @@ const button: Component<ButtonInteraction> = {
                 return { label: name!, description: (n + 1).toString(), value: n.toString() };
             });
 
-        if (!presets || !options.length) {
+        if (!options.length) {
             await interaction.editReply({
                 embeds: [createEmbed('info', "You don't have any survivor presets.")]
             });

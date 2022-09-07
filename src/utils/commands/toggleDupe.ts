@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction } from 'discord.js';
 
-import { AuthData, DupeWhitelist } from '../../types/supabase';
+import { SlotData, DupeWhitelist } from '../../types/supabase';
 
 import createOperationRequest from '../../api/mcp/createOperationRequest';
 import { FortniteItem } from '../../api/types';
@@ -11,7 +11,7 @@ import createEmbed from './createEmbed';
 import refreshAuthData from './refreshAuthData';
 
 interface Overrides {
-    auth: AuthData;
+    auth: SlotData;
     userId: string;
 }
 

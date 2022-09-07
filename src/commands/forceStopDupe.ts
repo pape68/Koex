@@ -4,7 +4,7 @@ import createDeviceAuth from '../api/auth/createDeviceAuth';
 import createOAuthData from '../api/auth/createOAuthData';
 import { FORTNITE_CLIENT } from '../constants';
 import { Command } from '../interfaces/Command';
-import { AuthData } from '../types/supabase';
+import { SlotData } from '../types/supabase';
 import createEmbed from '../utils/commands/createEmbed';
 import refreshAuthData from '../utils/commands/refreshAuthData';
 import toggleDupe from '../utils/commands/toggleDupe';
@@ -44,7 +44,7 @@ const command: Command = {
             return;
         }
 
-        let auth: AuthData | null = null;
+        let auth: SlotData | null = null;
         if (queryDatabase) {
             auth = await refreshAuthData(userId);
         }
@@ -88,7 +88,8 @@ const command: Command = {
                 displayName: oAuthData.displayName,
                 accountId: deviceAuth.accountId,
                 deviceId: deviceAuth.deviceId,
-                secret: deviceAuth.secret
+                secret: deviceAuth.secret,
+                survivorPresets: null
             }
         });
     },

@@ -8,7 +8,7 @@ import defaultResponses from '../../utils/helpers/defaultResponses';
 import createOperationRequest from '../../api/mcp/createOperationRequest';
 import { FortniteItem } from '../../api/types';
 import supabase from '../../utils/functions/supabase';
-import { SlotName, SurvivorPresets } from '../../types/supabase';
+import { SlotName, SurvivorPresets, Accounts, PresetData } from '../../types/supabase';
 
 const button: Component<ButtonInteraction> = {
     name: 'saveSurvivorPreset',
@@ -110,25 +110,21 @@ const button: Component<ButtonInteraction> = {
             slotIndices
         };
 
-        const { data: presets, error } = await supabase
-            .from<SurvivorPresets>('survivor_presets')
-            .upsert({ user_id: interaction.user.id })
-            .single();
+        const { data: account } = await supabase
+            .from<Accounts>('accounts_test')
+            .select('*')
+            .match({ user_id: interaction.user.id })
+            .maybeSingle();
 
-        if (!presets) {
-            interaction.editReply(
-                "This shouldn't be possible, so uhh. (Probably not the llama you're looking for.)"
-            );
-            return;
-        }
-
-        if (error) {
-            await interaction.followUp({ ...defaultResponses.retrievalError, ephemeral: true });
+        if (!account) {
+            await interaction.followUp(defaultResponses.loggedOut);
             return;
         }
 
         for (let i = 0; i < 5; i++) {
-            const data = presets[('slot_' + i) as SlotName];
+            const presets = account[('slot_' + account.active_slot) as SlotName]?.survivorPresets;
+
+            const data = presets ? presets[('slot_' + i) as SlotName] : null;
 
             if (data?.name === name) {
                 await interaction.followUp({
@@ -139,9 +135,14 @@ const button: Component<ButtonInteraction> = {
             }
 
             if (!data) {
-                await supabase.from<SurvivorPresets>('survivor_presets').upsert({
+                await supabase.from<Accounts>('accounts_test').upsert({
                     user_id: interaction.user.id,
-                    ['slot_' + i]: preset
+                    ['slot_' + account.active_slot]: {
+                        ...account[('slot_' + account.active_slot) as SlotName],
+                        survivorPresets: {
+                            ['slot_' + i]: preset
+                        }
+                    }
                 });
 
                 await interaction.followUp({

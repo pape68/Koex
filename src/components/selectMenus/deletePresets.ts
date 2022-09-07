@@ -1,5 +1,4 @@
 import { SelectMenuInteraction } from 'discord.js';
-import createOperationRequest from '../../api/mcp/createOperationRequest';
 
 import { Component } from '../../interfaces/Component';
 import { Accounts, SlotName, PresetData, SurvivorPresets } from '../../types/supabase';
@@ -15,20 +14,19 @@ const selectMenu: Component<SelectMenuInteraction> = {
 
         const slots = interaction.values;
 
-        const { data: presets, error } = await supabase
-            .from<SurvivorPresets>('survivor_presets')
-            .upsert({ user_id: interaction.user.id })
-            .single();
-
-        if (error) {
-            await interaction.editReply(defaultResponses.retrievalError);
-            return;
-        }
-
         const auth = await refreshAuthData(interaction.user.id);
 
         if (!auth) {
             await interaction.editReply(defaultResponses.loggedOut);
+            return;
+        }
+
+        const presets = auth.survivorPresets;
+
+        if (!presets) {
+            await interaction.editReply({
+                embeds: [createEmbed('error', "You don't have any survivor presets.")]
+            });
             return;
         }
 
@@ -41,6 +39,17 @@ const selectMenu: Component<SelectMenuInteraction> = {
             return;
         }
 
+        const { data: account } = await supabase
+            .from<Accounts>('accounts_test')
+            .select('*')
+            .match({ user_id: interaction.user.id })
+            .maybeSingle();
+
+        if (!account) {
+            await interaction.followUp(defaultResponses.loggedOut);
+            return;
+        }
+
         preset.forEach(async (p) => {
             const target = Object.entries(presets)
                 .filter(
@@ -48,17 +57,15 @@ const selectMenu: Component<SelectMenuInteraction> = {
                 )
                 .map(([k]) => k.split('_')[1])[0];
 
-            const { error } = await supabase.from<SurvivorPresets>('survivor_presets').upsert({
+            await supabase.from<Accounts>('accounts_test').upsert({
                 user_id: interaction.user.id,
-                ['slot_' + target]: null
+                ['slot_' + account.active_slot]: {
+                    ...account[('slot_' + account.active_slot) as SlotName],
+                    survivorPresets: {
+                        ['slot_' + target]: null
+                    }
+                }
             });
-
-            if (error) {
-                await interaction.editReply({
-                    embeds: [createEmbed('error', 'Failed to delete preset.')]
-                });
-                return;
-            }
         });
 
         await interaction.editReply({

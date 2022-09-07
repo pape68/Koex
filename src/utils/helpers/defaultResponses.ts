@@ -2,12 +2,11 @@ import createEmbed from '../commands/createEmbed';
 
 export default {
     loggedOut: {
-        embeds: [createEmbed('info', 'You are not logged in to any accounts.')]
+        embeds: [createEmbed('info', 'You are not logged.')],
+        ephemeral: true
     },
     authError: {
-        embeds: [createEmbed('error', 'An error occurred while authenticating.')]
-    },
-    retrievalError: {
-        embeds: [createEmbed('error', 'An error occurred while retrieving your data.')]
+        embeds: [createEmbed('error', 'An error occurred while authenticating.')],
+        ephemeral: true
     }
 };

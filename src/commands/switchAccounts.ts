@@ -7,7 +7,7 @@ import {
 
 import { COLORS } from '../constants';
 import { Command } from '../interfaces/Command';
-import { Accounts, AuthData } from '../types/supabase';
+import { Accounts, SlotData } from '../types/supabase';
 import supabase from '../utils/functions/supabase';
 import defaultResponses from '../utils/helpers/defaultResponses';
 
@@ -32,7 +32,7 @@ const command: Command = {
         const options = Object.entries(account ?? {})
             .filter(([k, v]) => k.startsWith('slot_') && !!v)
             .map(([k, v]) => {
-                const { displayName, accountId } = v as AuthData;
+                const { displayName, accountId } = v as SlotData;
 
                 return {
                     label: displayName,

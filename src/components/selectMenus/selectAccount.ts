@@ -22,13 +22,13 @@ const selectMenu: Component<SelectMenuInteraction> = {
 
         const slot = interaction.values[0];
 
-        const { data: account, error } = await supabase
+        const { data: account } = await supabase
             .from<Accounts>('accounts_test')
             .upsert({ user_id: interaction.user.id, active_slot: parseInt(slot) })
             .single();
 
-        if (error) {
-            await interaction.editReply(defaultResponses.retrievalError);
+        if (!account) {
+            await interaction.editReply(defaultResponses.loggedOut);
             return;
         }
 

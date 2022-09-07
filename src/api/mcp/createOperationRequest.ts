@@ -1,4 +1,4 @@
-import { AuthData } from '../../types/supabase';
+import { SlotData } from '../../types/supabase';
 import request from '../../utils/functions/request';
 import { FortniteProfile, MCPOperation } from '../types';
 import createMCPUrl from './createMCPUrl';
@@ -36,7 +36,7 @@ export interface Stats<T> {
 }
 
 const createOperationRequest = async (
-    auth: AuthData,
+    auth: SlotData,
     profile: keyof typeof FortniteProfile,
     operation: keyof typeof MCPOperation,
     payload?: any

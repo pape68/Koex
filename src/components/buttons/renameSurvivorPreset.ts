@@ -6,7 +6,7 @@ import createEmbed from '../../utils/commands/createEmbed';
 import refreshAuthData from '../../utils/commands/refreshAuthData';
 import defaultResponses from '../../utils/helpers/defaultResponses';
 import supabase from '../../utils/functions/supabase';
-import { SlotName, SurvivorPresets, PresetData } from '../../types/supabase';
+import { SlotName, SurvivorPresets, PresetData, Accounts } from '../../types/supabase';
 import _ from 'lodash';
 
 const button: Component<ButtonInteraction> = {
@@ -18,6 +18,14 @@ const button: Component<ButtonInteraction> = {
 
         if (!auth) {
             await interaction.editReply(defaultResponses.loggedOut);
+            return;
+        }
+        const presets = auth.survivorPresets;
+
+        if (!presets) {
+            await interaction.editReply({
+                embeds: [createEmbed('error', "You don't have any survivor presets.")]
+            });
             return;
         }
 
@@ -77,21 +85,10 @@ const button: Component<ButtonInteraction> = {
 
         if (!preset) return;
 
-        const { data: presets, error } = await supabase
-            .from<SurvivorPresets>('survivor_presets')
-            .select('*')
-            .match({ user_id: interaction.user.id })
-            .maybeSingle();
-
-        if (!presets || error) {
-            await interaction.followUp({ ...defaultResponses.retrievalError, ephemeral: true });
-            return;
-        }
-
         for (let i = 0; i < 5; i++) {
-            const slot = presets[('slot_' + i) as SlotName];
+            const data = presets ? presets[('slot_' + i) as SlotName] : null;
 
-            if (slot?.name === preset.newName) {
+            if (data?.name === preset.newName) {
                 await interaction.followUp({
                     embeds: [
                         createEmbed('error', `You already have a preset named "${preset.newName}".`)
@@ -102,7 +99,7 @@ const button: Component<ButtonInteraction> = {
             }
         }
 
-        const target = Object.entries(presets)
+        const target = Object.entries(presets ?? {})
             .filter(
                 ([k, v]) =>
                     k.startsWith('slot_') && !!v && (v as PresetData).name === preset.oldName
@@ -119,11 +116,27 @@ const button: Component<ButtonInteraction> = {
             return;
         }
 
-        await supabase.from<SurvivorPresets>('survivor_presets').upsert({
+        const { data: account } = await supabase
+            .from<Accounts>('accounts_test')
+            .select('*')
+            .match({ user_id: interaction.user.id })
+            .maybeSingle();
+
+        if (!account) {
+            await interaction.followUp(defaultResponses.loggedOut);
+            return;
+        }
+
+        await supabase.from<Accounts>('accounts_test').upsert({
             user_id: interaction.user.id,
-            ['slot_' + target]: {
-                name: preset.newName,
-                ...presets[('slot_' + target) as SlotName]
+            ['slot_' + account.active_slot]: {
+                ...account[('slot_' + account.active_slot) as SlotName],
+                survivorPresets: {
+                    ['slot_' + target]: {
+                        ...presets[('slot_' + target) as SlotName],
+                        name: preset.newName
+                    }
+                }
             }
         });
 

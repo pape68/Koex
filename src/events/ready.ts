@@ -1,10 +1,12 @@
 import { ActivityType } from 'discord.js';
+import cron from 'node-cron';
 import pc from 'picocolors';
 
 import { Event } from '../interfaces/Event';
 import { ExtendedClient } from '../interfaces/ExtendedClient';
 import loadCommands from '../utils/handlers/loadCommands';
 import loadComponents from '../utils/handlers/loadComponents';
+import startAutoDailyJob from '../jobs/autoDaily';
 
 export const event: Event<true> = {
     name: 'ready',
@@ -27,6 +29,10 @@ export const event: Event<true> = {
                 type: ActivityType.Watching
             });
         }, 10 * 1000);
+
+        cron.schedule('1 0 * * *', async () => {
+            await startAutoDailyJob(client);
+        });
     }
 };
 

@@ -37,7 +37,7 @@ const modal: Component<ModalSubmitInteraction> = {
             return;
         }
 
-        const { data: account, error } = await supabase
+        const { data: account } = await supabase
             .from<Accounts>('accounts_test')
             .upsert({ user_id: interaction.user.id })
             .single();
@@ -46,11 +46,6 @@ const modal: Component<ModalSubmitInteraction> = {
             await interaction.editReply(
                 "This shouldn't be possible, so some weird shit happened. (Probably not the llama you're looking for.)"
             );
-            return;
-        }
-
-        if (error) {
-            await interaction.editReply(defaultResponses.retrievalError);
             return;
         }
 

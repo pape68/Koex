@@ -1,7 +1,7 @@
 import { ApplicationCommandType } from 'discord.js';
 
 import { Command } from '../interfaces/Command';
-import { Accounts, AuthData, SlotName } from '../types/supabase';
+import { Accounts, SlotData, SlotName } from '../types/supabase';
 import createEmbed from '../utils/commands/createEmbed';
 import getCosmetic from '../utils/commands/getCosmetic';
 import supabase from '../utils/functions/supabase';
@@ -14,7 +14,7 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply();
 
-        const { data: account, error } = await supabase
+        const { data: account } = await supabase
             .from<Accounts>('accounts_test')
             .select('*')
             .match({ user_id: interaction.user.id })
@@ -24,15 +24,9 @@ const command: Command = {
             await interaction.editReply(defaultResponses.loggedOut);
             return;
         }
-
-        if (error) {
-            await interaction.editReply(defaultResponses.retrievalError);
-            return;
-        }
-
         let activeSlotIndex = 0;
         for (let i = 0; i < 5; i++) {
-            const auth: AuthData | null = account[('slot_' + i) as SlotName];
+            const auth: SlotData | null = account[('slot_' + i) as SlotName];
 
             if (activeSlotIndex === i) continue;
 
@@ -42,7 +36,7 @@ const command: Command = {
             }
         }
 
-        const auth: AuthData | null = account[('slot_' + activeSlotIndex) as SlotName];
+        const auth: SlotData | null = account[('slot_' + activeSlotIndex) as SlotName];
 
         if (!auth) {
             await interaction.editReply(defaultResponses.loggedOut);
@@ -72,3 +66,5 @@ const command: Command = {
         }
     }
 };
+
+export default command;

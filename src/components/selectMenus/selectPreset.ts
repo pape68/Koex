@@ -2,10 +2,9 @@ import { SelectMenuInteraction } from 'discord.js';
 import createOperationRequest from '../../api/mcp/createOperationRequest';
 
 import { Component } from '../../interfaces/Component';
-import { Accounts, SlotName, PresetData, SurvivorPresets } from '../../types/supabase';
+import { SlotName } from '../../types/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
 import refreshAuthData from '../../utils/commands/refreshAuthData';
-import supabase from '../../utils/functions/supabase';
 import defaultResponses from '../../utils/helpers/defaultResponses';
 
 const selectMenu: Component<SelectMenuInteraction> = {
@@ -15,20 +14,19 @@ const selectMenu: Component<SelectMenuInteraction> = {
 
         const slot = interaction.values[0];
 
-        const { data: presets, error } = await supabase
-            .from<SurvivorPresets>('survivor_presets')
-            .upsert({ user_id: interaction.user.id })
-            .single();
-
-        if (error) {
-            await interaction.editReply(defaultResponses.retrievalError);
-            return;
-        }
-
         const auth = await refreshAuthData(interaction.user.id);
 
         if (!auth) {
             await interaction.editReply(defaultResponses.loggedOut);
+            return;
+        }
+
+        const presets = auth.survivorPresets;
+
+        if (!presets) {
+            await interaction.editReply({
+                embeds: [createEmbed('error', "You don't have any survivor presets.")]
+            });
             return;
         }
 
