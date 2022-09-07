@@ -23,9 +23,16 @@ export const event: Event<true> = {
         const getUsers = () =>
             client.guilds.cache.map((g) => g.memberCount).reduce((a, c) => a + c);
 
+        let i = 0;
         setInterval(() => {
             const userCount = getUsers();
-            client.user!.setActivity(`${userCount} Users`, {
+
+            const activities = [`${userCount} Users`, `${client.guilds.cache.size} Servers`];
+
+            const i = Math.floor(Math.random() * (activities.length - 1) + 1);
+            const activity = activities[i];
+
+            client.user!.setActivity(activity, {
                 type: ActivityType.Watching
             });
         }, 10 * 1000);
