@@ -23,20 +23,19 @@ export const event: Event<true> = {
         const getUsers = () =>
             client.guilds.cache.map((g) => g.memberCount).reduce((a, c) => a + c);
 
+        let idx = 0;
+        const activities = [`${getUsers()} Users`, `${client.guilds.cache.size} Servers`];
+
         setInterval(() => {
-            const userCount = getUsers();
-
-            const activities = [`${userCount} Users`, `${client.guilds.cache.size} Servers`];
-
-            const i = Math.floor(Math.random() * (activities.length - 1) + 1);
-            const activity = activities[i];
+            idx = (idx + 1) % activities.length;
+            const activity = activities[idx];
 
             client.user!.setActivity(activity, {
                 type: ActivityType.Watching
             });
         }, 10 * 1000);
 
-        cron.schedule('1 0 * * *', async () => {
+        cron.schedule('0 0 * * *', async () => {
             await startAutoDailyJob(client);
         });
     }
