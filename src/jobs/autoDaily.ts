@@ -27,7 +27,7 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
             embeds: [
                 createEmbed(
                     'info',
-                    `Attempted to claim daily login reward for "${account.user_id}".`
+                    `Attempted to claim daily login reward for **${account.user_id}**.`
                 )
             ]
         });

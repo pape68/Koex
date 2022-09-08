@@ -1,11 +1,11 @@
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, Client } from 'discord.js';
 
-import { SlotData, DupeWhitelist } from '../../types/supabase';
-
+import { SlotData } from '../../types/supabase';
 import createOperationRequest from '../../api/mcp/createOperationRequest';
 import { FortniteItem } from '../../api/types';
+import { WHITELISTED_SERVERS } from '../../constants';
 import { ComponentInteraction } from '../../interfaces/Component';
-import supabase from '../functions/supabase';
+import { ExtendedClient } from '../../interfaces/ExtendedClient';
 import defaultResponses from '../helpers/defaultResponses';
 import createEmbed from './createEmbed';
 import refreshAuthData from './refreshAuthData';
@@ -16,6 +16,7 @@ interface Overrides {
 }
 
 const toggleDupe = async (
+    client: Client | ExtendedClient,
     enable: boolean,
     interaction?: ChatInputCommandInteraction | ComponentInteraction,
     overrides?: Overrides
@@ -29,17 +30,19 @@ const toggleDupe = async (
 
     const userId = (overrides?.userId ?? interaction?.user.id)!;
 
-    const whitelist = await supabase
-        .from<DupeWhitelist>('dupe_whitelist')
-        .select('*')
-        .match({ user_id: userId })
-        .maybeSingle();
+    const occurances = [];
 
-    if (!whitelist.data) {
-        interaction?.editReply({
-            embeds: [createEmbed('error', `You must be whitelisted to use this command.`)]
+    WHITELISTED_SERVERS.forEach(async (id) => {
+        const member = await client.guilds.cache.get(id)?.members.fetch(userId);
+
+        if (member) occurances.push(true);
+    });
+
+    if (!occurances.length) {
+        await interaction?.editReply({
+            embeds: [createEmbed('error', "You don't have permission to use this.")]
         });
-        throw new Error(`User '${userId}' not whitelisted.`);
+        return;
     }
 
     const auth = await refreshAuthData(userId);

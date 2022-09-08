@@ -48,12 +48,12 @@ const selectMenu: Component<SelectMenuInteraction> = {
 
         if (skipTutorialRes.error) {
             interaction.editReply({
-                embeds: [createEmbed('error', `Failed to apply preset "${preset.name}".`)]
+                embeds: [createEmbed('error', `Failed to apply preset **${preset.name}**.`)]
             });
         }
 
         await interaction.editReply({
-            embeds: [createEmbed('success', `Using survivor preset "${preset.name}".`)]
+            embeds: [createEmbed('success', `Using survivor preset **${preset.name}**.`)]
         });
     }
 };

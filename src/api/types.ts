@@ -109,7 +109,7 @@ interface Endpoints {
     oAuthDeviceCode: string;
     // Account
     accountMultiple: string;
-    accountDisplayName: string;
+    accountdisplayName: string;
     accountId: string;
     accountEmail: string;
     userSearch: string;
@@ -144,7 +144,7 @@ export const Endpoints = {
     oAuthDeviceCode: `${OAuthEndpoint}/deviceAuthorization`,
     // Account
     accountMultiple: `${EpicServices.ACCOUNT_SERVICE}/account/api/public/account`,
-    accountDisplayName: `${EpicServices.ACCOUNT_SERVICE}/account/api/public/account/displayName`,
+    accountdisplayName: `${EpicServices.ACCOUNT_SERVICE}/account/api/public/account/displayName`,
     accountId: `${EpicServices.ACCOUNT_SERVICE}/account/api/public/account`,
     accountEmail: `${EpicServices.ACCOUNT_SERVICE}/account/api/public/account/email`,
     userSearch: `${EpicServices.USER_SEARCH_SERVICE}/api/v1/search`,

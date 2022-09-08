@@ -6,9 +6,9 @@ import {
     EmbedBuilder
 } from 'discord.js';
 
-import { COLORS } from '../constants';
+import { COLORS, WHITELISTED_SERVERS } from '../constants';
 import { Command } from '../interfaces/Command';
-import { Accounts, DupeWhitelist, SlotName } from '../types/supabase';
+import { Accounts, SlotName } from '../types/supabase';
 import createEmbed from '../utils/commands/createEmbed';
 import getCosmetic from '../utils/commands/getCosmetic';
 import supabase from '../utils/functions/supabase';
@@ -21,18 +21,22 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply();
 
-        const whitelist = await supabase
-            .from<DupeWhitelist>('dupe_whitelist')
-            .select('*')
-            .match({ user_id: interaction.user.id })
-            .maybeSingle();
+        const occurances = [];
 
-        if (!whitelist.data) {
+        WHITELISTED_SERVERS.forEach(async (id) => {
+            const member = await interaction.client.guilds.cache
+                .get(id)
+                ?.members.fetch(interaction.user.id);
+
+            if (member) occurances.push(true);
+        });
+
+        if (!occurances.length) {
             await interaction.editReply({
                 embeds: [
                     createEmbed(
                         'error',
-                        `You must be whitelisted to use /${interaction.commandName}.`
+                        `YOu don't have permission to use \`/${interaction.commandName}\`.`
                     )
                 ]
             });

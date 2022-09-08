@@ -68,8 +68,14 @@ const selectMenu: Component<SelectMenuInteraction> = {
             });
         });
 
+        const names = Object.values(presets)
+            .filter((v) => !!v)
+            .map((v) => v!.name);
+
         await interaction.editReply({
-            embeds: [createEmbed('success', `Deleted survivor preset(s): "${preset.join('", "')}"`)]
+            embeds: [
+                createEmbed('success', `Deleted survivor preset(s): **${names.join('**, **')}**`)
+            ]
         });
     }
 };

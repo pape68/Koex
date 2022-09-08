@@ -54,7 +54,9 @@ const modal: Component<ModalSubmitInteraction> = {
 
             if (auth?.accountId === deviceAuth.accountId) {
                 await interaction.editReply({
-                    embeds: [createEmbed('info', `Already logged into "${oAuthData.displayName}".`)]
+                    embeds: [
+                        createEmbed('info', `Already logged into **${oAuthData.displayName}**.`)
+                    ]
                 });
                 return;
             }
@@ -74,7 +76,12 @@ const modal: Component<ModalSubmitInteraction> = {
 
                 await interaction.editReply({
                     embeds: [
-                        createEmbed('info', `Logged in as "${oAuthData.displayName}".`, cosmeticUrl)
+                        createEmbed('info', `Logged in as **${oAuthData.displayName}**.`).setAuthor(
+                            {
+                                name: interaction.user.username,
+                                iconURL: cosmeticUrl ?? undefined
+                            }
+                        )
                     ]
                 });
                 return;

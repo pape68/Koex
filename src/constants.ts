@@ -18,14 +18,14 @@ export const CLIENT_OPTIONS: ClientOptions = {
 // General
 
 export const AUTODAILY_WH = {
-    id: '1016879424395817010',
-    token: '1ZM5-D8a4dYxYu3uaybKZPCbgutd6GYZGbahPqt2udUn5qdFcMRhS68Rk80JDhfwriG-'
+    id: '1017223630163288125',
+    token: 'I4YDBFRQF3x0tlD1hLV2L00m4SCT4cXuiEh5lXKyaCRobk8ouq6KGgN-MVt8V6wn0hpb'
 };
 
 export const IS_PROD = process.env.NODE_ENV === 'production';
 
 export const COLORS: Record<string, HexColorString> = {
-    red: '#e62d64',
+    red: '#FA4459',
     orange: '#F8602C',
     yellow: '#fadc44',
     green: '#04d46c',
@@ -35,16 +35,9 @@ export const COLORS: Record<string, HexColorString> = {
 };
 
 export const EMOJIS = {
-    error: '<:KX_Error:1007835165764112394>',
-    info: '<:KX_Info:1007846233198563339>',
-    success: '<:KX_Success:1007848246531608697>'
-};
-
-const emojiBaseUrl = 'https://cdn.discordapp.com/emojis/';
-export const EMOJI_URLS = {
-    error: emojiBaseUrl + '1007835165764112394',
-    info: emojiBaseUrl + '1007846233198563339',
-    success: emojiBaseUrl + '1007848246531608697'
+    check: '<:KX_Check:1017236824621596732>',
+    cross: '<:KX_Cross:1017236826223808602>',
+    info: '<:KX_Info:1017236827507265547>'
 };
 
 // Fortnite

@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
 
 import addFriendFromId from '../api/account/addFriendFromId';
-import getFromDisplayName from '../api/account/getFromDisplayName';
+import getFromdisplayName from '../api/account/getFromdisplayName';
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
 import refreshAuthData from '../utils/commands/refreshAuthData';
@@ -23,11 +23,11 @@ const command: Command = {
             return;
         }
 
-        const friendData = await getFromDisplayName(auth.accessToken, displayName);
+        const friendData = await getFromdisplayName(auth.accessToken, displayName);
 
         if (!friendData) {
             await interaction.editReply({
-                embeds: [createEmbed('error', `Failed to retrieve user "${displayName}".`)]
+                embeds: [createEmbed('error', `Failed to retrieve user **${displayName}**.`)]
             });
             return;
         }
@@ -52,7 +52,7 @@ const command: Command = {
                         embeds: [
                             createEmbed(
                                 'info',
-                                `You already have "${displayName}" on your friends list.`
+                                `You already have **${displayName}** on your friends list.`
                             )
                         ]
                     });
@@ -62,7 +62,7 @@ const command: Command = {
                         embeds: [
                             createEmbed(
                                 'info',
-                                `You already sent a friend request to "${displayName}".`
+                                `You already sent a friend request to **${displayName}**.`
                             )
                         ]
                     });
@@ -72,7 +72,7 @@ const command: Command = {
                         embeds: [
                             createEmbed(
                                 'error',
-                                `User "${displayName}" has too many incoming friend requests.`
+                                `User **${displayName}** has too many incoming friend requests.`
                             )
                         ]
                     });
@@ -81,13 +81,16 @@ const command: Command = {
 
             await interaction.editReply({
                 embeds: [
-                    createEmbed('error', `Failed to send friend request to user "${displayName}".`)
+                    createEmbed(
+                        'error',
+                        `Failed to send friend request to user **${displayName}**.`
+                    )
                 ]
             });
         }
 
         interaction.editReply({
-            embeds: [createEmbed('success', `Sent friend request to user "${displayName}".`)]
+            embeds: [createEmbed('success', `Sent friend request to user **${displayName}**.`)]
         });
     },
     options: [

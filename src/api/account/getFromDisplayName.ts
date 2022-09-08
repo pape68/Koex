@@ -9,15 +9,15 @@ interface AccountData {
     email?: string;
     failedLoginAttempts?: number;
     lastLogin?: Date;
-    numberOfDisplayNameChanges?: number;
+    numberOfdisplayNameChanges?: number;
     ageGroup?: string;
     headless?: boolean;
     country?: string;
     lastName?: string;
     preferredLanguage?: string;
     links?: any;
-    lastDisplayNameChange?: Date;
-    canUpdateDisplayName?: boolean;
+    lastdisplayNameChange?: Date;
+    canUpdatedisplayName?: boolean;
     tfaEnabled?: boolean;
     emailVerified?: boolean;
     minorVerified?: boolean;
@@ -26,10 +26,10 @@ interface AccountData {
     cabinedModev: boolean;
 }
 
-const getFromDisplayName = async (accessToken: string, displayName: string) => {
+const getFromdisplayName = async (accessToken: string, displayName: string) => {
     const { data } = await request<AccountData>({
         method: 'GET',
-        url: `${Endpoints.accountDisplayName}/${displayName}`,
+        url: `${Endpoints.accountdisplayName}/${displayName}`,
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${accessToken}`
@@ -39,4 +39,4 @@ const getFromDisplayName = async (accessToken: string, displayName: string) => {
     return data ?? null;
 };
 
-export default getFromDisplayName;
+export default getFromdisplayName;

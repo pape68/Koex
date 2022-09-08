@@ -57,10 +57,6 @@ export type AutoDaily = {
     user_id: string;
 };
 
-export type DupeWhitelist = {
-    user_id: string;
-};
-
 export type PresetData = {
     name: string | null;
     characterIds: string[];

@@ -52,7 +52,10 @@ const command: Command = {
 
         await interaction.editReply({
             embeds: [
-                createEmbed('success', `Changed Homebase name from "${oldName}" to "${newName}".`)
+                createEmbed(
+                    'success',
+                    `Changed Homebase name from **${oldName}** to **${newName}**.`
+                )
             ]
         });
     },

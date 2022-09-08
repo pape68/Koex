@@ -128,7 +128,7 @@ const button: Component<ButtonInteraction> = {
 
             if (data?.name === name) {
                 await interaction.followUp({
-                    embeds: [createEmbed('error', `You already have a preset named "${name}".`)],
+                    embeds: [createEmbed('error', `You already have a preset named **${name}**.`)],
                     ephemeral: true
                 });
                 return;
@@ -146,7 +146,7 @@ const button: Component<ButtonInteraction> = {
                 });
 
                 await interaction.followUp({
-                    embeds: [createEmbed('success', `Saved survivor preset "${name}".`)],
+                    embeds: [createEmbed('success', `Saved survivor preset **${name}**.`)],
                     ephemeral: true
                 });
                 return;

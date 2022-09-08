@@ -53,13 +53,16 @@ const command: Command = {
             });
         } catch (error) {
             await interaction.editReply({
-                embeds: [createEmbed('error', `Failed to logout of "${auth.displayName}".`)]
+                embeds: [createEmbed('error', `Failed to logout of **${auth.displayName}**.`)]
             });
             return;
         } finally {
             await interaction.editReply({
                 embeds: [
-                    createEmbed('success', `Logged out of "${auth.displayName}".`, cosmeticUrl)
+                    createEmbed('success', `Logged out of **${auth.displayName}**.`).setAuthor({
+                        name: interaction.user.username,
+                        iconURL: cosmeticUrl ?? undefined
+                    })
                 ]
             });
             return;

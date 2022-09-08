@@ -23,7 +23,12 @@ const command: Command = {
         const cosmeticUrl = await getCosmetic(interaction.user.id);
 
         await interaction.editReply({
-            embeds: [createEmbed('info', `Logged in as "${auth.displayName}".`, cosmeticUrl)]
+            embeds: [
+                createEmbed('info', `Logged in as **${auth.displayName}**.`).setAuthor({
+                    name: interaction.user.username,
+                    iconURL: cosmeticUrl ?? undefined
+                })
+            ]
         });
     }
 };

@@ -91,7 +91,10 @@ const button: Component<ButtonInteraction> = {
             if (data?.name === preset.newName) {
                 await interaction.followUp({
                     embeds: [
-                        createEmbed('error', `You already have a preset named "${preset.newName}".`)
+                        createEmbed(
+                            'error',
+                            `You already have a preset named **${preset.newName}**.`
+                        )
                     ],
                     ephemeral: true
                 });
@@ -141,7 +144,7 @@ const button: Component<ButtonInteraction> = {
         });
 
         await interaction.followUp({
-            embeds: [createEmbed('success', `Renamed survivor preset to "${preset.newName}".`)],
+            embeds: [createEmbed('success', `Renamed survivor preset to **${preset.newName}**.`)],
             ephemeral: true
         });
         return;

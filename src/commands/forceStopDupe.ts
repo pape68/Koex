@@ -81,7 +81,7 @@ const command: Command = {
             return;
         }
 
-        await toggleDupe(false, interaction, {
+        await toggleDupe(interaction.client, false, interaction, {
             userId,
             auth: {
                 accessToken: oAuthData.access_token,

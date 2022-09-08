@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
 
 import deleteFriendFromId from '../api/account/deleteFriendFromId';
-import getFromDisplayName from '../api/account/getFromDisplayName';
+import getFromdisplayName from '../api/account/getFromdisplayName';
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
 import refreshAuthData from '../utils/commands/refreshAuthData';
@@ -23,11 +23,11 @@ const command: Command = {
             return;
         }
 
-        const friendData = await getFromDisplayName(auth.accessToken, displayName);
+        const friendData = await getFromdisplayName(auth.accessToken, displayName);
 
         if (!friendData) {
             await interaction.editReply({
-                embeds: [createEmbed('error', `Failed to retrieve user "${displayName}".`)]
+                embeds: [createEmbed('error', `Failed to retrieve user **${displayName}**.`)]
             });
             return;
         }
@@ -43,7 +43,7 @@ const command: Command = {
                         embeds: [
                             createEmbed(
                                 'info',
-                                `You don't have user "${displayName}" on your friends list.`
+                                `You don't have user **${displayName}** on your friends list.`
                             )
                         ]
                     });
@@ -54,7 +54,7 @@ const command: Command = {
                 embeds: [
                     createEmbed(
                         'error',
-                        `Failed to remove user "${displayName}" from your friends list.`
+                        `Failed to remove user **${displayName}** from your friends list.`
                     )
                 ]
             });
@@ -63,7 +63,7 @@ const command: Command = {
 
         await interaction.editReply({
             embeds: [
-                createEmbed('success', `Removed user "${displayName}" from your friends list.`)
+                createEmbed('success', `Removed user **${displayName}** from your friends list.`)
             ]
         });
     },

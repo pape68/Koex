@@ -1,5 +1,5 @@
 import { EmbedBuilder, HexColorString } from 'discord.js';
-import { COLORS, EMOJI_URLS } from '../../constants';
+import { COLORS, EMOJIS } from '../../constants';
 
 type embedType = 'error' | 'info' | 'success';
 
@@ -10,20 +10,15 @@ const colors: Record<embedType, HexColorString> = {
 };
 
 const emojis: Record<embedType, string> = {
-    error: EMOJI_URLS.error,
-    info: EMOJI_URLS.info,
-    success: EMOJI_URLS.success
+    error: EMOJIS.cross,
+    info: EMOJIS.info,
+    success: EMOJIS.check
 };
 
-const createEmbed = (
-    type: embedType,
-    description?: string | null,
-    customEmojiUrl?: string | null
-) => {
-    return new EmbedBuilder().setColor(colors[type]).setAuthor({
-        name: description ?? 'No description provided.',
-        iconURL: customEmojiUrl ?? emojis[type]
-    });
+const createEmbed = (type: embedType, description: string) => {
+    return new EmbedBuilder()
+        .setColor(colors[type])
+        .setDescription(`${emojis[type]} ${description}`);
 };
 
 export default createEmbed;
