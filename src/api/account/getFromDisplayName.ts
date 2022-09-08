@@ -26,7 +26,7 @@ interface AccountData {
     cabinedModev: boolean;
 }
 
-const getFromdisplayName = async (accessToken: string, displayName: string) => {
+const getFromDisplayName = async (accessToken: string, displayName: string) => {
     const { data } = await request<AccountData>({
         method: 'GET',
         url: `${Endpoints.accountdisplayName}/${displayName}`,
@@ -39,4 +39,4 @@ const getFromdisplayName = async (accessToken: string, displayName: string) => {
     return data ?? null;
 };
 
-export default getFromdisplayName;
+export default getFromDisplayName;

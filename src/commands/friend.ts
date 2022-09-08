@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
 
 import addFriendFromId from '../api/account/addFriendFromId';
-import getFromdisplayName from '../api/account/getFromdisplayName';
+import getFromDisplayName from '../api/account/getFromDisplayName';
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
 import refreshAuthData from '../utils/commands/refreshAuthData';
@@ -23,7 +23,7 @@ const command: Command = {
             return;
         }
 
-        const friendData = await getFromdisplayName(auth.accessToken, displayName);
+        const friendData = await getFromDisplayName(auth.accessToken, displayName);
 
         if (!friendData) {
             await interaction.editReply({
