@@ -36,7 +36,7 @@ const command: Command = {
                 embeds: [
                     createEmbed(
                         'error',
-                        `YOu don't have permission to use \`/${interaction.commandName}\`.`
+                        `You don't have permission to use \`/${interaction.commandName}\`.`
                     )
                 ]
             });
