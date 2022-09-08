@@ -1,4 +1,5 @@
-import { ApplicationCommandType } from 'discord.js';
+import { ApplicationCommandType, EmbedBuilder } from 'discord.js';
+import { COLORS } from '../constants';
 
 import { Command } from '../interfaces/Command';
 import { Accounts, SlotData, SlotName } from '../types/supabase';
@@ -59,10 +60,12 @@ const command: Command = {
         } finally {
             await interaction.editReply({
                 embeds: [
-                    createEmbed('success', `Logged out of **${auth.displayName}**.`).setAuthor({
-                        name: interaction.user.username,
-                        iconURL: cosmeticUrl ?? undefined
-                    })
+                    new EmbedBuilder()
+                        .setAuthor({
+                            name: `Goodbye, ${auth.displayName}`,
+                            iconURL: cosmeticUrl ?? undefined
+                        })
+                        .setColor(COLORS.gray)
                 ]
             });
             return;

@@ -78,10 +78,10 @@ const modal: Component<ModalSubmitInteraction> = {
                     embeds: [
                         new EmbedBuilder()
                             .setAuthor({
-                                name: oAuthData.displayName,
+                                name: `Welcome, ${oAuthData.displayName}`,
                                 iconURL: cosmeticUrl ?? undefined
                             })
-                            .setColor(COLORS.green)
+                            .setColor(COLORS.gray)
                     ]
                 });
                 return;

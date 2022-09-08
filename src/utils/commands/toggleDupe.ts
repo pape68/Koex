@@ -38,7 +38,7 @@ const toggleDupe = async (
 
     if (!whitelist.data) {
         interaction?.editReply({
-            embeds: [createEmbed('error', `You must be whitelisted to use this command.`)]
+            embeds: [createEmbed('error', "You don't have permission to use this.")]
         });
         throw new Error(`User '${userId}' not whitelisted.`);
     }

@@ -32,7 +32,7 @@ const command: Command = {
                 embeds: [
                     createEmbed(
                         'error',
-                        `You must be whitelisted to use /${interaction.commandName}.`
+                        `You don't have permission to use \`/${interaction.commandName}\`.`
                     )
                 ]
             });

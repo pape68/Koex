@@ -26,10 +26,10 @@ const command: Command = {
             embeds: [
                 new EmbedBuilder()
                     .setAuthor({
-                        name: auth.displayName,
+                        name: `Hello, ${auth.displayName}`,
                         iconURL: cosmeticUrl ?? undefined
                     })
-                    .setColor(COLORS.blue)
+                    .setColor(COLORS.gray)
             ]
         });
     }
