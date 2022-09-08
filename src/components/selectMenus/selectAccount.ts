@@ -1,5 +1,6 @@
-import { SelectMenuInteraction } from 'discord.js';
+import { EmbedBuilder, SelectMenuInteraction } from 'discord.js';
 
+import { COLORS } from '../../constants';
 import { Component } from '../../interfaces/Component';
 import { Accounts, SlotName } from '../../types/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
@@ -43,10 +44,12 @@ const selectMenu: Component<SelectMenuInteraction> = {
 
         interaction.editReply({
             embeds: [
-                createEmbed('info', `Logged in as **${auth.displayName}**.`).setAuthor({
-                    name: interaction.user.username,
-                    iconURL: cosmeticUrl ?? undefined
-                })
+                new EmbedBuilder()
+                    .setAuthor({
+                        name: auth.displayName,
+                        iconURL: cosmeticUrl ?? undefined
+                    })
+                    .setColor(COLORS.green)
             ]
         });
     }

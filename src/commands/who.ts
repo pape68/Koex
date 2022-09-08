@@ -1,10 +1,10 @@
-import { ApplicationCommandType } from 'discord.js';
+import { ApplicationCommandType, EmbedBuilder } from 'discord.js';
 
 import { Command } from '../interfaces/Command';
-import createEmbed from '../utils/commands/createEmbed';
 import refreshAuthData from '../utils/commands/refreshAuthData';
 import defaultResponses from '../utils/helpers/defaultResponses';
 import getCosmetic from '../utils/commands/getCosmetic';
+import { COLORS } from '../constants';
 
 const command: Command = {
     name: 'who',
@@ -24,10 +24,12 @@ const command: Command = {
 
         await interaction.editReply({
             embeds: [
-                createEmbed('info', `Logged in as **${auth.displayName}**.`).setAuthor({
-                    name: interaction.user.username,
-                    iconURL: cosmeticUrl ?? undefined
-                })
+                new EmbedBuilder()
+                    .setAuthor({
+                        name: auth.displayName,
+                        iconURL: cosmeticUrl ?? undefined
+                    })
+                    .setColor(COLORS.blue)
             ]
         });
     }

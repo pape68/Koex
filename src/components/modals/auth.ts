@@ -1,8 +1,8 @@
-import { ModalSubmitInteraction } from 'discord.js';
+import { ModalSubmitInteraction, EmbedBuilder } from 'discord.js';
 
 import createDeviceAuth from '../../api/auth/createDeviceAuth';
 import createOAuthData from '../../api/auth/createOAuthData';
-import { FORTNITE_CLIENT } from '../../constants';
+import { FORTNITE_CLIENT, COLORS } from '../../constants';
 import { Component } from '../../interfaces/Component';
 import { Accounts, SlotName } from '../../types/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
@@ -76,12 +76,12 @@ const modal: Component<ModalSubmitInteraction> = {
 
                 await interaction.editReply({
                     embeds: [
-                        createEmbed('info', `Logged in as **${oAuthData.displayName}**.`).setAuthor(
-                            {
-                                name: interaction.user.username,
+                        new EmbedBuilder()
+                            .setAuthor({
+                                name: oAuthData.displayName,
                                 iconURL: cosmeticUrl ?? undefined
-                            }
-                        )
+                            })
+                            .setColor(COLORS.green)
                     ]
                 });
                 return;
