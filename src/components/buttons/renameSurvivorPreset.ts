@@ -1,4 +1,5 @@
 import { ButtonInteraction, EmbedBuilder, Message } from 'discord.js';
+import _ from 'lodash';
 
 import { Component } from '../../interfaces/Component';
 import { COLORS } from '../../constants';
@@ -6,13 +7,12 @@ import createEmbed from '../../utils/commands/createEmbed';
 import refreshAuthData from '../../utils/commands/refreshAuthData';
 import defaultResponses from '../../utils/helpers/defaultResponses';
 import supabase from '../../utils/functions/supabase';
-import { SlotName, SurvivorPresets, PresetData, Accounts } from '../../types/supabase';
-import _ from 'lodash';
+import { SlotName, PresetData, Accounts } from '../../types/supabase';
 
 const button: Component<ButtonInteraction> = {
     name: 'renameSurvivorPreset',
     execute: async (interaction) => {
-        await interaction.deferReply({ ephemeral: true });
+        const reply = await interaction.deferReply({ ephemeral: true, fetchReply: true });
 
         const auth = await refreshAuthData(interaction.user.id);
 
@@ -40,19 +40,11 @@ const button: Component<ButtonInteraction> = {
             .setFooter(interaction.message.embeds[0].footer)
             .setTimestamp();
 
-        const channel = interaction.channel?.isDMBased()
-            ? await interaction.user.createDM()
-            : interaction.channel;
-
-        if (!channel) {
-            interaction.editReply({
-                embeds: [createEmbed('error', 'Failed to find your current channel.')]
-            });
-            return;
-        }
-
         await interaction.editReply({ embeds: [embed], components: [], files: [] });
-        await interaction.channel?.sendTyping();
+
+        const channel = await interaction.user.createDM().then(() => reply.channel);
+
+        await channel.sendTyping();
 
         const filter = (message: Message) => message.author.id === interaction.user.id;
 

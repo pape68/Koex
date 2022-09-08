@@ -8,12 +8,12 @@ import defaultResponses from '../../utils/helpers/defaultResponses';
 import createOperationRequest from '../../api/mcp/createOperationRequest';
 import { FortniteItem } from '../../api/types';
 import supabase from '../../utils/functions/supabase';
-import { SlotName, SurvivorPresets, Accounts, PresetData } from '../../types/supabase';
+import { SlotName, Accounts } from '../../types/supabase';
 
 const button: Component<ButtonInteraction> = {
     name: 'saveSurvivorPreset',
     execute: async (interaction) => {
-        await interaction.deferReply({ ephemeral: true });
+        const reply = await interaction.deferReply({ ephemeral: true, fetchReply: true });
 
         const auth = await refreshAuthData(interaction.user.id);
 
@@ -33,24 +33,13 @@ const button: Component<ButtonInteraction> = {
             .setFooter(interaction.message.embeds[0].footer)
             .setTimestamp();
 
-        const dmChannel = interaction.channel?.isDMBased()
-            ? await interaction.user.createDM()
-            : null;
-
-        const channel = dmChannel ?? interaction.channel;
-
-        if (!channel) {
-            interaction.editReply({
-                embeds: [createEmbed('error', 'Failed to find your current channel.')]
-            });
-            return;
-        }
-
         await interaction.editReply({ embeds: [embed], components: [], files: [] });
-        await interaction.channel?.sendTyping();
+
+        const channel = await interaction.user.createDM().then(() => reply.channel);
+
+        await channel.sendTyping();
 
         const filter = (message: Message) => message.author.id === interaction.user.id;
-
         const name = await channel
             .awaitMessages({ filter, max: 1, time: 30 * 1000, errors: ['time'] })
             .then((collected) => {
