@@ -70,12 +70,11 @@ const command: Command = {
         const newClaimDate = new Date(newInfo.lastClaimDate);
 
         let currentReward = newInfo.nextDefaultReward;
-
-        const rewards = [`\`${currentReward}\` **${(rewardData as any)[currentReward]}**`];
+        let currentReward2 = currentReward % 336
+        const rewards = [`\`${currentReward2}\` **${(rewardData as any)[currentReward2]}**`];
 
         for (let i = 1; i < 6; i++) {
-            if (currentReward + i === 336) currentReward = 0;
-            rewards.push(`\`${currentReward + i}\` **${(rewardData as any)[currentReward + i]}**`);
+            rewards.push(`\`${currentReward2 + i}\` **${(rewardData as any)[currentReward2 + i]}**`);
         }
 
         const cosmeticUrl = await getCosmetic(interaction.user.id);
