@@ -2,7 +2,7 @@
     "name": "koex",
     "version": "1.2.0",
     "description": "A Discord bot focused around Fortnite Save the World.",
-    "main": "dist",
+    "main": "dist/index.js",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/KojiOdyssey/Koex.git"
@@ -10,9 +10,9 @@
     "type": "module",
     "scripts": {
         "compile": "tsc --build tsconfig.json",
-        "start": "cross-env NODE_ENV=production node --experimental-specifier-resolution=node",
+        "start": "cross-env NODE_ENV=production node --no-warnings --experimental-specifier-resolution=node",
         "start:dev": "cross-env NODE_ENV=development nodemon",
-        "start:prod": "npm run compile && npm run start"
+        "start:prod": "pnpm compile && pnpm start"
     },
     "author": "Koji (KojiOdyssey)",
     "license": "Apache-2.0",
