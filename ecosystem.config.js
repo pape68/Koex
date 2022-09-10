@@ -3,7 +3,7 @@ module.exports = {
         {
             name: 'koex',
             script: 'node',
-            args: '-r dotenv/config dist/index.js',
+            args: '--experimental-specifier-resolution=node ./dist/index.js',
             instances: 1,
             env_production: {
                 NODE_ENV: 'production'
