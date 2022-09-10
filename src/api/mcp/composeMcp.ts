@@ -1,7 +1,7 @@
 import { SlotData } from '../../typings/supabase';
 import request from '../../utils/functions/request';
 import { FortniteProfile, MCPOperation } from '../types';
-import createMcpUrl from './createMcpUrl';
+import createMcpUrl from './createMppUrl';
 
 export interface MCPResponse<T = any> {
     profileRevision: number;
