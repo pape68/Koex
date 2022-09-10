@@ -25,7 +25,7 @@ const refreshAuthData = async (userId: string) => {
 
     if (!newAuth) return null;
 
-    const auth = Object.assign(oldAuth, newAuth);
+    const auth = Object.assign(newAuth, oldAuth);
 
     await supabase.from<Accounts>('accounts').upsert({
         user_id: userId,
