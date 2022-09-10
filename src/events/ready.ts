@@ -13,7 +13,7 @@ export const event: Event<true> = {
     execute: async (client: ExtendedClient) => {
         const { username, discriminator } = client.user!;
 
-        console.info(`Logged in as ${chalk.bold(username)}#${chalk.bold(chalk.gray(discriminator))}`);
+        console.info(`Logged in as ${chalk.bold(username) + chalk.bold(chalk.gray('#' + discriminator))}`);
 
         await loadCommands(client);
         await loadComponents(client);
