@@ -1,14 +1,14 @@
 import { ButtonInteraction, EmbedBuilder, Message } from 'discord.js';
 
+import composeMcp from '../../api/mcp/composeMcp';
+import { FortniteItem } from '../../api/types';
+import { Color } from '../../constants';
 import { Component } from '../../interfaces/Component';
-import { COLORS } from '../../constants';
+import { Accounts, SlotName } from '../../typings/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
 import refreshAuthData from '../../utils/commands/refreshAuthData';
-import defaultResponses from '../../utils/helpers/defaultResponses';
-import createOperationRequest from '../../api/mcp/createOperationRequest';
-import { FortniteItem } from '../../api/types';
 import supabase from '../../utils/functions/supabase';
-import { SlotName, Accounts } from '../../types/supabase';
+import defaultResponses from '../../utils/helpers/defaultResponses';
 
 const button: Component<ButtonInteraction> = {
     name: 'saveSurvivorPreset',
@@ -23,7 +23,7 @@ const button: Component<ButtonInteraction> = {
         }
 
         const embed = new EmbedBuilder()
-            .setColor(COLORS.gray)
+            .setColor(Color.gray)
             .setFields([
                 {
                     name: 'Naming Preset',
@@ -63,7 +63,7 @@ const button: Component<ButtonInteraction> = {
 
         if (!name) return;
 
-        const queryProfileRes = await createOperationRequest(auth, 'campaign', 'QueryProfile');
+        const queryProfileRes = await composeMcp(auth, 'campaign', 'QueryProfile');
 
         if (queryProfileRes.error) {
             interaction.followUp({

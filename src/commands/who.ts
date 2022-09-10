@@ -1,10 +1,10 @@
 import { ApplicationCommandType, EmbedBuilder } from 'discord.js';
 
+import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
+import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
 import refreshAuthData from '../utils/commands/refreshAuthData';
 import defaultResponses from '../utils/helpers/defaultResponses';
-import getCosmetic from '../utils/commands/getCosmetic';
-import { COLORS } from '../constants';
 
 const command: Command = {
     name: 'who',
@@ -20,16 +20,16 @@ const command: Command = {
             return;
         }
 
-        const cosmeticUrl = await getCosmetic(interaction.user.id);
+        const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
 
         await interaction.editReply({
             embeds: [
                 new EmbedBuilder()
                     .setAuthor({
                         name: `Hello, ${auth.displayName}`,
-                        iconURL: cosmeticUrl ?? undefined
+                        iconURL: characterAvatarUrl ?? undefined
                     })
-                    .setColor(COLORS.gray)
+                    .setColor(Color.gray)
             ]
         });
     }

@@ -1,9 +1,8 @@
 import { ActionRowBuilder, ButtonInteraction, EmbedBuilder, SelectMenuBuilder } from 'discord.js';
 
-import { COLORS } from '../../constants';
+import { Color } from '../../constants';
 import { Component } from '../../interfaces/Component';
-import { PresetData } from '../../types/supabase';
-import defaultResponses from '../../utils/helpers/defaultResponses';
+import { PresetData } from '../../typings/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
 import refreshAuthData from '../../utils/commands/refreshAuthData';
 
@@ -31,7 +30,7 @@ const button: Component<ButtonInteraction> = {
             return;
         }
 
-        const embed = new EmbedBuilder().setColor(COLORS.gray).addFields([
+        const embed = new EmbedBuilder().setColor(Color.gray).addFields([
             {
                 name: 'Switching Presets',
                 value: `Use the select menu below to switch survivor presets.`

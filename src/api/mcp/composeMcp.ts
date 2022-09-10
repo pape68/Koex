@@ -1,7 +1,7 @@
-import { SlotData } from '../../types/supabase';
+import { SlotData } from '../../typings/supabase';
 import request from '../../utils/functions/request';
 import { FortniteProfile, MCPOperation } from '../types';
-import createMCPUrl from './createMCPUrl';
+import createMcpUrl from './createMcpUrl';
 
 export interface MCPResponse<T = any> {
     profileRevision: number;
@@ -35,13 +35,13 @@ export interface Stats<T> {
     attributes: T;
 }
 
-const createOperationRequest = async (
+const composeMcp = async (
     auth: SlotData,
     profile: keyof typeof FortniteProfile,
     operation: keyof typeof MCPOperation,
     payload?: any
 ) => {
-    const { url, params } = createMCPUrl(auth.accountId, 'client', operation, profile);
+    const { url, params } = createMcpUrl(auth.accountId, 'client', operation, profile);
 
     const headers = {
         'Content-Type': 'application/json',
@@ -57,4 +57,4 @@ const createOperationRequest = async (
     });
 };
 
-export default createOperationRequest;
+export default composeMcp;

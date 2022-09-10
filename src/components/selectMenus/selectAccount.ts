@@ -1,10 +1,10 @@
 import { EmbedBuilder, SelectMenuInteraction } from 'discord.js';
 
-import { COLORS } from '../../constants';
+import { Color } from '../../constants';
 import { Component } from '../../interfaces/Component';
-import { Accounts, SlotName } from '../../types/supabase';
+import { Accounts, SlotName } from '../../typings/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
-import getCosmetic from '../../utils/commands/getCosmetic';
+import getCharacterAvatar from '../../utils/commands/getCharacterAvatar';
 import supabase from '../../utils/functions/supabase';
 import defaultResponses from '../../utils/helpers/defaultResponses';
 
@@ -40,16 +40,16 @@ const selectMenu: Component<SelectMenuInteraction> = {
             return;
         }
 
-        const cosmeticUrl = await getCosmetic(interaction.user.id);
+        const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
 
         interaction.editReply({
             embeds: [
                 new EmbedBuilder()
                     .setAuthor({
                         name: auth.displayName,
-                        iconURL: cosmeticUrl ?? undefined
+                        iconURL: characterAvatarUrl ?? undefined
                     })
-                    .setColor(COLORS.green)
+                    .setColor(Color.green)
             ]
         });
     }

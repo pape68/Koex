@@ -1,13 +1,8 @@
-import {
-    ActionRowBuilder,
-    ApplicationCommandType,
-    EmbedBuilder,
-    SelectMenuBuilder
-} from 'discord.js';
+import { ActionRowBuilder, ApplicationCommandType, EmbedBuilder, SelectMenuBuilder } from 'discord.js';
 
-import { COLORS } from '../constants';
+import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
-import { Accounts, SlotData } from '../types/supabase';
+import { Accounts, SlotData } from '../typings/supabase';
 import supabase from '../utils/functions/supabase';
 import defaultResponses from '../utils/helpers/defaultResponses';
 
@@ -46,7 +41,7 @@ const command: Command = {
             return;
         }
 
-        const embed = new EmbedBuilder().setColor(COLORS.blue).addFields([
+        const embed = new EmbedBuilder().setColor(Color.blue).addFields([
             {
                 name: 'Switching Accounts',
                 value: `Use the select menu below to switch accounts.`

@@ -1,8 +1,7 @@
 import { WebhookClient } from 'discord.js';
-import createOperationRequest from '../api/mcp/createOperationRequest';
-import { AUTODAILY_WH } from '../constants';
+import composeMcp from '../api/mcp/composeMcp';
 import { ExtendedClient } from '../interfaces/ExtendedClient';
-import { AutoDaily } from '../types/supabase';
+import { AutoDaily } from '../typings/supabase';
 import createEmbed from '../utils/commands/createEmbed';
 import refreshAuthData from '../utils/commands/refreshAuthData';
 import supabase from '../utils/functions/supabase';
@@ -17,19 +16,17 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
 
         if (!auth) return;
 
-        await createOperationRequest(auth, 'campaign', 'ClaimLoginReward');
+        await composeMcp(auth, 'campaign', 'ClaimLoginReward');
 
-        const webhookClient = new WebhookClient({ id: AUTODAILY_WH.id, token: AUTODAILY_WH.token });
+        const webhookClient = new WebhookClient({
+            id: process.env.AUTODAILY_WEBHOOK_ID!,
+            token: process.env.AUTODAILY_WEBHOOK_TOKEN!
+        });
 
         webhookClient.send({
             username: client.user?.username,
             avatarURL: client.user?.displayAvatarURL(),
-            embeds: [
-                createEmbed(
-                    'info',
-                    `Attempted to claim daily login reward for **${account.user_id}**.`
-                )
-            ]
+            embeds: [createEmbed('info', `Attempted to claim daily login reward for **${account.user_id}**.`)]
         });
     });
 };

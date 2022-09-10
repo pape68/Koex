@@ -1,10 +1,6 @@
-import {
-    ApplicationCommandOptionType,
-    ApplicationCommandType,
-    AttachmentBuilder
-} from 'discord.js';
+import { ApplicationCommandOptionType, ApplicationCommandType, AttachmentBuilder } from 'discord.js';
 
-import createOperationRequest from '../api/mcp/createOperationRequest';
+import composeMcp from '../api/mcp/composeMcp';
 import { FortniteProfile, MCPOperation } from '../api/types';
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
@@ -29,12 +25,7 @@ const command: Command = {
             return;
         }
 
-        const operationRes = await createOperationRequest(
-            auth,
-            profile,
-            operation,
-            payload ? JSON.parse(payload) : {}
-        );
+        const operationRes = await composeMcp(auth, profile, operation, payload ? JSON.parse(payload) : {});
 
         if (operationRes.error) {
             await interaction.editReply({

@@ -1,4 +1,4 @@
-import { Accounts, SlotName } from '../../types/supabase';
+import { Accounts, SlotName } from '../../typings/supabase';
 import supabase from '../functions/supabase';
 
 const getAuthData = async (userId: string) => {
@@ -10,9 +10,7 @@ const getAuthData = async (userId: string) => {
 
     if (!account) return null;
 
-    const auth = account[('slot_' + account.active_slot) as SlotName];
-
-    return auth;
+    return account[('slot_' + account.active_slot) as SlotName];
 };
 
 export default getAuthData;

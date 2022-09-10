@@ -1,5 +1,5 @@
 import { Client, Collection } from 'discord.js';
-import { Queue } from '../types';
+import { Queue } from '../typings';
 
 import { Command } from './Command';
 import { Component, ComponentInteraction } from './Component';

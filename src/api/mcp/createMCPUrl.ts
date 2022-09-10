@@ -1,6 +1,6 @@
 import { Endpoints, FortniteProfile, MCPOperation } from '../types';
 
-const createMCPUrl = (
+const createMcpUrl = (
     accountId: string,
     route: string,
     operation: keyof typeof MCPOperation,
@@ -10,4 +10,4 @@ const createMCPUrl = (
     params: { profileId: profile.toString() }
 });
 
-export default createMCPUrl;
+export default createMcpUrl;

@@ -7,9 +7,9 @@ import {
     EmbedBuilder
 } from 'discord.js';
 
-import { COLORS } from '../constants';
+import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
-import getCosmetic from '../utils/commands/getCosmetic';
+import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
 import refreshAuthData from '../utils/commands/refreshAuthData';
 import defaultResponses from '../utils/helpers/defaultResponses';
 
@@ -25,12 +25,12 @@ const command: Command = {
             return;
         }
 
-        const cosmeticUrl = await getCosmetic(interaction.user.id);
+        const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
 
         const file = new AttachmentBuilder(process.cwd() + '/assets/survivors.png');
 
         const embed = new EmbedBuilder()
-            .setColor(COLORS.blue)
+            .setColor(Color.blue)
             .addFields([
                 {
                     name: 'Saving Squads',
@@ -42,14 +42,11 @@ const command: Command = {
                 }
             ])
             .setImage('attachment://survivors.png')
-            .setFooter({ text: auth.displayName, iconURL: cosmeticUrl ?? undefined })
+            .setFooter({ text: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
             .setTimestamp();
 
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-            new ButtonBuilder()
-                .setLabel('Save Preset')
-                .setStyle(ButtonStyle.Primary)
-                .setCustomId('saveSurvivorPreset'),
+            new ButtonBuilder().setLabel('Save Preset').setStyle(ButtonStyle.Primary).setCustomId('saveSurvivorPreset'),
             new ButtonBuilder()
                 .setLabel('Switch Presets')
                 .setStyle(ButtonStyle.Secondary)

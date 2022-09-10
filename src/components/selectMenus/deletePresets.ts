@@ -1,7 +1,7 @@
 import { SelectMenuInteraction } from 'discord.js';
 
 import { Component } from '../../interfaces/Component';
-import { Accounts, SlotName, PresetData, SurvivorPresets } from '../../types/supabase';
+import { Accounts, PresetData, SlotName } from '../../typings/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
 import refreshAuthData from '../../utils/commands/refreshAuthData';
 import supabase from '../../utils/functions/supabase';
@@ -52,9 +52,7 @@ const selectMenu: Component<SelectMenuInteraction> = {
 
         preset.forEach(async (p) => {
             const target = Object.entries(presets)
-                .filter(
-                    ([k, v]) => k.startsWith('slot_') && !!v && (v as PresetData).name === p.name
-                )
+                .filter(([k, v]) => k.startsWith('slot_') && !!v && (v as PresetData).name === p.name)
                 .map(([k]) => k.split('_')[1])[0];
 
             await supabase.from<Accounts>('accounts_test').upsert({
@@ -73,9 +71,7 @@ const selectMenu: Component<SelectMenuInteraction> = {
             .map((v) => v!.name);
 
         await interaction.editReply({
-            embeds: [
-                createEmbed('success', `Deleted survivor preset(s): **${names.join('**, **')}**`)
-            ]
+            embeds: [createEmbed('success', `Deleted survivor preset(s): **${names.join('**, **')}**`)]
         });
     }
 };

@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
-import createOperationRequest from '../api/mcp/createOperationRequest';
+import composeMcp from '../api/mcp/composeMcp';
 
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
@@ -22,10 +22,9 @@ const command: Command = {
             return;
         }
 
-        const queryProfileRes = await createOperationRequest(auth, 'common_public', 'QueryProfile');
+        const queryProfileRes = await composeMcp(auth, 'common_public', 'QueryProfile');
 
-        const oldName =
-            queryProfileRes.data?.profileChanges[0].profile.stats.attributes.homebase_name;
+        const oldName = queryProfileRes.data?.profileChanges[0].profile.stats.attributes.homebase_name;
 
         if (queryProfileRes.error) {
             await interaction.editReply({
@@ -34,14 +33,9 @@ const command: Command = {
             return;
         }
 
-        const setHomebaseNameRes = await createOperationRequest(
-            auth,
-            'common_public',
-            'SetHomebaseName',
-            {
-                homebaseName: newName
-            }
-        );
+        const setHomebaseNameRes = await composeMcp(auth, 'common_public', 'SetHomebaseName', {
+            homebaseName: newName
+        });
 
         if (setHomebaseNameRes.error) {
             await interaction.editReply({
@@ -51,12 +45,7 @@ const command: Command = {
         }
 
         await interaction.editReply({
-            embeds: [
-                createEmbed(
-                    'success',
-                    `Changed Homebase name from **${oldName}** to **${newName}**.`
-                )
-            ]
+            embeds: [createEmbed('success', `Changed Homebase name from **${oldName}** to **${newName}**.`)]
         });
     },
     options: [

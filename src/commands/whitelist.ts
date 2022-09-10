@@ -1,10 +1,10 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
 
+import { PostgrestResponse } from '@supabase/supabase-js';
 import { Command } from '../interfaces/Command';
+import { DupeWhitelist } from '../typings/supabase';
 import createEmbed from '../utils/commands/createEmbed';
 import supabase from '../utils/functions/supabase';
-import { DupeWhitelist } from '../types/supabase';
-import { PostgrestResponse } from '@supabase/supabase-js';
 
 const command: Command = {
     name: 'whitelist',

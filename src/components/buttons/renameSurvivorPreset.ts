@@ -1,13 +1,12 @@
 import { ButtonInteraction, EmbedBuilder, Message } from 'discord.js';
-import _ from 'lodash';
 
+import { Color } from '../../constants';
 import { Component } from '../../interfaces/Component';
-import { COLORS } from '../../constants';
+import { Accounts, PresetData, SlotName } from '../../typings/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
 import refreshAuthData from '../../utils/commands/refreshAuthData';
-import defaultResponses from '../../utils/helpers/defaultResponses';
 import supabase from '../../utils/functions/supabase';
-import { SlotName, PresetData, Accounts } from '../../types/supabase';
+import defaultResponses from '../../utils/helpers/defaultResponses';
 
 const button: Component<ButtonInteraction> = {
     name: 'renameSurvivorPreset',
@@ -30,7 +29,7 @@ const button: Component<ButtonInteraction> = {
         }
 
         const embed = new EmbedBuilder()
-            .setColor(COLORS.gray)
+            .setColor(Color.gray)
             .setFields([
                 {
                     name: 'Renaming Preset',
@@ -54,9 +53,7 @@ const button: Component<ButtonInteraction> = {
                 collected.forEach((item) => {
                     if (item.content.length > 16) {
                         interaction.followUp({
-                            embeds: [
-                                createEmbed('error', 'Please limit the name to 16 characters.')
-                            ],
+                            embeds: [createEmbed('error', 'Please limit the name to 16 characters.')],
                             ephemeral: true
                         });
                         return null;
@@ -82,12 +79,7 @@ const button: Component<ButtonInteraction> = {
 
             if (data?.name === preset.newName) {
                 await interaction.followUp({
-                    embeds: [
-                        createEmbed(
-                            'error',
-                            `You already have a preset named **${preset.newName}**.`
-                        )
-                    ],
+                    embeds: [createEmbed('error', `You already have a preset named **${preset.newName}**.`)],
                     ephemeral: true
                 });
                 return;
@@ -95,17 +87,12 @@ const button: Component<ButtonInteraction> = {
         }
 
         const target = Object.entries(presets ?? {})
-            .filter(
-                ([k, v]) =>
-                    k.startsWith('slot_') && !!v && (v as PresetData).name === preset.oldName
-            )
+            .filter(([k, v]) => k.startsWith('slot_') && !!v && (v as PresetData).name === preset.oldName)
             .map(([k]) => k.split('_')[1])[0];
 
         if (!target) {
             await interaction.followUp({
-                embeds: [
-                    createEmbed('info', `You don't have a survivor preset named ${preset.oldName}.`)
-                ],
+                embeds: [createEmbed('info', `You don't have a survivor preset named ${preset.oldName}.`)],
                 ephemeral: true
             });
             return;

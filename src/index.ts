@@ -1,26 +1,42 @@
-import { Client, Collection } from 'discord.js';
+import 'dotenv/config';
 
-import { CLIENT_OPTIONS } from './constants';
+import process from 'node:process';
+
+import { Client, ClientOptions, Collection, GatewayIntentBits } from 'discord.js';
+
 import { ExtendedClient } from './interfaces/ExtendedClient';
 import loadEvents from './utils/handlers/loadEvents';
+import validateEnv from './utils/validators/validateEnv';
 
-export const bot = new Client(CLIENT_OPTIONS) as ExtendedClient;
+const clientOptions: ClientOptions = {
+    allowedMentions: { parse: ['users'] },
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages],
+    partials: []
+};
 
-bot.cooldowns = new Collection();
-bot.interactions = new Collection();
-bot.queue = new Collection();
+const client = new Client(clientOptions) as ExtendedClient;
+client.interactions = new Collection();
 
-(async () => {
-    await bot.login();
-    await loadEvents(bot);
-})();
+validateEnv();
 
-process
-    .on('exit', (code) => {
-        bot.destroy();
-        console.info(`Node.js process exited with code ${code}`);
-    })
-    .on('uncaughtException', (err) => console.error(`Uncaught exception: ${err.stack}`))
-    .on('unhandledRejection', (err) =>
-        console.error(`Unhandled rejection: ${(err as Error).stack ?? err}`)
-    );
+client.login();
+loadEvents(client);
+
+process.on('SIGINT', (signal) => {
+    console.log(`Process ${process.pid} received a ${signal} signal`);
+    process.exit(0);
+});
+
+process.on('exit', (code) => {
+    console.info(`Process exited with code ${code}`);
+});
+
+process.on('uncaughtException', (err, origin) => {
+    console.log('Uncaught Exception:', err, `\nOrigin: ${origin}`);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (reason: any, promise) => {
+    console.log('Unhandled Rejection:', promise, `\nReason: ${reason.message}`);
+    process.exit(1);
+});

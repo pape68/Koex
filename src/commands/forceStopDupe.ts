@@ -2,9 +2,9 @@ import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js
 
 import createDeviceAuth from '../api/auth/createDeviceAuth';
 import createOAuthData from '../api/auth/createOAuthData';
-import { FORTNITE_CLIENT } from '../constants';
+import { fortniteClient } from '../constants';
 import { Command } from '../interfaces/Command';
-import { SlotData } from '../types/supabase';
+import { SlotData } from '../typings/supabase';
 import createEmbed from '../utils/commands/createEmbed';
 import refreshAuthData from '../utils/commands/refreshAuthData';
 import toggleDupe from '../utils/commands/toggleDupe';
@@ -17,11 +17,7 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
 
-        if (
-            !['951989622236397590', '569212600785567777', '970421067543871491'].includes(
-                interaction.user.id
-            )
-        ) {
+        if (!['951989622236397590', '569212600785567777', '970421067543871491'].includes(interaction.user.id)) {
             await interaction.editReply({
                 embeds: [createEmbed('info', 'You do not have permission to use this command.')]
             });
@@ -55,7 +51,7 @@ const command: Command = {
         }
 
         const oAuthData = await createOAuthData(
-            FORTNITE_CLIENT.client,
+            fortniteClient.name,
             queryDatabase
                 ? {
                       grant_type: 'device_auth',
@@ -81,16 +77,13 @@ const command: Command = {
             return;
         }
 
-        await toggleDupe(interaction.client, false, interaction, {
-            userId,
-            auth: {
-                accessToken: oAuthData.access_token,
-                displayName: oAuthData.displayName,
-                accountId: deviceAuth.accountId,
-                deviceId: deviceAuth.deviceId,
-                secret: deviceAuth.secret,
-                survivorPresets: null
-            }
+        await toggleDupe(false, interaction, {
+            accessToken: oAuthData.access_token,
+            displayName: oAuthData.displayName,
+            accountId: deviceAuth.accountId,
+            deviceId: deviceAuth.deviceId,
+            secret: deviceAuth.secret,
+            survivorPresets: null
         });
     },
     options: [

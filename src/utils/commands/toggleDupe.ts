@@ -1,62 +1,43 @@
-import { ChatInputCommandInteraction, Client } from 'discord.js';
-
-import { DupeWhitelist, SlotData } from '../../types/supabase';
-import createOperationRequest from '../../api/mcp/createOperationRequest';
+import { ChatInputCommandInteraction } from 'discord.js';
+import composeMcp from '../../api/mcp/composeMcp';
 import { FortniteItem } from '../../api/types';
 import { ComponentInteraction } from '../../interfaces/Component';
-import { ExtendedClient } from '../../interfaces/ExtendedClient';
+import { DupeWhitelist, SlotData } from '../../typings/supabase';
+import supabase from '../functions/supabase';
 import defaultResponses from '../helpers/defaultResponses';
 import createEmbed from './createEmbed';
 import refreshAuthData from './refreshAuthData';
-import supabase from '../functions/supabase';
-
-interface Overrides {
-    auth: SlotData;
-    userId: string;
-}
 
 const toggleDupe = async (
-    client: Client | ExtendedClient,
     enable: boolean,
-    interaction?: ChatInputCommandInteraction | ComponentInteraction,
-    overrides?: Overrides
+    interaction: ChatInputCommandInteraction | ComponentInteraction,
+    authOverride?: SlotData
 ) => {
-    if (!interaction && !overrides) {
-        throw new Error('Invalid function parameters.');
-    }
-
-    if (!interaction?.deferred && !interaction?.replied)
-        await interaction?.deferReply({ ephemeral: true });
-
-    const userId = (overrides?.userId ?? interaction?.user.id)!;
+    if (!interaction.deferred && !interaction.replied) await interaction.deferReply({ ephemeral: true });
 
     const whitelist = await supabase
         .from<DupeWhitelist>('dupe_whitelist')
         .select('*')
-        .match({ user_id: userId })
+        .match({ user_id: interaction.user.id })
         .maybeSingle();
 
     if (!whitelist.data) {
-        interaction?.editReply({
+        await interaction.editReply({
             embeds: [createEmbed('error', "You don't have permission to use this.")]
         });
-        throw new Error(`User '${userId}' not whitelisted.`);
-    }
-
-    const auth = await refreshAuthData(userId);
-
-    if (!auth) {
-        await interaction?.editReply(defaultResponses.loggedOut);
         return;
     }
 
-    const queryProfileRes = await createOperationRequest(
-        auth,
-        enable ? 'theater0' : 'outpost0',
-        'QueryProfile'
-    );
+    const auth = authOverride ?? (await refreshAuthData(interaction.user.id));
 
-    if (!queryProfileRes.data || queryProfileRes.error) {
+    if (!auth) {
+        await interaction.editReply(defaultResponses.loggedOut);
+        return;
+    }
+
+    const profile = await composeMcp(auth, enable ? 'theater0' : 'outpost0', 'QueryProfile');
+
+    if (!profile.data || profile.error) {
         await interaction?.editReply({
             embeds: [createEmbed('error', `Failed to ${enable ? 'start' : 'stop'} the dupe.`)]
         });
@@ -70,7 +51,7 @@ const toggleDupe = async (
         'Weapon:buildingitemdata_roofs'
     ];
 
-    const profileItems: FortniteItem[] = queryProfileRes.data.profileChanges[0].profile.items;
+    const profileItems: FortniteItem[] = profile.data.profileChanges[0].profile.items;
     const transferData = new Map(Object.entries(profileItems).map(([k, v]) => [v.templateId, k]));
 
     const transferOperations = itemGuids
@@ -83,29 +64,31 @@ const toggleDupe = async (
         }));
 
     if (!transferOperations.length) {
-        await interaction?.editReply({
+        await interaction.editReply({
             embeds: [createEmbed('error', `The dupe is already ${enable ? 'started' : 'stopped'}.`)]
         });
         return;
     }
 
-    const storageTransferRes = await createOperationRequest(
-        overrides?.auth ?? auth,
-        'theater0',
-        'StorageTransfer',
-        {
-            transferOperations
-        }
-    );
+    const storage = await composeMcp(auth, 'theater0', 'StorageTransfer', {
+        transferOperations
+    });
 
-    if (!storageTransferRes.data || storageTransferRes.error) {
+    if (!storage.data) {
+        await interaction?.editReply({
+            embeds: [createEmbed('error', `Failed to ${enable ? 'start' : 'stop'} the dupe.`)]
+        });
+        return;
+    }
+
+    if (!storage.data || storage.error) {
         const defaultResponse = {
             embeds: [createEmbed('error', `Failed to ${enable ? 'start' : 'stop'} the dupe.`)]
         };
 
-        switch (storageTransferRes.error.numericErrorCode) {
+        switch (storage.error.numericErrorCode) {
             case 12821:
-                await interaction?.editReply({
+                await interaction.editReply({
                     embeds: [
                         createEmbed(
                             'error',
@@ -115,24 +98,17 @@ const toggleDupe = async (
                 });
                 return;
             case 16098:
-                await interaction?.editReply({
+                await interaction.editReply({
                     embeds: [
-                        createEmbed(
-                            'error',
-                            `You need at least 4 free ${enable ? 'storage' : 'inventory'} slots.`
-                        )
+                        createEmbed('error', `You need at least 4 free ${enable ? 'storage' : 'inventory'} slots.`)
                     ]
                 });
                 return;
             default:
-                await interaction?.editReply(defaultResponse);
+                await interaction.editReply(defaultResponse);
                 return;
         }
     }
-
-    await interaction?.editReply({
-        embeds: [createEmbed('success', `Successfully ${enable ? 'started' : 'stopped'} the dupe.`)]
-    });
 };
 
 export default toggleDupe;

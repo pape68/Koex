@@ -15,9 +15,7 @@ const event: Event = {
             return;
         }
 
-        const component = client.interactions.get(interaction.customId) as
-            | Component<ComponentInteraction>
-            | undefined;
+        const component = client.interactions.get(interaction.customId) as Component<ComponentInteraction> | undefined;
 
         if (!component) {
             await interaction.reply({

@@ -1,6 +1,6 @@
 import { ApplicationCommandType } from 'discord.js';
 
-import createOperationRequest from '../api/mcp/createOperationRequest';
+import composeMcp from '../api/mcp/composeMcp';
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
 import refreshAuthData from '../utils/commands/refreshAuthData';
@@ -20,11 +20,7 @@ const command: Command = {
             return;
         }
 
-        const unassignAllSquadsRes = await createOperationRequest(
-            auth,
-            'campaign',
-            'UnassignAllSquads'
-        );
+        const unassignAllSquadsRes = await composeMcp(auth, 'campaign', 'UnassignAllSquads');
 
         if (unassignAllSquadsRes.error) {
             interaction.followUp({

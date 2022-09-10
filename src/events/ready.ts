@@ -1,27 +1,24 @@
+import chalk from 'chalk';
 import { ActivityType } from 'discord.js';
 import cron from 'node-cron';
-import pc from 'picocolors';
 
 import { Event } from '../interfaces/Event';
 import { ExtendedClient } from '../interfaces/ExtendedClient';
+import startAutoDailyJob from '../jobs/autoDaily';
 import loadCommands from '../utils/handlers/loadCommands';
 import loadComponents from '../utils/handlers/loadComponents';
-import startAutoDailyJob from '../jobs/autoDaily';
 
 export const event: Event<true> = {
     name: 'ready',
     execute: async (client: ExtendedClient) => {
-        console.info(
-            `Logged in as ${
-                pc.bold(client.user!.username) + pc.gray('#' + client.user!.discriminator)
-            }. ✅`
-        );
+        const { username, discriminator } = client.user!;
+
+        console.info(`Logged in as ${chalk.bold(username)}#${chalk.bold(chalk.gray(discriminator))}`);
 
         await loadCommands(client);
         await loadComponents(client);
 
-        const getUsers = () =>
-            client.guilds.cache.map((g) => g.memberCount).reduce((a, c) => a + c);
+        const getUsers = () => client.guilds.cache.map((g) => g.memberCount).reduce((a, c) => a + c);
 
         let idx = 0;
         const activities = [`${getUsers()} Users`, `${client.guilds.cache.size} Servers`];
@@ -35,8 +32,10 @@ export const event: Event<true> = {
             });
         }, 10 * 1000);
 
-        cron.schedule('30 0 * * *', async () => {
-            await startAutoDailyJob(client);
+        cron.schedule('0 0 * * *', async () => {
+            setTimeout(async () => {
+                await startAutoDailyJob(client);
+            }, 30 * 1000);
         });
     }
 };

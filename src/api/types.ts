@@ -177,15 +177,9 @@ interface AuthClients {
 
 export const AuthClients = {
     fortnitePCGameClient: btoa('ec684b8c687f479fadea3cb2ad83f5c6:e1f31c211f28413186262d37a13fc84d'),
-    fortniteIOSGameClient: btoa(
-        '3446cd72694c4a4485d81b77adbb2141:9209d4a5e25a457fb9b07489d313b41a'
-    ),
-    fortniteAndroidGameClient: btoa(
-        '3f69e56c7649492c8cc29f1af08a8a12:b51ee9cb12234f50a69efa67ef53812e'
-    ),
-    fortniteSwitchGameClient: btoa(
-        '5229dcd3ac3845208b496649092f251b:e3bd2d3e-bf8c-4857-9e7d-f3d947d220c7'
-    ),
+    fortniteIOSGameClient: btoa('3446cd72694c4a4485d81b77adbb2141:9209d4a5e25a457fb9b07489d313b41a'),
+    fortniteAndroidGameClient: btoa('3f69e56c7649492c8cc29f1af08a8a12:b51ee9cb12234f50a69efa67ef53812e'),
+    fortniteSwitchGameClient: btoa('5229dcd3ac3845208b496649092f251b:e3bd2d3e-bf8c-4857-9e7d-f3d947d220c7'),
     fortniteCNGameClient: btoa('efe3cbb938804c74b20e109d0efc1548:6e31bdbae6a44f258474733db74f39ba'),
     launcherAppClient2: btoa('34a02cf8f4414e29b15921876da36f9a:daafbccc737745039dffe53d94fc76cf')
 };

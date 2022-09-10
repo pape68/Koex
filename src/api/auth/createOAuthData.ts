@@ -1,6 +1,6 @@
 import qs from 'qs';
 
-import { UserData } from '../../types/supabase';
+import { UserData } from '../../typings/supabase';
 import request from '../../utils/functions/request';
 import { AuthClients, Endpoints } from '../types';
 

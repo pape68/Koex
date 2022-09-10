@@ -7,20 +7,21 @@ import {
     EmbedBuilder
 } from 'discord.js';
 
-import { COLORS, FORTNITE_CLIENT } from '../constants';
+import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
+import { fortniteClient } from './../constants';
 
 const command: Command = {
     name: 'login',
     description: 'Login to a new Epic Games account.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
-        const baseUrl = `https://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fredirect%3FclientId%3D${FORTNITE_CLIENT.id}%26responseType%3Dcode%0A`;
+        const baseUrl = `https://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fredirect%3FclientId%3D${fortniteClient.id}%26responseType%3Dcode%0A`;
 
         const file = new AttachmentBuilder(process.cwd() + '/assets/authCode.png');
 
         const embed = new EmbedBuilder()
-            .setColor(COLORS.blue)
+            .setColor(Color.blue)
             .addFields([
                 {
                     name: 'Logging In',
@@ -35,10 +36,7 @@ const command: Command = {
 
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
             new ButtonBuilder().setLabel('Epic Games').setStyle(ButtonStyle.Link).setURL(baseUrl),
-            new ButtonBuilder()
-                .setLabel('Submit Code')
-                .setStyle(ButtonStyle.Primary)
-                .setCustomId('submitCode')
+            new ButtonBuilder().setLabel('Submit Code').setStyle(ButtonStyle.Primary).setCustomId('submitCode')
         );
 
         await interaction.reply({ embeds: [embed], components: [row], files: [file] });

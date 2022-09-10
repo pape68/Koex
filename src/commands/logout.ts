@@ -1,10 +1,10 @@
 import { ApplicationCommandType, EmbedBuilder } from 'discord.js';
-import { COLORS } from '../constants';
 
+import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
-import { Accounts, SlotData, SlotName } from '../types/supabase';
+import { Accounts, SlotData, SlotName } from '../typings/supabase';
 import createEmbed from '../utils/commands/createEmbed';
-import getCosmetic from '../utils/commands/getCosmetic';
+import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
 import supabase from '../utils/functions/supabase';
 import defaultResponses from '../utils/helpers/defaultResponses';
 
@@ -44,7 +44,7 @@ const command: Command = {
             return;
         }
 
-        const cosmeticUrl = await getCosmetic(interaction.user.id);
+        const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
 
         try {
             await supabase.from<Accounts>('accounts_test').upsert({
@@ -63,9 +63,9 @@ const command: Command = {
                     new EmbedBuilder()
                         .setAuthor({
                             name: `Goodbye, ${auth.displayName}`,
-                            iconURL: cosmeticUrl ?? undefined
+                            iconURL: characterAvatarUrl ?? undefined
                         })
-                        .setColor(COLORS.gray)
+                        .setColor(Color.gray)
                 ]
             });
             return;

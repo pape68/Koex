@@ -1,8 +1,8 @@
 import { SelectMenuInteraction } from 'discord.js';
-import createOperationRequest from '../../api/mcp/createOperationRequest';
+import composeMcp from '../../api/mcp/composeMcp';
 
 import { Component } from '../../interfaces/Component';
-import { SlotName } from '../../types/supabase';
+import { SlotName } from '../../typings/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
 import refreshAuthData from '../../utils/commands/refreshAuthData';
 import defaultResponses from '../../utils/helpers/defaultResponses';
@@ -39,12 +39,7 @@ const selectMenu: Component<SelectMenuInteraction> = {
             return;
         }
 
-        const skipTutorialRes = await createOperationRequest(
-            auth,
-            'campaign',
-            'AssignWorkerToSquadBatch',
-            preset
-        );
+        const skipTutorialRes = await composeMcp(auth, 'campaign', 'AssignWorkerToSquadBatch', preset);
 
         if (skipTutorialRes.error) {
             interaction.editReply({

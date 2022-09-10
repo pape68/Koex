@@ -2,28 +2,28 @@ import { join } from 'node:path';
 
 import glob from 'glob';
 
-import { IS_PROD } from '../../constants';
 import { Command } from '../../interfaces/Command';
 import { ExtendedClient } from '../../interfaces/ExtendedClient';
+import { isProd } from './../../constants';
 import registerInteractions from './registerInteractions';
 
 const loadCommands = async (client: ExtendedClient) => {
     const commands: Command[] = [];
 
-    const files = glob.sync(`${IS_PROD ? 'dist' : 'src'}/commands/**/*.{js,ts}`);
+    const files = glob.sync(`${isProd ? 'dist' : 'src'}/commands/**/*.{js,ts}`);
 
     for (const file of files) {
         const path = join(process.cwd(), file);
-        const interaction: Command = (await import(path)).default;
+        const url = new URL('file:///' + path);
+        const command: Command = (await import(url.href)).default;
 
-        if (!interaction) continue;
+        if (!command) continue;
 
-        client.interactions.set(interaction.name, interaction);
-
-        commands.push(interaction);
+        client.interactions.set(command.name, command);
+        commands.push(command);
     }
 
-    registerInteractions(client, commands);
+    await registerInteractions(client, commands);
 };
 
 export default loadCommands;
