@@ -10,7 +10,7 @@
     "type": "module",
     "scripts": {
         "compile": "tsc --build tsconfig.json",
-        "start": "cross-env NODE_ENV=production node --no-warnings --experimental-specifier-resolution=node",
+        "start": "cross-env NODE_ENV=production node --experimental-specifier-resolution=node",
         "start:dev": "cross-env NODE_ENV=development nodemon",
         "start:prod": "pnpm compile && pnpm start"
     },
