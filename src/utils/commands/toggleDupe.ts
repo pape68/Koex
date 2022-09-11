@@ -109,6 +109,10 @@ const toggleDupe = async (
                 return;
         }
     }
+
+    await interaction.editReply({
+        embeds: [createEmbed('success', `Successfully ${enable ? 'started' : 'stopped'} the dupe.`)]
+    });
 };
 
 export default toggleDupe;
