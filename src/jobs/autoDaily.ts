@@ -40,24 +40,47 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
 
             const characterAvatarUrl = await getCharacterAvatar(account.user_id);
 
-            const login = await composeMcp(auth, 'campaign', 'ClaimLoginReward');
+            const profile = await composeMcp(auth, 'campaign', 'QueryProfile');
 
-            if (!login.data) {
+            if (profile.error) {
                 await webhookClient.send({
                     ...webhookOptions,
-                    embeds: [createEmbed('error', `Failed to retrieve reward data for <@!${account.user_id}>.`)]
+                    embeds: [createEmbed('error', `Failed to retrieve profile data for <@!${account.user_id}>.`)]
                 });
                 return;
             }
 
-            const rewards = (login.data as MCPResponse<LoginRewardAttributes>).profileChanges[0].profile.stats
+            const oldInfo = (profile.data as MCPResponse<LoginRewardAttributes>).profileChanges[0].profile.stats
                 .attributes.daily_rewards;
 
-            let currentReward = rewards.nextDefaultReward;
+            const login = await composeMcp(auth, 'campaign', 'ClaimLoginReward');
+
+            if (login.error) {
+                await webhookClient.send({
+                    ...webhookOptions,
+                    embeds: [createEmbed('error', `Failed to retrieve daily reward data for <@!${account.user_id}>.`)]
+                });
+                return;
+            }
+
+            const newInfo = (login.data as MCPResponse<LoginRewardAttributes>).profileChanges[0].profile.stats
+                .attributes.daily_rewards;
+
+            const oldClaimDate = new Date(oldInfo.lastClaimDate);
+            const newClaimDate = new Date(newInfo.lastClaimDate);
+
+            let currentReward = newInfo.nextDefaultReward;
 
             const embed = new EmbedBuilder()
                 .setColor(Color.gray)
-                .setDescription(`\`${currentReward}\` **${(rewardData as any)[currentReward]}**`)
+                .addFields([
+                    {
+                        name: `Today's Reward ${
+                            oldClaimDate.getTime() === newClaimDate.getTime() ? '(Already Claimed)' : ''
+                        }`,
+                        value: `\`${currentReward}\` **${(rewardData as any)[currentReward]}**`
+                    }
+                ])
                 .setFooter({
                     text: auth.displayName,
                     iconURL: characterAvatarUrl ?? undefined
@@ -65,6 +88,7 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
 
             await webhookClient.send({
                 ...webhookOptions,
+                content: `<@!${account.user_id}>`,
                 embeds: [embed]
             });
         }, 30 * 1000);

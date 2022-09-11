@@ -32,7 +32,7 @@ export const event: Event<true> = {
             });
         }, 10 * 1000);
 
-        cron.schedule('32 7 * * *', async () => {
+        cron.schedule('0 0 * * *', async () => {
             await startAutoDailyJob(client);
         });
     }
