@@ -33,7 +33,8 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
             if (!auth) {
                 await webhookClient.send({
                     ...webhookOptions,
-                    embeds: [createEmbed('error', `Failed to retrieve account data for <@!${account.user_id}>.`)]
+                    content: `<@!${account.user_id}>`,
+                    embeds: [createEmbed('error', `Failed to retrieve account data.`)]
                 });
                 return;
             }
@@ -45,7 +46,8 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
             if (profile.error) {
                 await webhookClient.send({
                     ...webhookOptions,
-                    embeds: [createEmbed('error', `Failed to retrieve profile data for <@!${account.user_id}>.`)]
+                    content: `<@!${account.user_id}>`,
+                    embeds: [createEmbed('error', `Failed to retrieve profile data.`)]
                 });
                 return;
             }
@@ -58,7 +60,8 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
             if (login.error) {
                 await webhookClient.send({
                     ...webhookOptions,
-                    embeds: [createEmbed('error', `Failed to retrieve daily reward data for <@!${account.user_id}>.`)]
+                    content: `<@!${account.user_id}>`,
+                    embeds: [createEmbed('error', `Failed to retrieve daily reward data.`)]
                 });
                 return;
             }
@@ -81,10 +84,8 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
                         value: `\`${currentReward}\` **${(rewardData as any)[currentReward]}**`
                     }
                 ])
-                .setFooter({
-                    text: auth.displayName,
-                    iconURL: characterAvatarUrl ?? undefined
-                });
+                .setFooter({ text: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
+                .setTimestamp();
 
             await webhookClient.send({
                 ...webhookOptions,
