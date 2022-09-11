@@ -10,7 +10,8 @@ import { MCPResponse } from '../api/mcp/composeMcp';
 import { Color } from '../constants';
 import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
 import rewardData from '../utils/helpers/rewards.json' assert { type: 'json' };
-export interface Attributes {
+
+export interface LoginRewardAttributes {
     daily_rewards: DailyRewards;
 }
 
@@ -44,7 +45,7 @@ const command: Command = {
             return;
         }
 
-        const oldInfo = (profile.data as MCPResponse<Attributes>).profileChanges[0].profile.stats.attributes
+        const oldInfo = (profile.data as MCPResponse<LoginRewardAttributes>).profileChanges[0].profile.stats.attributes
             .daily_rewards;
 
         const login = await composeMcp(auth, 'campaign', 'ClaimLoginReward');
@@ -56,7 +57,7 @@ const command: Command = {
             return;
         }
 
-        const newInfo = (login.data as MCPResponse<Attributes>).profileChanges[0].profile.stats.attributes
+        const newInfo = (login.data as MCPResponse<LoginRewardAttributes>).profileChanges[0].profile.stats.attributes
             .daily_rewards;
 
         const oldClaimDate = new Date(oldInfo.lastClaimDate);

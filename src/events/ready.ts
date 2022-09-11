@@ -32,10 +32,8 @@ export const event: Event<true> = {
             });
         }, 10 * 1000);
 
-        cron.schedule('0 0 * * *', async () => {
-            setTimeout(async () => {
-                await startAutoDailyJob(client);
-            }, 30 * 1000);
+        cron.schedule('30 7 * * *', async () => {
+            await startAutoDailyJob(client);
         });
     }
 };
