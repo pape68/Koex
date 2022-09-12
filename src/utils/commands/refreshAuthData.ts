@@ -1,4 +1,5 @@
 import createOAuthData from '../../api/auth/createOAuthData';
+import verifyAuthSession from '../../api/auth/verifyAuthSession';
 import { fortniteClient } from '../../constants';
 import { Accounts, SlotName } from '../../typings/supabase';
 import supabase from '../functions/supabase';
@@ -12,9 +13,13 @@ const refreshAuthData = async (userId: string) => {
 
     if (!account) return null;
 
-    let oldAuth = account[('slot_' + account.active_slot) as SlotName];
+    const oldAuth = account[('slot_' + account.active_slot) as SlotName];
 
     if (!oldAuth) return null;
+
+    const oldValid = await verifyAuthSession(oldAuth!.accessToken);
+
+    if (oldValid) return oldAuth;
 
     const newAuth = await createOAuthData(fortniteClient.name, {
         grant_type: 'device_auth',
@@ -23,7 +28,7 @@ const refreshAuthData = async (userId: string) => {
         secret: oldAuth.secret
     });
 
-    if (!newAuth) return oldAuth;
+    if (!newAuth) return null;
 
     const auth = {
         ...oldAuth,
