@@ -74,13 +74,6 @@ const toggleDupe = async (
         transferOperations
     });
 
-    if (!storage.data) {
-        await interaction?.editReply({
-            embeds: [createEmbed('error', `Failed to ${enable ? 'start' : 'stop'} the dupe.`)]
-        });
-        return;
-    }
-
     if (!storage.data || storage.error) {
         const defaultResponse = {
             embeds: [createEmbed('error', `Failed to ${enable ? 'start' : 'stop'} the dupe.`)]
