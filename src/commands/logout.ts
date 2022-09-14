@@ -5,6 +5,7 @@ import { Command } from '../interfaces/Command';
 import { Accounts, SlotData, SlotName } from '../typings/supabase';
 import createEmbed from '../utils/commands/createEmbed';
 import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
+import refreshAuthData from '../utils/commands/refreshAuthData';
 import supabase from '../utils/functions/supabase';
 import defaultResponses from '../utils/helpers/defaultResponses';
 
@@ -37,7 +38,7 @@ const command: Command = {
             }
         }
 
-        const auth: SlotData | null = account[('slot_' + activeSlotIndex) as SlotName];
+        const auth = await refreshAuthData(interaction.user.id);
 
         if (!auth) {
             await interaction.editReply(defaultResponses.loggedOut);
