@@ -35,20 +35,7 @@ const command: Command = {
             await interaction.editReply(defaultResponses.loggedOut);
             return;
         }
-
-        const profile = await composeMcp(auth, 'campaign', 'QueryProfile');
-
-        if (profile.error) {
-            await interaction.editReply({
-                embeds: [createEmbed('error', '`' + profile.error.message + '`')]
-            });
-            return;
-        }
-
-        const oldInfo = (profile.data as MCPResponse<LoginRewardAttributes>).profileChanges[0].profile.stats.attributes
-            .daily_rewards;
-
-        const login = await composeMcp(auth, 'campaign', 'ClaimLoginReward');
+         const login = await composeMcp(auth, 'campaign', 'ClaimLoginReward');
 
         if (login.error) {
             await interaction.editReply({
@@ -60,7 +47,6 @@ const command: Command = {
         const newInfo = (login.data as MCPResponse<LoginRewardAttributes>).profileChanges[0].profile.stats.attributes
             .daily_rewards;
 
-        const oldClaimDate = new Date(oldInfo.lastClaimDate);
         const newClaimDate = new Date(newInfo.lastClaimDate);
 
         let currentReward = newInfo.nextDefaultReward;
@@ -78,7 +64,7 @@ const command: Command = {
             .addFields([
                 {
                     name: `Today's Reward ${
-                        oldClaimDate.getTime() === newClaimDate.getTime() ? '(Already Claimed)' : ''
+                        login.data as MCPResponse<LoginRewardAttributes>).notifications[0].items.length === 0 ? '(Already Claimed)' : ''
                     }`,
                     value: rewards[0]
                 },
