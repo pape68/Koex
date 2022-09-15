@@ -40,21 +40,6 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
             }
 
             const characterAvatarUrl = await getCharacterAvatar(account.user_id);
-
-            const profile = await composeMcp(auth, 'campaign', 'QueryProfile');
-
-            if (profile.error) {
-                await webhookClient.send({
-                    ...webhookOptions,
-                    content: `<@!${account.user_id}>`,
-                    embeds: [createEmbed('error', `Failed to retrieve profile data.`)]
-                });
-                return;
-            }
-
-            const oldInfo = (profile.data as MCPResponse<LoginRewardAttributes>).profileChanges[0].profile.stats
-                .attributes.daily_rewards;
-
             const login = await composeMcp(auth, 'campaign', 'ClaimLoginReward');
 
             if (login.error) {
@@ -69,7 +54,6 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
             const newInfo = (login.data as MCPResponse<LoginRewardAttributes>).profileChanges[0].profile.stats
                 .attributes.daily_rewards;
 
-            const oldClaimDate = new Date(oldInfo.lastClaimDate);
             const newClaimDate = new Date(newInfo.lastClaimDate);
 
             let currentReward = newInfo.nextDefaultReward;
@@ -79,7 +63,7 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
                 .addFields([
                     {
                         name: `Today's Reward ${
-                            oldClaimDate.getTime() === newClaimDate.getTime() ? '(Already Claimed)' : ''
+                            (login.data as MCPResponse<LoginRewardAttributes>).notifications[0].items.length === 0 ? '(Already Claimed)' : ''
                         }`,
                         value: `\`${currentReward}\` **${(rewardData as any)[currentReward]}**`
                     }
