@@ -7,11 +7,12 @@ import refreshAuthData from '../utils/commands/refreshAuthData';
 import defaultResponses from '../utils/helpers/defaultResponses';
 
 import { MCPResponse } from '../api/mcp/composeMcp';
+import { FortniteItem } from '../api/types';
 import { Color } from '../constants';
 import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
 import rewardData from '../utils/helpers/rewards.json' assert { type: 'json' };
 
-export interface LoginRewardAttributes {
+export interface ClaimLoginRewardAttributes {
     daily_rewards: DailyRewards;
 }
 
@@ -20,6 +21,17 @@ export interface DailyRewards {
     totalDaysLoggedIn: number;
     lastClaimDate: string;
     additionalSchedules: any;
+}
+
+export interface Notification {
+    type: string;
+    primary: boolean;
+    daysLoggedIn: number;
+    items: FortniteItem[];
+}
+
+export interface ClaimLoginRewardResponse extends MCPResponse<ClaimLoginRewardAttributes> {
+    notifications: Notification[];
 }
 
 const command: Command = {
@@ -35,7 +47,7 @@ const command: Command = {
             await interaction.editReply(defaultResponses.loggedOut);
             return;
         }
-         const login = await composeMcp(auth, 'campaign', 'ClaimLoginReward');
+        const login = await composeMcp(auth, 'campaign', 'ClaimLoginReward');
 
         if (login.error) {
             await interaction.editReply({
@@ -44,7 +56,7 @@ const command: Command = {
             return;
         }
 
-        const newInfo = (login.data as MCPResponse<LoginRewardAttributes>).profileChanges[0].profile.stats.attributes
+        const newInfo = (login.data as ClaimLoginRewardResponse).profileChanges[0].profile.stats.attributes
             .daily_rewards;
 
         const newClaimDate = new Date(newInfo.lastClaimDate);
@@ -64,7 +76,9 @@ const command: Command = {
             .addFields([
                 {
                     name: `Today's Reward ${
-                        login.data as MCPResponse<LoginRewardAttributes>).notifications[0].items.length === 0 ? '(Already Claimed)' : ''
+                        (login.data as ClaimLoginRewardResponse).notifications[0].items.length === 0
+                            ? '(Already Claimed)'
+                            : ''
                     }`,
                     value: rewards[0]
                 },

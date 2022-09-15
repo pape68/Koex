@@ -1,7 +1,7 @@
 import { EmbedBuilder, WebhookClient } from 'discord.js';
 
-import composeMcp, { MCPResponse } from '../api/mcp/composeMcp';
-import { LoginRewardAttributes } from '../commands/claimDaily';
+import { ClaimLoginRewardResponse } from './../commands/claimDaily';
+import composeMcp from '../api/mcp/composeMcp';
 import { Color } from '../constants';
 import { ExtendedClient } from '../interfaces/ExtendedClient';
 import { AutoDaily } from '../typings/supabase';
@@ -51,10 +51,8 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
                 return;
             }
 
-            const newInfo = (login.data as MCPResponse<LoginRewardAttributes>).profileChanges[0].profile.stats
-                .attributes.daily_rewards;
-
-            const newClaimDate = new Date(newInfo.lastClaimDate);
+            const newInfo = (login.data as ClaimLoginRewardResponse).profileChanges[0].profile.stats.attributes
+                .daily_rewards;
 
             let currentReward = newInfo.nextDefaultReward;
 
@@ -63,7 +61,9 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
                 .addFields([
                     {
                         name: `Today's Reward ${
-                            (login.data as MCPResponse<LoginRewardAttributes>).notifications[0].items.length === 0 ? '(Already Claimed)' : ''
+                            (login.data as ClaimLoginRewardResponse).notifications[0].items.length === 0
+                                ? '(Already Claimed)'
+                                : ''
                         }`,
                         value: `\`${currentReward}\` **${(rewardData as any)[currentReward]}**`
                     }
