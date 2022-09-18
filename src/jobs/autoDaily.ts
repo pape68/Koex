@@ -1,9 +1,9 @@
-import { EmbedBuilder, WebhookClient } from 'discord.js';
+import { APIEmbedField, EmbedBuilder, WebhookClient } from 'discord.js';
 
 import composeMcp from '../api/mcp/composeMcp';
 import { Color } from '../constants';
 import { ExtendedClient } from '../interfaces/ExtendedClient';
-import { AutoDaily } from '../typings/supabase';
+import { Accounts, AutoDaily, SlotData } from '../typings/supabase';
 import createEmbed from '../utils/commands/createEmbed';
 import refreshAuthData from '../utils/commands/refreshAuthData';
 import supabase from '../utils/functions/supabase';
@@ -11,9 +11,9 @@ import { CampaignProfileData } from '../utils/helpers/operationResources';
 import rewardData from '../utils/helpers/rewards.json' assert { type: 'json' };
 
 const startAutoDailyJob = async (client: ExtendedClient) => {
-    const { data: accounts } = await supabase.from<AutoDaily>('auto_daily').select('*');
+    const { data: enrollees } = await supabase.from<AutoDaily>('auto_daily').select('*');
 
-    if (!accounts || !accounts.length) return;
+    if (!enrollees || !enrollees.length) return;
 
     const webhookClient = new WebhookClient({
         id: process.env.AUTODAILY_WEBHOOK_ID!,
@@ -25,59 +25,69 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
         avatarURL: client.user?.displayAvatarURL()
     };
 
-    for (const account of accounts) {
+    for (const enrollee of enrollees) {
         setTimeout(async () => {
-            const auth = await refreshAuthData(account.user_id);
+            const { data: account } = await supabase
+                .from<Accounts>('accounts_test')
+                .select('*')
+                .match({ user_id: enrollee.user_id })
+                .maybeSingle();
 
-            if (!auth) {
-                await webhookClient.send({
-                    ...webhookOptions,
-                    content: `<@!${account.user_id}>`,
-                    embeds: [createEmbed('error', `Failed to retrieve account data.`)]
+            const slotIndicies = Object.entries(account ?? {})
+                .filter(([k, v]) => k.startsWith('slot_') && v)
+                .map(([k]) => parseInt(k.split('_')[1]));
+
+            const fields: APIEmbedField[] = [];
+
+            for (const idx of slotIndicies) {
+                const auth = await refreshAuthData(enrollee.user_id, idx);
+
+                if (!auth) {
+                    await webhookClient.send({
+                        ...webhookOptions,
+                        content: `<@!${enrollee.user_id}>`,
+                        embeds: [createEmbed('error', `Failed to retrieve account data.`)]
+                    });
+                    return;
+                }
+
+                const claimLoginRewardResponse = await composeMcp<CampaignProfileData>(
+                    auth,
+                    'campaign',
+                    'ClaimLoginReward'
+                );
+
+                if (!claimLoginRewardResponse.data || claimLoginRewardResponse.error) {
+                    fields.push({
+                        name: `${auth.displayName}'s Reward`,
+                        value: claimLoginRewardResponse.error?.errorMessage ?? 'An unknown error occurred.'
+                    });
+                    continue;
+                }
+
+                const rewards = claimLoginRewardResponse.data.profileChanges[0].profile.stats.attributes
+                    .daily_rewards as Required<CampaignProfileData['daily_rewards']>;
+
+                const nextReward = rewards.nextDefaultReward % 336;
+
+                fields.push({
+                    name: `${auth.displayName}'s Reward ${
+                        claimLoginRewardResponse.data.notifications[0].items?.length === 0 ? '(Already Claimed)' : ''
+                    }`,
+                    value: `\`${nextReward}\` **${(rewardData as any)[nextReward]}**`
                 });
-                return;
             }
 
-            const claimLoginRewardResponse = await composeMcp<CampaignProfileData>(
-                auth,
-                'campaign',
-                'ClaimLoginReward'
-            );
+            if (!fields.length) return;
 
-            if (!claimLoginRewardResponse.data || claimLoginRewardResponse.error) {
-                await webhookClient.send({
-                    ...webhookOptions,
-                    content: `<@!${account.user_id}>`,
-                    embeds: [createEmbed('error', `Failed to retrieve daily reward data.`)]
-                });
-                return;
-            }
-
-            const rewards = claimLoginRewardResponse.data.profileChanges[0].profile.stats.attributes
-                .daily_rewards as Required<CampaignProfileData['daily_rewards']>;
-
-            const nextReward = rewards.nextDefaultReward % 336;
-
-            const embed = new EmbedBuilder()
-                .setColor(Color.GRAY)
-                .addFields([
-                    {
-                        name: `Today's Reward ${
-                            claimLoginRewardResponse.data.notifications[0].items?.length === 0
-                                ? '(Already Claimed)'
-                                : ''
-                        }`,
-                        value: `\`${nextReward}\` **${(rewardData as any)[nextReward]}**`
-                    }
-                ])
-                .setTimestamp();
+            const embed = new EmbedBuilder().setColor(Color.GRAY).setFields(fields).setTimestamp();
 
             await webhookClient.send({
                 ...webhookOptions,
-                content: `<@!${account.user_id}>`,
+                content: `<@!${enrollee.user_id}>`,
                 embeds: [embed]
             });
-        }, 30 * 1000);
+        }, 0 * 1000);
     }
 };
 

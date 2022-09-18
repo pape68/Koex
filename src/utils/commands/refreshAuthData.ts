@@ -4,7 +4,7 @@ import { fortniteClient } from '../../constants';
 import { Accounts, SlotName } from '../../typings/supabase';
 import supabase from '../functions/supabase';
 
-const refreshAuthData = async (userId: string) => {
+const refreshAuthData = async (userId: string, slotIdx?: number) => {
     const { data: account } = await supabase
         .from<Accounts>('accounts_test')
         .select('*')
@@ -13,7 +13,7 @@ const refreshAuthData = async (userId: string) => {
 
     if (!account) return null;
 
-    const oldAuth = account[('slot_' + account.active_slot) as SlotName];
+    const oldAuth = account[('slot_' + (slotIdx ?? account.active_slot)) as SlotName];
 
     if (!oldAuth) return null;
 

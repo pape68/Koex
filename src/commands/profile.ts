@@ -1,4 +1,4 @@
-import { ApplicationCommandType, EmbedBuilder } from 'discord.js';
+import { ApplicationCommandType, EmbedBuilder, AttachmentBuilder } from 'discord.js';
 
 import composeMcp from '../api/mcp/composeMcp';
 import { Color } from '../constants';
@@ -24,7 +24,7 @@ const achievements: Partial<Record<string, keyof typeof Emoji>> = {
 
 const command: Command = {
     name: 'profile',
-    description: 'Claim your Save the World daily login reward.',
+    description: 'Get information about your Save the World profile.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply();
@@ -75,6 +75,8 @@ const command: Command = {
             ([k, v]) => `${Emoji[k.toUpperCase() as keyof typeof Emoji]} \`${v}\``
         );
 
+        const attachment = new AttachmentBuilder(bannerUrl!, { name: 'buffer.png' });
+
         const embed = new EmbedBuilder()
             .setColor(Color.GRAY)
             .setAuthor({ name: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
@@ -95,11 +97,11 @@ const command: Command = {
                     inline: true
                 }
             ])
-            .setThumbnail(bannerUrl)
+            .setThumbnail('attachment://buffer.png')
             .setFooter({ text: `Account ID: ${auth.accountId}` })
             .setTimestamp();
 
-        await interaction.editReply({ embeds: [embed] });
+        await interaction.editReply({ embeds: [embed], files: bannerUrl ? [attachment] : [] });
     }
 };
 

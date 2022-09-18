@@ -17,6 +17,7 @@
     "author": "Koji (KojiOdyssey)",
     "license": "Apache-2.0",
     "devDependencies": {
+        "@types/delta-e": "^0.0.0",
         "@types/glob": "^7.2.0",
         "@types/lodash": "^4.14.184",
         "@types/ms": "^0.7.31",
@@ -34,11 +35,14 @@
     "dependencies": {
         "@discordjs/rest": "^1.1.0",
         "@discordjs/voice": "^0.11.0",
+        "@pixi/picture": "^3.0.6",
         "@supabase/supabase-js": "^1.35.6",
         "axios": "^0.27.2",
         "chalk": "^5.0.1",
+        "delta-e": "^0.0.8",
         "discord-api-types": "^0.36.3",
         "discord.js": "^14.3.0",
+        "jimp": "^0.16.2",
         "joi": "^17.6.0",
         "lodash": "^4.17.21",
         "ms": "^2.1.3",
