@@ -1,4 +1,5 @@
-import { Endpoints, FortniteProfile, MCPOperation } from '../types';
+import { FortniteProfile, MCPOperation } from '../../utils/helpers/operationResources';
+import { Endpoints } from '../types';
 
 const createMcpUrl = (
     accountId: string,

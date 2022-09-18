@@ -41,7 +41,7 @@ const command: Command = {
             return;
         }
 
-        const embed = new EmbedBuilder().setColor(Color.blue).addFields([
+        const embed = new EmbedBuilder().setColor(Color.BLUE).addFields([
             {
                 name: 'Switching Accounts',
                 value: `Use the select menu below to switch accounts.`

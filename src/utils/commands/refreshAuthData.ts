@@ -17,9 +17,9 @@ const refreshAuthData = async (userId: string) => {
 
     if (!oldAuth) return null;
 
-    const oldValid = await verifyAuthSession(oldAuth!.accessToken);
+    const oldIsValid = await verifyAuthSession(oldAuth!.accessToken);
 
-    if (oldValid) return oldAuth;
+    if (oldIsValid) return oldAuth;
 
     const newAuth = await createOAuthData(fortniteClient.name, {
         grant_type: 'device_auth',

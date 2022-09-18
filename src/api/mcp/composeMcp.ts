@@ -1,41 +1,9 @@
 import { SlotData } from '../../typings/supabase';
-import request from '../../utils/functions/request';
-import { FortniteProfile, MCPOperation } from '../types';
+import sendEpicAPIRequest from '../../utils/functions/request';
+import { FortniteProfile, MCPOperation, McpResponse, ProfileAttributes } from '../../utils/helpers/operationResources';
 import createMcpUrl from './createMcpUrl';
 
-export interface MCPResponse<T = any> {
-    profileRevision: number;
-    profileId: string;
-    profileChangesBaseRevision: number;
-    profileChanges: ProfileChange<T>[];
-    profileCommandRevision: number;
-    serverTime: Date;
-    responseVersion: number;
-}
-
-export interface ProfileChange<T> {
-    changeType: string;
-    profile: Profile<T>;
-}
-
-export interface Profile<T> {
-    _id: string;
-    created: string;
-    updated: string;
-    rvn: number;
-    wipeNumber: number;
-    accountId: string;
-    profileId: string;
-    version: string;
-    items: any;
-    stats: Stats<T>;
-}
-
-export interface Stats<T> {
-    attributes: T;
-}
-
-const composeMcp = async (
+const composeMcp = async <T extends ProfileAttributes>(
     auth: SlotData,
     profile: keyof typeof FortniteProfile,
     operation: keyof typeof MCPOperation,
@@ -48,7 +16,7 @@ const composeMcp = async (
         Authorization: `Bearer ${auth.accessToken}`
     };
 
-    return await request<MCPResponse>({
+    return await sendEpicAPIRequest<McpResponse<T>>({
         method: 'POST',
         url,
         params,

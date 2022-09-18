@@ -48,7 +48,7 @@ const command: Command = {
         }
 
         const embed = new EmbedBuilder()
-            .setColor(Color.gray)
+            .setColor(Color.GRAY)
             .addFields([
                 {
                     name: 'Dupe Menu',

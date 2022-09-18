@@ -79,7 +79,7 @@ const modal: Component<ModalSubmitInteraction> = {
                                 name: `Welcome, ${oAuthData.displayName}`,
                                 iconURL: characterAvatarUrl ?? undefined
                             })
-                            .setColor(Color.gray)
+                            .setColor(Color.GRAY)
                     ]
                 });
                 return;

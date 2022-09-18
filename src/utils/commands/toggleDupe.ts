@@ -1,10 +1,11 @@
 import { ChatInputCommandInteraction } from 'discord.js';
+
 import composeMcp from '../../api/mcp/composeMcp';
-import { FortniteItem } from '../../api/types';
 import { ComponentInteraction } from '../../interfaces/Component';
 import { DupeWhitelist, SlotData } from '../../typings/supabase';
 import supabase from '../functions/supabase';
 import defaultResponses from '../helpers/defaultResponses';
+import { CampaignProfileData } from '../helpers/operationResources';
 import createEmbed from './createEmbed';
 import refreshAuthData from './refreshAuthData';
 
@@ -35,29 +36,27 @@ const toggleDupe = async (
         return;
     }
 
-    const profile = await composeMcp(auth, enable ? 'theater0' : 'outpost0', 'QueryProfile');
+    const queryProfileReponse = await composeMcp(auth, enable ? 'theater0' : 'outpost0', 'QueryProfile');
 
-    if (!profile.data || profile.error) {
-        await interaction?.editReply({
+    if (!queryProfileReponse.data || queryProfileReponse.error) {
+        await interaction.editReply({
             embeds: [createEmbed('error', `Failed to ${enable ? 'start' : 'stop'} the dupe.`)]
         });
         return;
     }
 
-    const itemGuids = [
+    const itemTypes = [
         'Weapon:buildingitemdata_wall',
         'Weapon:buildingitemdata_floor',
         'Weapon:buildingitemdata_stair_w',
         'Weapon:buildingitemdata_roofs'
     ];
 
-    const profileItems: FortniteItem[] = profile.data.profileChanges[0].profile.items;
-    const transferData = new Map(Object.entries(profileItems).map(([k, v]) => [v.templateId, k]));
-
-    const transferOperations = itemGuids
-        .filter((v) => transferData.has(v))
-        .map((v) => ({
-            itemId: transferData.get(v),
+    const profileItems = queryProfileReponse.data.profileChanges[0].profile.items;
+    const transferOperations = Object.entries(profileItems)
+        .filter(([, v]) => itemTypes.includes(v.templateId))
+        .map(([k]) => ({
+            itemId: k,
             quantity: 1,
             toStorage: enable ? 'True' : 'False',
             newItemIdHint: 'molleja'
@@ -70,16 +69,16 @@ const toggleDupe = async (
         return;
     }
 
-    const storage = await composeMcp(auth, 'theater0', 'StorageTransfer', {
+    const storageTransferResponse = await composeMcp<CampaignProfileData>(auth, 'theater0', 'StorageTransfer', {
         transferOperations
     });
 
-    if (!storage.data || storage.error) {
+    if (!storageTransferResponse.data || storageTransferResponse.error) {
         const defaultResponse = {
             embeds: [createEmbed('error', `Failed to ${enable ? 'start' : 'stop'} the dupe.`)]
         };
 
-        switch (storage.error.numericErrorCode) {
+        switch (storageTransferResponse.error!.numericErrorCode) {
             case 12821:
                 await interaction.editReply({
                     embeds: [

@@ -1,9 +1,9 @@
 import { UserData } from '../../typings/supabase';
-import request from '../../utils/functions/request';
+import sendEpicAPIRequest from '../../utils/functions/request';
 import { Endpoints } from '../types';
 
 const verifyAuthSession = async (accessToken: string) => {
-    const { data } = await request<UserData>({
+    const { error } = await sendEpicAPIRequest<UserData>({
         method: 'GET',
         url: Endpoints.oAuthTokenVerify,
         headers: {
@@ -12,7 +12,9 @@ const verifyAuthSession = async (accessToken: string) => {
         }
     });
 
-    return data;
+    if (error && error.errorCode === 'errors.com.epicgames.common.oauth.invalid_token') return false;
+
+    return true;
 };
 
 export default verifyAuthSession;

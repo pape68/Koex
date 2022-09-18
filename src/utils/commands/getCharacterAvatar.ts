@@ -1,5 +1,5 @@
 import { Endpoints } from '../../api/types';
-import request from '../functions/request';
+import sendEpicAPIRequest from '../functions/request';
 import refreshAuthData from './refreshAuthData';
 
 export interface AvatarResponse {
@@ -13,7 +13,7 @@ const getCharacterAvatar = async (userId: string) => {
 
     if (!user) return null;
 
-    const { data } = await request<AvatarResponse[]>({
+    const { data } = await sendEpicAPIRequest<AvatarResponse[]>({
         method: 'GET',
         url: Endpoints.accountAvatars,
         params: { accountIds: user.accountId },

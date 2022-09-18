@@ -49,7 +49,7 @@ const selectMenu: Component<SelectMenuInteraction> = {
                         name: auth.displayName,
                         iconURL: characterAvatarUrl ?? undefined
                     })
-                    .setColor(Color.green)
+                    .setColor(Color.GREEN)
             ]
         });
     }

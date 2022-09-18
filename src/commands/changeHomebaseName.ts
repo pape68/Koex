@@ -5,6 +5,7 @@ import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
 import refreshAuthData from '../utils/commands/refreshAuthData';
 import defaultResponses from '../utils/helpers/defaultResponses';
+import { PublicProfileData } from '../utils/helpers/operationResources';
 
 const command: Command = {
     name: 'homebase-name',
@@ -22,24 +23,24 @@ const command: Command = {
             return;
         }
 
-        const queryProfileRes = await composeMcp(auth, 'common_public', 'QueryProfile');
+        const publicProfile = await composeMcp<PublicProfileData>(auth, 'common_public', 'QueryProfile');
 
-        const oldName = queryProfileRes.data?.profileChanges[0].profile.stats.attributes.homebase_name;
-
-        if (queryProfileRes.error) {
+        if (!publicProfile.data || publicProfile.error) {
             await interaction.editReply({
-                embeds: [createEmbed('error', '`' + queryProfileRes.error.message + '`')]
+                embeds: [createEmbed('error', '`' + publicProfile.error!.errorMessage + '`')]
             });
             return;
         }
 
-        const setHomebaseNameRes = await composeMcp(auth, 'common_public', 'SetHomebaseName', {
+        const oldName = publicProfile.data.profileChanges[0].profile.stats.attributes.homebase_name;
+
+        const publicHomebase = await composeMcp<PublicProfileData>(auth, 'common_public', 'SetHomebaseName', {
             homebaseName: newName
         });
 
-        if (setHomebaseNameRes.error) {
+        if (!publicHomebase.data || publicHomebase.error) {
             await interaction.editReply({
-                embeds: [createEmbed('error', '`' + setHomebaseNameRes.error.message + '`')]
+                embeds: [createEmbed('error', '`' + publicHomebase.error!.errorMessage + '`')]
             });
             return;
         }

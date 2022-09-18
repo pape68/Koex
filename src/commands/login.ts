@@ -21,7 +21,7 @@ const command: Command = {
         const file = new AttachmentBuilder(process.cwd() + '/assets/authCode.png');
 
         const embed = new EmbedBuilder()
-            .setColor(Color.blue)
+            .setColor(Color.BLUE)
             .addFields([
                 {
                     name: 'Logging In',

@@ -10,138 +10,17 @@ export enum EpicServices {
     FRIEND_SERVICE = 'https://friends-public-service-prod.ol.epicgames.com'
 }
 
-export enum FortniteProfile {
-    'campaign',
-    'athena',
-    'common_core',
-    'common_public',
-    'theater0',
-    'theater1',
-    'theater2',
-    'outpost0'
-}
+const oAuthEndpoint = `${EpicServices.ACCOUNT_SERVICE}/account/api/oauth`;
 
-export enum MCPOperation {
-    'QueryPublicProfile',
-    'QueryProfile',
-    'ClaimLoginReward',
-    'ClientQuestLogin',
-    'PopulatePrerolledOffers',
-    'PurchaseCatalogEntry',
-    'FortRerollDailyQuest',
-    'SetMtxPlatform',
-    'RecycleItemBatch',
-    'RecycleItem',
-    'RefreshExpeditions',
-    'PurchaseHomebaseNode',
-    'OpenCardPackBatch',
-    'OpenCardPack',
-    'UnslotAllWorkers',
-    'UnassignAllSquads',
-    'TransmogItem',
-    'SkipTutorial',
-    'ModifyMission',
-    'IssueFriendCode',
-    'IncrementNamedCounterStat',
-    'GetMcpTimeForLogin',
-    'EquipCharCosmetic',
-    'EndPrimaryMission',
-    'EarnScore',
-    'ConvertItem',
-    'ConsumeItems',
-    'CollectExpedition',
-    'ClaimMissionAlertRewards',
-    'ClaimCollectionBookRewards',
-    'ClaimCollectedResources',
-    'AssignWorkerToSquadBatch',
-    'AssignWorkerToSquad',
-    'ApplyAlteration',
-    'ActivateConsumable',
-    'SetAffiliateName',
-    'ClaimMfaEnabled',
-    'SetLoadoutName',
-    'SetActiveHeroLoadout',
-    'SetHomebaseName',
-    'PurchaseOrUpgradeHomebaseNode',
-    'AbandonExpedition',
-    'UpdateOutpostCore',
-    'UpdateDeployableBaseTierProgression',
-    'CreateOrUpgradeOutpostItem',
-    'CreateDeployableBaseItem',
-    'UpgradeSlottedItem',
-    'ConvertSlottedItem',
-    'ClaimCollectionBookPageRewards',
-    'SetBattleRoyaleBanner',
-    'EndBattleRoyaleGame',
-    'EquipBattleRoyaleCustomization',
-    'UpdateBuildingLevelAndRating',
-    'UnloadWarehouse',
-    'DestroyWorldItems',
-    'StorageTransfer',
-    'PurchaseResearchStatUpgrade',
-    'ClaimDifficultyIncreaseRewards'
-}
-
-export interface AvatarResponse {
-    accountId: string;
-    namespace: string;
-    avatarId: string;
-}
-
-export interface FortniteItem {
-    itemId: string;
-    templateId: string;
-    attributes: any;
-    quantity: number;
-}
-
-const OAuthEndpoint = `${EpicServices.ACCOUNT_SERVICE}/account/api/oauth`;
-
-interface Endpoints {
+export const Endpoints = Object.freeze({
     // OAuth
-    oAuth: string;
-    oAuthTokenCreate: string;
-    oAuthTokenVerify: string;
-    oAuthTokenDelete: string;
-    oAuthTokenDeleteMultiple: string;
-    oAuthExchange: string;
-    oAuthDeviceAuth: string;
-    oAuthDeviceCode: string;
-    // Account
-    accountMultiple: string;
-    accountdisplayName: string;
-    accountId: string;
-    accountEmail: string;
-    userSearch: string;
-    accountAvatars: string;
-    // Caldera
-    calderaToken: string;
-    // Battle Royale
-    brStats: string;
-    mcp: string;
-    brInventory: string;
-    // Fortnite Data
-    fortniteStatus: string;
-    fortniteCatalog: string;
-    eventFlags: string;
-    // Fortnite Party
-    fortniteParty: string;
-    // Friends
-    friends: string;
-    addFriend: string;
-    removeFriend: string;
-    blockFriend: string;
-}
-
-export const Endpoints = {
-    // OAuth
-    oAuth: OAuthEndpoint,
-    oAuthTokenCreate: `${OAuthEndpoint}/token`,
-    oAuthTokenVerify: `${OAuthEndpoint}/verify`,
-    oAuthTokenDelete: `${OAuthEndpoint}/sessions/kill`,
-    oAuthTokenExchange: `${OAuthEndpoint}/exchange`,
+    oAuth: oAuthEndpoint,
+    oAuthTokenCreate: `${oAuthEndpoint}/token`,
+    oAuthTokenVerify: `${oAuthEndpoint}/verify`,
+    oAuthTokenDelete: `${oAuthEndpoint}/sessions/kill`,
+    oAuthTokenExchange: `${oAuthEndpoint}/exchange`,
     oAuthDeviceAuth: `${EpicServices.ACCOUNT_SERVICE}/account/api/public/account`,
-    oAuthDeviceCode: `${OAuthEndpoint}/deviceAuthorization`,
+    oAuthDeviceCode: `${oAuthEndpoint}/deviceAuthorization`,
     // Account
     accountMultiple: `${EpicServices.ACCOUNT_SERVICE}/account/api/public/account`,
     accountdisplayName: `${EpicServices.ACCOUNT_SERVICE}/account/api/public/account/displayName`,
@@ -164,22 +43,55 @@ export const Endpoints = {
     addFriend: `${EpicServices.FRIEND_SERVICE}/friends/api/v1`,
     removeFriend: `${EpicServices.FRIEND_SERVICE}/friends/api/v1`,
     blockFriend: `${EpicServices.FRIEND_SERVICE}/friends/api/public/blocklist`
-};
+});
 
-interface AuthClients {
-    fortnitePCGameClient: string;
-    fortniteIOSGameClient: string;
-    fortniteAndroidGameClient: string;
-    fortniteSwitchGameClient: string;
-    fortniteCNGameClient: string;
-    launcherAppClient2: string;
-}
-
-export const AuthClients = {
+export const AuthClients = Object.freeze({
     fortnitePCGameClient: btoa('ec684b8c687f479fadea3cb2ad83f5c6:e1f31c211f28413186262d37a13fc84d'),
     fortniteIOSGameClient: btoa('3446cd72694c4a4485d81b77adbb2141:9209d4a5e25a457fb9b07489d313b41a'),
     fortniteAndroidGameClient: btoa('3f69e56c7649492c8cc29f1af08a8a12:b51ee9cb12234f50a69efa67ef53812e'),
     fortniteSwitchGameClient: btoa('5229dcd3ac3845208b496649092f251b:e3bd2d3e-bf8c-4857-9e7d-f3d947d220c7'),
     fortniteCNGameClient: btoa('efe3cbb938804c74b20e109d0efc1548:6e31bdbae6a44f258474733db74f39ba'),
     launcherAppClient2: btoa('34a02cf8f4414e29b15921876da36f9a:daafbccc737745039dffe53d94fc76cf')
-};
+});
+
+export interface AccountData {
+    id: string;
+    displayName: string;
+    externalAuths?: any;
+    name?: string;
+    email?: string;
+    failedLoginAttempts?: number;
+    lastLogin?: Date;
+    numberOfdisplayNameChanges?: number;
+    ageGroup?: string;
+    headless?: boolean;
+    country?: string;
+    lastName?: string;
+    preferredLanguage?: string;
+    links?: any;
+    lastdisplayNameChange?: Date;
+    canUpdatedisplayName?: boolean;
+    tfaEnabled?: boolean;
+    emailVerified?: boolean;
+    minorVerified?: boolean;
+    minorExpected?: boolean;
+    minorStatus?: string;
+    cabinedModev: boolean;
+}
+
+export enum GrantType {
+    authorization_code,
+    client_credentials,
+    device_auth,
+    device_code,
+    exchange_code,
+    external_auth,
+    password,
+    refresh_token,
+    token_to_token
+}
+
+export interface GrantData {
+    grant_type: keyof typeof GrantType;
+    [key: string]: any;
+}

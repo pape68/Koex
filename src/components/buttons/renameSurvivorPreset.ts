@@ -29,7 +29,7 @@ const button: Component<ButtonInteraction> = {
         }
 
         const embed = new EmbedBuilder()
-            .setColor(Color.gray)
+            .setColor(Color.GRAY)
             .setFields([
                 {
                     name: 'Renaming Preset',

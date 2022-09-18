@@ -2,7 +2,7 @@ import createEmbed from '../commands/createEmbed';
 
 export default {
     loggedOut: {
-        embeds: [createEmbed('info', 'You are not logged.')],
+        embeds: [createEmbed('info', 'You are not logged in.')],
         ephemeral: true
     },
     authError: {

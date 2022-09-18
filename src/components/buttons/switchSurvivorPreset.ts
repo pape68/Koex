@@ -30,7 +30,7 @@ const button: Component<ButtonInteraction> = {
             return;
         }
 
-        const embed = new EmbedBuilder().setColor(Color.gray).addFields([
+        const embed = new EmbedBuilder().setColor(Color.GRAY).addFields([
             {
                 name: 'Switching Presets',
                 value: `Use the select menu below to switch survivor presets.`

@@ -29,7 +29,7 @@ const command: Command = {
                         name: `Hello, ${auth.displayName}`,
                         iconURL: characterAvatarUrl ?? undefined
                     })
-                    .setColor(Color.gray)
+                    .setColor(Color.GRAY)
             ]
         });
     }

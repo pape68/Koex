@@ -20,11 +20,11 @@ const command: Command = {
             return;
         }
 
-        const unassignAllSquadsRes = await composeMcp(auth, 'campaign', 'UnassignAllSquads');
+        const campaignWorkerSquad = await composeMcp(auth, 'campaign', 'UnassignAllSquads');
 
-        if (unassignAllSquadsRes.error) {
+        if (campaignWorkerSquad.error) {
             interaction.followUp({
-                embeds: [createEmbed('error', '`' + unassignAllSquadsRes.error.message + '`')]
+                embeds: [createEmbed('error', '`' + campaignWorkerSquad.error!.errorMessage + '`')]
             });
             return;
         }

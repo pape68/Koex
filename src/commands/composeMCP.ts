@@ -1,11 +1,11 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, AttachmentBuilder } from 'discord.js';
 
 import composeMcp from '../api/mcp/composeMcp';
-import { FortniteProfile, MCPOperation } from '../api/types';
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
 import refreshAuthData from '../utils/commands/refreshAuthData';
 import defaultResponses from '../utils/helpers/defaultResponses';
+import { MCPOperation, FortniteProfile } from '../utils/helpers/operationResources';
 
 const command: Command = {
     name: 'compose-mcp',
@@ -14,7 +14,7 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply();
 
-        const operation = interaction.options.getString('operation')! as keyof typeof MCPOperation;
+        const operationNamae = interaction.options.getString('operation')! as keyof typeof MCPOperation;
         const profile = interaction.options.getString('profile')! as keyof typeof FortniteProfile;
         const payload = interaction.options.getString('payload');
 
@@ -25,16 +25,16 @@ const command: Command = {
             return;
         }
 
-        const operationRes = await composeMcp(auth, profile, operation, payload ? JSON.parse(payload) : {});
+        const operation = await composeMcp(auth, profile, operationNamae, payload ? JSON.parse(payload) : {});
 
-        if (operationRes.error) {
+        if (operation.error) {
             await interaction.editReply({
-                embeds: [createEmbed('error', '`' + operationRes.error.message + '`')]
+                embeds: [createEmbed('error', '`' + operation.error!.errorMessage + '`')]
             });
             return;
         }
 
-        const response = JSON.stringify(operationRes.data, null, 4);
+        const response = JSON.stringify(operation.data, null, 4);
 
         const file = new AttachmentBuilder(Buffer.from(response), {
             name: 'response.json'
@@ -61,13 +61,7 @@ const command: Command = {
             name: 'profile',
             description: 'The Fortnite MCP profile.',
             required: true,
-            type: ApplicationCommandOptionType.String,
-            choices: Object.values(FortniteProfile)
-                .filter((v) => isNaN(Number(v)))
-                .map((v) => ({
-                    name: v.toString(),
-                    value: v.toString()
-                }))
+            type: ApplicationCommandOptionType.String
         },
         {
             name: 'payload',

@@ -1,14 +1,13 @@
 import { EmbedBuilder, WebhookClient } from 'discord.js';
 
-import { ClaimLoginRewardResponse } from './../commands/claimDaily';
 import composeMcp from '../api/mcp/composeMcp';
 import { Color } from '../constants';
 import { ExtendedClient } from '../interfaces/ExtendedClient';
 import { AutoDaily } from '../typings/supabase';
 import createEmbed from '../utils/commands/createEmbed';
-import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
 import refreshAuthData from '../utils/commands/refreshAuthData';
 import supabase from '../utils/functions/supabase';
+import { CampaignProfileData } from '../utils/helpers/operationResources';
 import rewardData from '../utils/helpers/rewards.json' assert { type: 'json' };
 
 const startAutoDailyJob = async (client: ExtendedClient) => {
@@ -39,10 +38,13 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
                 return;
             }
 
-            const characterAvatarUrl = await getCharacterAvatar(account.user_id);
-            const login = await composeMcp(auth, 'campaign', 'ClaimLoginReward');
+            const claimLoginRewardResponse = await composeMcp<CampaignProfileData>(
+                auth,
+                'campaign',
+                'ClaimLoginReward'
+            );
 
-            if (login.error) {
+            if (!claimLoginRewardResponse.data || claimLoginRewardResponse.error) {
                 await webhookClient.send({
                     ...webhookOptions,
                     content: `<@!${account.user_id}>`,
@@ -51,24 +53,23 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
                 return;
             }
 
-            const newInfo = (login.data as ClaimLoginRewardResponse).profileChanges[0].profile.stats.attributes
-                .daily_rewards;
+            const rewards = claimLoginRewardResponse.data.profileChanges[0].profile.stats.attributes
+                .daily_rewards as Required<CampaignProfileData['daily_rewards']>;
 
-            let currentReward = newInfo.nextDefaultReward;
+            const nextReward = rewards.nextDefaultReward % 336;
 
             const embed = new EmbedBuilder()
-                .setColor(Color.gray)
+                .setColor(Color.GRAY)
                 .addFields([
                     {
                         name: `Today's Reward ${
-                            (login.data as ClaimLoginRewardResponse).notifications[0].items.length === 0
+                            claimLoginRewardResponse.data.notifications[0].items?.length === 0
                                 ? '(Already Claimed)'
                                 : ''
                         }`,
-                        value: `\`${currentReward}\` **${(rewardData as any)[currentReward]}**`
+                        value: `\`${nextReward}\` **${(rewardData as any)[nextReward]}**`
                     }
                 ])
-                .setFooter({ text: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
                 .setTimestamp();
 
             await webhookClient.send({

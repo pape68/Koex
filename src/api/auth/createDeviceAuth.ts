@@ -1,4 +1,4 @@
-import request from '../../utils/functions/request';
+import sendEpicAPIRequest from '../../utils/functions/request';
 import { Endpoints } from '../types';
 
 interface DeviceAuthResponse {
@@ -8,7 +8,7 @@ interface DeviceAuthResponse {
 }
 
 const createDeviceAuth = async (accessToken: string, accountId: string) => {
-    const { data } = await request<DeviceAuthResponse>({
+    const { data } = await sendEpicAPIRequest<DeviceAuthResponse>({
         method: 'POST',
         url: `${Endpoints.oAuthDeviceAuth}/${accountId}/deviceAuth`,
         headers: {

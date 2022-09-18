@@ -6,33 +6,10 @@ import createEmbed from '../utils/commands/createEmbed';
 import refreshAuthData from '../utils/commands/refreshAuthData';
 import defaultResponses from '../utils/helpers/defaultResponses';
 
-import { MCPResponse } from '../api/mcp/composeMcp';
-import { FortniteItem } from '../api/types';
 import { Color } from '../constants';
 import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
 import rewardData from '../utils/helpers/rewards.json' assert { type: 'json' };
-
-export interface ClaimLoginRewardAttributes {
-    daily_rewards: DailyRewards;
-}
-
-export interface DailyRewards {
-    nextDefaultReward: number;
-    totalDaysLoggedIn: number;
-    lastClaimDate: string;
-    additionalSchedules: any;
-}
-
-export interface Notification {
-    type: string;
-    primary: boolean;
-    daysLoggedIn: number;
-    items: FortniteItem[];
-}
-
-export interface ClaimLoginRewardResponse extends MCPResponse<ClaimLoginRewardAttributes> {
-    notifications: Notification[];
-}
+import { CampaignProfileData } from '../utils/helpers/operationResources';
 
 const command: Command = {
     name: 'claim-daily',
@@ -47,52 +24,48 @@ const command: Command = {
             await interaction.editReply(defaultResponses.loggedOut);
             return;
         }
-        const login = await composeMcp(auth, 'campaign', 'ClaimLoginReward');
+        const campaignLogin = await composeMcp<CampaignProfileData>(auth, 'campaign', 'ClaimLoginReward');
 
-        if (login.error) {
+        if (!campaignLogin.data || campaignLogin.error) {
             await interaction.editReply({
-                embeds: [createEmbed('error', '`' + login.error.message + '`')]
+                embeds: [createEmbed('error', '`' + campaignLogin.error!.errorMessage + '`')]
             });
             return;
         }
 
-        const newInfo = (login.data as ClaimLoginRewardResponse).profileChanges[0].profile.stats.attributes
-            .daily_rewards;
+        const rewards = campaignLogin.data.profileChanges[0].profile.stats.attributes.daily_rewards as Required<
+            CampaignProfileData['daily_rewards']
+        >;
 
-        const newClaimDate = new Date(newInfo.lastClaimDate);
-
-        let currentReward = newInfo.nextDefaultReward;
-        let currentReward2 = currentReward % 336;
-        const rewards = [`\`${currentReward2}\` **${(rewardData as any)[currentReward2]}**`];
+        const nextReward = rewards.nextDefaultReward % 336;
+        const rewardDescriptions = [`\`${nextReward}\` **${(rewardData as any)[nextReward]}**`];
 
         for (let i = 1; i < 6; i++) {
-            rewards.push(`\`${currentReward2 + i}\` **${(rewardData as any)[currentReward2 + i]}**`);
+            rewardDescriptions.push(`\`${nextReward + i}\` **${(rewardData as any)[nextReward + i]}**`);
         }
 
         const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
 
         const embed = new EmbedBuilder()
-            .setColor(Color.yellow)
+            .setColor(Color.YELLOW)
             .addFields([
                 {
                     name: `Today's Reward ${
-                        (login.data as ClaimLoginRewardResponse).notifications[0].items.length === 0
-                            ? '(Already Claimed)'
-                            : ''
+                        campaignLogin.data.notifications[0].items?.length === 0 ? '(Already Claimed)' : ''
                     }`,
-                    value: rewards[0]
+                    value: rewardDescriptions[0]
                 },
                 {
                     name: "Tomorrow's Reward",
-                    value: rewards[1]
+                    value: rewardDescriptions[1]
                 },
                 {
                     name: 'Upcoming Rewards',
-                    value: rewards.slice(2).join('\n')
+                    value: rewardDescriptions.slice(2).join('\n')
                 }
             ])
             .setFooter({ text: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
-            .setTimestamp(newClaimDate);
+            .setTimestamp(new Date(rewards.lastClaimDate));
 
         await interaction.editReply({ embeds: [embed] });
     }

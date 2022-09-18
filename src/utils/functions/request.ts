@@ -1,8 +1,20 @@
 import axios, { AxiosRequestHeaders, Method } from 'axios';
+import verifyAuthSession from '../../api/auth/verifyAuthSession';
+
+export interface EpicApiErrorData {
+    errorCode: string;
+    errorMessage: string;
+    messageVars: any[];
+    numericErrorCode: number;
+    originatingService: string;
+    intent: string;
+    message: string;
+    errorStatus?: number;
+}
 
 export interface Result<T> {
     data: T | null;
-    error: any | null;
+    error: EpicApiErrorData | null;
 }
 
 export interface RequestData {
@@ -13,7 +25,19 @@ export interface RequestData {
     data?: any;
 }
 
-const request = async <T>(data: RequestData): Promise<Result<T>> => {
+const sendEpicAPIRequest = async <T>(data: RequestData, accessToken?: string): Promise<Result<T>> => {
+    if (accessToken) {
+        const sessionValid = await verifyAuthSession(accessToken);
+
+        if (!sessionValid) return Promise.reject('Invalid account credentials.');
+
+        Object.assign(data, {
+            headers: {
+                Authentication: `bearer ${accessToken}`
+            }
+        });
+    }
+
     return axios
         .request(data)
         .then(({ data }) => ({ data, error: null }))
@@ -27,4 +51,4 @@ const request = async <T>(data: RequestData): Promise<Result<T>> => {
         });
 };
 
-export default request;
+export default sendEpicAPIRequest;

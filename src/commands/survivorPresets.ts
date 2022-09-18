@@ -30,7 +30,7 @@ const command: Command = {
         const file = new AttachmentBuilder(process.cwd() + '/assets/survivors.png');
 
         const embed = new EmbedBuilder()
-            .setColor(Color.blue)
+            .setColor(Color.BLUE)
             .addFields([
                 {
                     name: 'Saving Squads',

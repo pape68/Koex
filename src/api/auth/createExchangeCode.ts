@@ -1,14 +1,14 @@
-import request from '../../utils/functions/request';
+import sendEpicAPIRequest from '../../utils/functions/request';
 
-interface ExchangeCodeData {
+interface ExchangeCodeResponse {
     expiresInSeconds: number;
     code: string;
     creatingClientId: string;
 }
 
 const createExchangeCode = async (accessToken: string) => {
-    const { data } = await request<ExchangeCodeData>({
-        method: 'get',
+    const { data } = await sendEpicAPIRequest<ExchangeCodeResponse>({
+        method: 'GET',
         url: 'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/exchange',
         headers: {
             Authorization: `Bearer ${accessToken}`

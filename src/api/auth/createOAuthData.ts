@@ -1,28 +1,11 @@
 import qs from 'qs';
 
 import { UserData } from '../../typings/supabase';
-import request from '../../utils/functions/request';
-import { AuthClients, Endpoints } from '../types';
-
-enum GrantType {
-    'authorization_code',
-    'client_credentials',
-    'device_auth',
-    'device_code',
-    'exchange_code',
-    'external_auth',
-    'password',
-    'refresh_token',
-    'token_to_token'
-}
-
-interface GrantData {
-    grant_type: keyof typeof GrantType;
-    [key: string]: any;
-}
+import sendEpicAPIRequest from '../../utils/functions/request';
+import { AuthClients, Endpoints, GrantData } from '../types';
 
 const createOAuthData = async (client: keyof typeof AuthClients, grant: GrantData) => {
-    const { data } = await request<UserData>({
+    const { data } = await sendEpicAPIRequest<UserData>({
         method: 'POST',
         url: Endpoints.oAuthTokenCreate,
         headers: {

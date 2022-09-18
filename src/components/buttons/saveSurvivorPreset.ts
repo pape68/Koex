@@ -1,7 +1,6 @@
 import { ButtonInteraction, EmbedBuilder, Message } from 'discord.js';
 
 import composeMcp from '../../api/mcp/composeMcp';
-import { FortniteItem } from '../../api/types';
 import { Color } from '../../constants';
 import { Component } from '../../interfaces/Component';
 import { Accounts, SlotName } from '../../typings/supabase';
@@ -23,7 +22,7 @@ const button: Component<ButtonInteraction> = {
         }
 
         const embed = new EmbedBuilder()
-            .setColor(Color.gray)
+            .setColor(Color.GRAY)
             .setFields([
                 {
                     name: 'Naming Preset',
@@ -63,18 +62,18 @@ const button: Component<ButtonInteraction> = {
 
         if (!name) return;
 
-        const queryProfileRes = await composeMcp(auth, 'campaign', 'QueryProfile');
+        const profile = await composeMcp(auth, 'campaign', 'QueryProfile');
 
-        if (queryProfileRes.error) {
+        if (!profile.data || profile.error) {
             interaction.followUp({
-                embeds: [createEmbed('error', '`' + queryProfileRes.error.message + '`')]
+                embeds: [createEmbed('error', '`' + profile.error!.errorMessage + '`')]
             });
             return;
         }
 
-        const profileItems: FortniteItem[] = queryProfileRes.data?.profileChanges[0].profile.items;
+        const items = profile.data.profileChanges[0].profile.items;
 
-        const workers = Object.entries(profileItems)
+        const workers = Object.entries(items)
             .filter(([, v]) => v.templateId.startsWith('Worker:') && v.attributes.squad_id)
             .map(([k, v]) => ({
                 characterId: k,

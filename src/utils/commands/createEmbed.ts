@@ -5,15 +5,15 @@ import { Color, Emoji } from '../../constants';
 type embedType = 'error' | 'info' | 'success';
 
 const colors: Record<embedType, HexColorString> = {
-    error: Color.red,
-    info: Color.blue,
-    success: Color.green
+    error: Color.RED,
+    info: Color.BLUE,
+    success: Color.GREEN
 };
 
 const emojis: Record<embedType, string> = {
-    error: Emoji.cross,
-    info: Emoji.info,
-    success: Emoji.check
+    error: Emoji.CROSS,
+    info: Emoji.INFO,
+    success: Emoji.CHECK
 };
 
 const createEmbed = (type: embedType, description: string) => {

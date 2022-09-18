@@ -66,7 +66,7 @@ const command: Command = {
                             name: `Goodbye, ${auth.displayName}`,
                             iconURL: characterAvatarUrl ?? undefined
                         })
-                        .setColor(Color.gray)
+                        .setColor(Color.GRAY)
                 ]
             });
             return;
