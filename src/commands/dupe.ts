@@ -9,8 +9,8 @@ import supabase from '../utils/functions/supabase';
 import defaultResponses from '../utils/helpers/defaultResponses';
 
 const command: Command = {
-    name: 'dupe',
-    description: 'Brings up the dupe menu.',
+    name: 'magic',
+    description: '🔮',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply();

@@ -38,6 +38,8 @@ export const Endpoints = Object.freeze({
     mcp: `${EpicServices.FORTNITE_SERVICE}/fortnite/api/game/v2/profile`,
     // Fortnite Party
     fortniteParty: `${EpicServices.PARTY_SERVICE}/party/api/v1/Fortnite`,
+    // Caldera
+    caldera: `${EpicServices.CALDERA_SERVICE}/caldera/api/v1/launcher/racp`,
     // Friends
     friends: `${EpicServices.FRIEND_SERVICE}/friends/api/v1`,
     addFriend: `${EpicServices.FRIEND_SERVICE}/friends/api/v1`,

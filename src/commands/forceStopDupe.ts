@@ -11,8 +11,8 @@ import toggleDupe from '../utils/commands/toggleDupe';
 import defaultResponses from '../utils/helpers/defaultResponses';
 
 const command: Command = {
-    name: 'force-stop-dupe',
-    description: "Force stop a user's dupe.",
+    name: 'force-stop-magic',
+    description: '🔮',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
