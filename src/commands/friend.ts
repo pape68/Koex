@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
 
-import addFriendFromId from '../api/account/addFriendFromId';
+import addFriendFromId from '../api/friend/addFriendFromId';
 import getFromDisplayName from '../api/account/getFromDisplayName';
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';

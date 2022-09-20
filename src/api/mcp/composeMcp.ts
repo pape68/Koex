@@ -1,7 +1,7 @@
 import { SlotData } from '../../typings/supabase';
 import sendEpicAPIRequest from '../../utils/functions/request';
 import { FortniteProfile, MCPOperation, McpResponse, ProfileAttributes } from '../../utils/helpers/operationResources';
-import createMcpUrl from './createMcpUrl';
+import { Endpoints } from '../types';
 
 const composeMcp = async <T extends ProfileAttributes>(
     auth: SlotData,
@@ -24,5 +24,15 @@ const composeMcp = async <T extends ProfileAttributes>(
         data: payload ?? {}
     });
 };
+
+const createMcpUrl = (
+    accountId: string,
+    route: string,
+    operation: keyof typeof MCPOperation,
+    profile: keyof typeof FortniteProfile
+) => ({
+    url: `${Endpoints.mcp}/${accountId}/${route}/${operation.toString()}`,
+    params: { profileId: profile.toString() }
+});
 
 export default composeMcp;
