@@ -10,9 +10,6 @@ const calderaRequest = async (accountId: string, exchangeCode: string) => {
     return await sendEpicAPIRequest<CalderaResponse>({
         method: 'POST',
         url: Endpoints.caldera,
-        headers: {
-            'User-Agent': 'Koexdupebot'
-        },
         data: {
             account_id: accountId,
             exchange_code: exchangeCode,
