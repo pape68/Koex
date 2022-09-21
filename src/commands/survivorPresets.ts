@@ -30,17 +30,11 @@ const command: Command = {
         const file = new AttachmentBuilder(process.cwd() + '/assets/survivors.png');
 
         const embed = new EmbedBuilder()
-            .setColor(Color.BLUE)
-            .addFields([
-                {
-                    name: 'Saving Squads',
-                    value: `\` - \` Click the **Save Preset** button below.\n\` - \` Enter the name of the new survivor preset **(10 seconds)**.`
-                },
-                {
-                    name: 'Switching Squads',
-                    value: `\` - \` Click the **Switch Presets** button below.\n\` - \` Select the name of your survivor preset.`
-                }
-            ])
+            .setColor(Color.GRAY)
+            .setFields({
+                name: 'Managing Squads',
+                value: 'Use the buttons below the navigate the menu and manage your survivor presets.'
+            })
             .setImage('attachment://survivors.png')
             .setFooter({ text: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
             .setTimestamp();
