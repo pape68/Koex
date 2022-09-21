@@ -42,7 +42,7 @@ const command: Command = {
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
             new ButtonBuilder().setLabel('Save Preset').setStyle(ButtonStyle.Primary).setCustomId('saveSurvivorPreset'),
             new ButtonBuilder()
-                .setLabel('Switch Presets')
+                .setLabel('Load Preset')
                 .setStyle(ButtonStyle.Secondary)
                 .setCustomId('switchSurvivorPreset'),
             new ButtonBuilder()
@@ -50,7 +50,7 @@ const command: Command = {
                 .setStyle(ButtonStyle.Secondary)
                 .setCustomId('renameSurvivorPreset'),
             new ButtonBuilder()
-                .setLabel('Delete Preset')
+                .setLabel('Delete Presets')
                 .setStyle(ButtonStyle.Danger)
                 .setCustomId('deleteSurvivorPreset')
         );
