@@ -7,7 +7,7 @@ import createEmbed from '../../utils/commands/createEmbed';
 import refreshAuthData from '../../utils/commands/refreshAuthData';
 
 const button: Component<ButtonInteraction> = {
-    name: 'switchSurvivorPreset',
+    name: 'loadSurvivorPreset',
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
 
@@ -32,8 +32,8 @@ const button: Component<ButtonInteraction> = {
 
         const embed = new EmbedBuilder().setColor(Color.GRAY).addFields([
             {
-                name: 'Switching Presets',
-                value: `Use the select menu below to switch survivor presets.`
+                name: 'Loading Preset',
+                value: `Use the select menu below to load a survivor preset.`
             }
         ]);
 

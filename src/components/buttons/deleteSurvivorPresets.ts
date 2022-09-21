@@ -8,7 +8,7 @@ import refreshAuthData from '../../utils/commands/refreshAuthData';
 import defaultResponses from '../../utils/helpers/defaultResponses';
 
 const button: Component<ButtonInteraction> = {
-    name: 'deleteSurvivorPreset',
+    name: 'deleteSurvivorPresets',
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
 
