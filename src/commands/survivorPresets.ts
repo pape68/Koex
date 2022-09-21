@@ -44,7 +44,7 @@ const command: Command = {
             new ButtonBuilder()
                 .setLabel('Load Preset')
                 .setStyle(ButtonStyle.Secondary)
-                .setCustomId('switchSurvivorPreset'),
+                .setCustomId('loadSurvivorPreset'),
             new ButtonBuilder()
                 .setLabel('Rename Preset')
                 .setStyle(ButtonStyle.Secondary)
@@ -52,7 +52,7 @@ const command: Command = {
             new ButtonBuilder()
                 .setLabel('Delete Presets')
                 .setStyle(ButtonStyle.Danger)
-                .setCustomId('deleteSurvivorPreset')
+                .setCustomId('deleteSurvivorPresets')
         );
 
         await interaction.reply({ embeds: [embed], components: [row], files: [file] });
