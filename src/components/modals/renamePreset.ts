@@ -75,6 +75,7 @@ const modal: Component<ModalSubmitInteraction> = {
             ['slot_' + account.active_slot]: {
                 ...account[('slot_' + account.active_slot) as SlotName],
                 survivorPresets: {
+		    ...presets,
                     ['slot_' + target]: {
                         ...presets[('slot_' + target) as SlotName],
                         name: newName
