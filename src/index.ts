@@ -15,7 +15,8 @@ const clientOptions: ClientOptions = {
 };
 
 const client = new Client(clientOptions) as ExtendedClient;
-client.interactions = new Collection();
+client.commands = new Collection();
+client.components = new Collection();
 
 validateEnv();
 

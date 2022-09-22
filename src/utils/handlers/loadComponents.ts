@@ -14,7 +14,7 @@ const loadComponents = async (client: ExtendedClient) => {
         const url = new URL('file:///' + path);
         const interaction: Component<ComponentInteraction> = (await import(url.href)).default;
 
-        client.interactions.set(interaction.name, interaction);
+        client.components.set(interaction.name, interaction);
     }
 };
 

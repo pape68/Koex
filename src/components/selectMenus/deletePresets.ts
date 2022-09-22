@@ -1,7 +1,7 @@
 import { SelectMenuInteraction } from 'discord.js';
 
 import { Component } from '../../interfaces/Component';
-import { Accounts, PresetData, SlotName } from '../../typings/supabase';
+import { Accounts, SlotName } from '../../typings/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
 import refreshAuthData from '../../utils/commands/refreshAuthData';
 import supabase from '../../utils/functions/supabase';
@@ -30,7 +30,7 @@ const selectMenu: Component<SelectMenuInteraction> = {
             return;
         }
 
-        const preset = slots.filter((v) => !!v).map((v) => presets[('slot_' + v) as SlotName]!);
+        const preset = slots.filter((v) => v).map((v) => presets[('slot_' + v) as SlotName]!);
 
         if (!preset) {
             interaction.editReply({
@@ -50,9 +50,9 @@ const selectMenu: Component<SelectMenuInteraction> = {
             return;
         }
 
-        preset.forEach(async (p) => {
+        for (const p of preset) {
             const target = Object.entries(presets)
-                .filter(([k, v]) => k.startsWith('slot_') && !!v && (v as PresetData).name === p.name)
+                .filter(([k, v]) => k.startsWith('slot_') && v && v.name === p.name)
                 .map(([k]) => k.split('_')[1])[0];
 
             await supabase.from<Accounts>('accounts_test').upsert({
@@ -60,11 +60,12 @@ const selectMenu: Component<SelectMenuInteraction> = {
                 ['slot_' + account.active_slot]: {
                     ...account[('slot_' + account.active_slot) as SlotName],
                     survivorPresets: {
+                        ...presets,
                         ['slot_' + target]: null
                     }
                 }
             });
-        });
+        }
 
         const names = Object.values(presets)
             .filter((v) => !!v)

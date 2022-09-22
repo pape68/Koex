@@ -9,7 +9,7 @@ const event: Event = {
     execute: async (client, interaction: ChatInputCommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
 
-        const command = client.interactions.get(interaction.commandName) as Command | undefined;
+        const command = client.commands.get(interaction.commandName) as Command | undefined;
 
         if (!command) {
             await interaction.reply({

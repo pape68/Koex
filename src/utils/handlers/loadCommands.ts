@@ -19,7 +19,7 @@ const loadCommands = async (client: ExtendedClient) => {
 
         if (!command) continue;
 
-        client.interactions.set(command.name, command);
+        client.commands.set(command.name, command);
         commands.push(command);
     }
 

@@ -12,9 +12,8 @@ const verifyAuthSession = async (accessToken: string) => {
         }
     });
 
-    if (error && error.errorCode === 'errors.com.epicgames.common.oauth.invalid_token') return false;
-
-    return true;
+    if (error?.errorCode === 'errors.com.epicgames.common.oauth.invalid_token') return false;
+    else return true;
 };
 
 export default verifyAuthSession;

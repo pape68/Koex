@@ -15,7 +15,9 @@ const event: Event = {
             return;
         }
 
-        const component = client.interactions.get(interaction.customId) as Component<ComponentInteraction> | undefined;
+        if (['next', 'prev'].includes(interaction.customId)) return;
+
+        const component = client.components.get(interaction.customId) as Component<ComponentInteraction> | undefined;
 
         if (!component) {
             await interaction.reply({

@@ -1,11 +1,9 @@
 import { Client, Collection } from 'discord.js';
-import { Queue } from '../typings';
 
 import { Command } from './Command';
 import { Component, ComponentInteraction } from './Component';
 
 export interface ExtendedClient extends Client {
-    cooldowns: Collection<string, Collection<any, any>>;
-    interactions: Collection<string, Command | Component<ComponentInteraction>>;
-    queue: Collection<string, Queue>;
+    commands: Collection<string, Command>;
+    components: Collection<string, Component<ComponentInteraction>>;
 }

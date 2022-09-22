@@ -1,10 +1,10 @@
-import axios, { AxiosRequestHeaders, Method } from 'axios';
+import axios, { AxiosError, AxiosRequestHeaders, Method } from 'axios';
 import verifyAuthSession from '../../api/auth/verifyAuthSession';
 
 export interface EpicApiErrorData {
     errorCode: string;
     errorMessage: string;
-    messageVars: any[];
+    messageVars: string[];
     numericErrorCode: number;
     originatingService: string;
     intent: string;
@@ -29,7 +29,7 @@ const sendEpicAPIRequest = async <T>(data: RequestData, accessToken?: string): P
     if (accessToken) {
         const sessionValid = await verifyAuthSession(accessToken);
 
-        if (!sessionValid) return Promise.reject('Invalid account credentials.');
+        if (!sessionValid) return Promise.reject('The bearer token supplied was not found. Session invalid');
 
         Object.assign(data, {
             headers: {
@@ -38,17 +38,19 @@ const sendEpicAPIRequest = async <T>(data: RequestData, accessToken?: string): P
         });
     }
 
-    return axios
-        .request(data)
-        .then(({ data }) => ({ data, error: null }))
-        .catch((error) => {
-            const data = error.response.data ?? error;
-            const message: string = data.errorMessage ?? error.message;
+    try {
+        const res = await axios.request(data);
+        return { data: res.data, error: null };
+    } catch (error) {
+        const data = (error as AxiosError).response?.data as EpicApiErrorData | undefined;
+        const message = data?.errorMessage;
 
-            console.error(new Error(message));
+        if (!data) return { data: null, error: data ?? null };
 
-            return { data: null, error: data };
-        });
+        console.error(message);
+
+        return { data: null, error: data };
+    }
 };
 
 export default sendEpicAPIRequest;
