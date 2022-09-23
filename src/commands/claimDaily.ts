@@ -37,11 +37,12 @@ const command: Command = {
             CampaignProfileData['daily_rewards']
         >;
 
-        const nextReward = rewards.nextDefaultReward % 336;
-        const rewardDescriptions = [`\`${nextReward}\` **${(rewardData as any)[nextReward]}**`];
+        const { nextDefaultReward } = rewards;
+        const rewardDescriptions = [`\`${nextDefaultReward % 336}\` **${(rewardData as any)[nextDefaultReward % 336]}**`];
 
-        for (let i = 1; i < 6; i++) {
-            rewardDescriptions.push(`\`${nextReward + i}\` **${(rewardData as any)[nextReward + i]}**`);
+        for (let i = 0; i < 5; i++) {
+	    const nextReward = ((nextDefaultReward + i) % 336) + 1;
+            rewardDescriptions.push(`\`${nextReward}\` **${(rewardData as any)[nextReward]}**`);
         }
 
         const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);

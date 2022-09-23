@@ -8,7 +8,7 @@ import defaultResponses from '../utils/helpers/defaultResponses';
 
 const command: Command = {
     name: 'clear-survivors',
-    description: '*** Clears all Save the World survivor squads. ***',
+    description: '⚠️ Clears all Save the World survivor squads.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });

@@ -8,7 +8,7 @@ import supabase from '../utils/functions/supabase';
 
 const command: Command = {
     name: 'whitelist',
-    description: 'Adds a user to the dupe whitelist.',
+    description: 'Adds a user to the bot whitelist.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
