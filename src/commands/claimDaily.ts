@@ -37,7 +37,7 @@ const command: Command = {
             CampaignProfileData['daily_rewards']
         >;
 
-        const totalDaysLoggedIn = 670;
+        const { totalDaysLoggedIn } = rewards;
         const rewardValues: string[] = [];
 
         for (let i = 0; i < 6; i++) {
