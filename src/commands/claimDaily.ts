@@ -37,12 +37,12 @@ const command: Command = {
             CampaignProfileData['daily_rewards']
         >;
 
-        const { nextDefaultReward } = rewards;
-        const rewardDescriptions = [`\`${nextDefaultReward % 336}\` **${(rewardData as any)[nextDefaultReward % 336]}**`];
+        const totalDaysLoggedIn = 670;
+        const rewardValues: string[] = [];
 
-        for (let i = 0; i < 5; i++) {
-	    const nextReward = ((nextDefaultReward + i) % 336) + 1;
-            rewardDescriptions.push(`\`${nextReward}\` **${(rewardData as any)[nextReward]}**`);
+        for (let i = 0; i < 6; i++) {
+            const nextLoginDay = totalDaysLoggedIn + i;
+            rewardValues.push(`\`${nextLoginDay}\` **${(rewardData as any)[nextLoginDay % 336]}**`);
         }
 
         const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
@@ -54,15 +54,15 @@ const command: Command = {
                     name: `Today's Reward ${
                         campaignLogin.data.notifications[0].items?.length === 0 ? '(Already Claimed)' : ''
                     }`,
-                    value: rewardDescriptions[0]
+                    value: rewardValues[0]
                 },
                 {
                     name: "Tomorrow's Reward",
-                    value: rewardDescriptions[1]
+                    value: rewardValues[1]
                 },
                 {
                     name: 'Upcoming Rewards',
-                    value: rewardDescriptions.slice(2).join('\n')
+                    value: rewardValues.slice(2).join('\n')
                 }
             ])
             .setFooter({ text: auth.displayName, iconURL: characterAvatarUrl ?? undefined })

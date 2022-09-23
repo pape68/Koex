@@ -68,13 +68,13 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
                 const rewards = claimLoginRewardResponse.data.profileChanges[0].profile.stats.attributes
                     .daily_rewards as Required<CampaignProfileData['daily_rewards']>;
 
-                const nextReward = rewards.nextDefaultReward % 336;
+                const { totalDaysLoggedIn } = rewards;
 
                 fields.push({
                     name: `${auth.displayName}'s Reward ${
                         claimLoginRewardResponse.data.notifications[0].items?.length === 0 ? '(Already Claimed)' : ''
                     }`,
-                    value: `\`${nextReward}\` **${(rewardData as any)[nextReward]}**`
+                    value: `\`${totalDaysLoggedIn}\` **${(rewardData as any)[totalDaysLoggedIn % 336]}**`
                 });
             }
 
