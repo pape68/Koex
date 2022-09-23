@@ -19,20 +19,18 @@ const command: Command = {
     execute: async (interaction) => {
         const client = interaction.client as ExtendedClient;
 
-        const commands = client.commands.map((c) => {
-            return {
-                name: c.name,
-                description: c.description
-            };
-        });
+        const commands = client.commands.map((c) => ({
+            name: c.name,
+            description: c.description
+        }));
 
         let currentPage = 1;
         const embed = new EmbedBuilder()
             .setColor(Color.GRAY)
             .setTitle(`${client.user!.username} - Help`)
-            .setDescription(`**Total Commands**: \`${commands.length}\``)
+            .setDescription(`**Total Commands** \`${commands.length}\``)
             .setFooter({
-                text: `Page ${currentPage}/${commands.length % 7}`
+                text: `Page ${currentPage}/${Math.ceil(commands.length / 9)}`
             });
 
         let chunks = commands.slice(0, 9);
@@ -57,7 +55,7 @@ const command: Command = {
                     .setStyle(ButtonStyle.Secondary)
                     .setEmoji('➡️')
                     .setCustomId('next')
-                    .setDisabled(!(pageIdx < commands.length % 7))
+                    .setDisabled(!(pageIdx < Math.ceil(commands.length / 9)))
             );
 
         const inter = await interaction.reply({
@@ -100,7 +98,7 @@ const command: Command = {
                     })
                 )
                 .setFooter({
-                    text: `Page ${currentPage}/${commands.length % 7}`
+                    text: `Page ${currentPage}/${Math.ceil(commands.length / 9)}`
                 });
 
             await i.update({
