@@ -1,11 +1,10 @@
-import { ActionRowBuilder, ButtonInteraction, EmbedBuilder, Message, SelectMenuBuilder } from 'discord.js';
+import { ActionRowBuilder, ButtonInteraction, EmbedBuilder, SelectMenuBuilder } from 'discord.js';
 
 import { Color } from '../../constants';
 import { Component } from '../../interfaces/Component';
-import { Accounts, PresetData, SlotName } from '../../typings/supabase';
+import { PresetData } from '../../typings/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
 import refreshAuthData from '../../utils/commands/refreshAuthData';
-import supabase from '../../utils/functions/supabase';
 import defaultResponses from '../../utils/helpers/defaultResponses';
 
 const button: Component<ButtonInteraction> = {
