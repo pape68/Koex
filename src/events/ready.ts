@@ -18,19 +18,11 @@ export const event: Event<true> = {
         await loadCommands(client);
         await loadComponents(client);
 
-        const getUsers = () => client.guilds.cache.map((g) => g.memberCount).reduce((a, c) => a + c);
-
-        let idx = 0;
         setInterval(() => {
-            const activities = [`${getUsers()} Users`, `${client.guilds.cache.size} Servers`];
-
-            idx = (idx + 1) % activities.length;
-            const activity = activities[idx];
-
-            client.user!.setActivity(activity, {
+            client.user!.setActivity(`${client.guilds.cache.size} Servers`, {
                 type: ActivityType.Watching
             });
-        }, 10 * 1000);
+        }, 60 * 1000);
 
         cron.schedule('0 0 * * *', async () => {
             await startAutoDailyJob(client);
