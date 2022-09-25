@@ -10,7 +10,7 @@ import validateEnv from './utils/validators/validateEnv';
 
 const clientOptions: ClientOptions = {
     allowedMentions: { parse: ['users'] },
-    intents: [],
+    intents: [GatewayIntentBits.Guilds],
     partials: []
 };
 
