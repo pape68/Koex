@@ -2,7 +2,7 @@ import { ApplicationCommandType } from 'discord.js';
 
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
-import { getWhitelistedUser, removeAutoDailyUser, saveAutoDailyUser } from '../utils/functions/database';
+import { getAutoDailyUser, removeAutoDailyUser, saveAutoDailyUser } from '../utils/functions/database';
 
 const command: Command = {
     name: 'autodaily',
@@ -11,7 +11,7 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
 
-        const isEnabled = await getWhitelistedUser(interaction.user.id);
+        const isEnabled = await getAutoDailyUser(interaction.user.id);
 
         switch (isEnabled) {
             case true:
