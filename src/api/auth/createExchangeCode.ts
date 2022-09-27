@@ -17,7 +17,7 @@ const createExchangeCode = async (accessToken: string) => {
     };
 
     try {
-        const { data } = await axios.post<ExchangeCodeResponse>(Endpoints.oAuthTokenExchange, {}, config);
+        const { data } = await axios.get<ExchangeCodeResponse>(Endpoints.oAuthTokenExchange, config);
         return data.code;
     } catch (err: any) {
         const error: AxiosError = err;
