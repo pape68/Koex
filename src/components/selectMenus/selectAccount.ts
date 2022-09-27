@@ -2,11 +2,10 @@ import { EmbedBuilder, SelectMenuInteraction } from 'discord.js';
 
 import { Color } from '../../constants';
 import { Component } from '../../interfaces/Component';
-import { Accounts, SlotName } from '../../typings/supabase';
+import { SlotName } from '../../typings/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
 import getCharacterAvatar from '../../utils/commands/getCharacterAvatar';
-import supabase from '../../utils/functions/supabase';
-import defaultResponses from '../../utils/helpers/defaultResponses';
+import { getAllAccounts } from '../../utils/functions/database';
 
 const selectMenu: Component<SelectMenuInteraction> = {
     name: 'selectAccount',
@@ -23,22 +22,12 @@ const selectMenu: Component<SelectMenuInteraction> = {
 
         const slot = interaction.values[0];
 
-        const { data: account } = await supabase
-            .from<Accounts>('accounts_test')
-            .upsert({ user_id: interaction.user.id, active_slot: parseInt(slot) })
-            .single();
-
-        if (!account) {
-            await interaction.editReply(defaultResponses.loggedOut);
+        const accounts = await getAllAccounts(interaction.user.id, async (msg) => {
+            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
             return;
-        }
+        });
 
-        const auth = account[('slot_' + slot) as SlotName];
-
-        if (!auth) {
-            await interaction.editReply(defaultResponses.loggedOut);
-            return;
-        }
+        const auth = accounts![('slot_' + slot) as SlotName];
 
         const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
 
@@ -46,7 +35,7 @@ const selectMenu: Component<SelectMenuInteraction> = {
             embeds: [
                 new EmbedBuilder()
                     .setAuthor({
-                        name: auth.displayName,
+                        name: auth!.displayName,
                         iconURL: characterAvatarUrl ?? undefined
                     })
                     .setColor(Color.GREEN)

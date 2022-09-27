@@ -9,6 +9,7 @@ import {
 
 import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
+import createEmbed from '../utils/commands/createEmbed';
 import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
 import refreshAuthData from '../utils/commands/refreshAuthData';
 import defaultResponses from '../utils/helpers/defaultResponses';
@@ -18,12 +19,10 @@ const command: Command = {
     description: 'Manage your Save the World Survior Presets.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
-        const auth = await refreshAuthData(interaction.user.id);
-
-        if (!auth) {
-            await interaction.editReply(defaultResponses.loggedOut);
+        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
+            await interaction.reply({ embeds: [createEmbed('info', msg)] });
             return;
-        }
+        });
 
         const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
 
@@ -36,7 +35,7 @@ const command: Command = {
                 value: 'Use the buttons below the navigate the menu and manage your survivor presets.'
             })
             .setImage('attachment://survivors.png')
-            .setFooter({ text: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
+            .setFooter({ text: auth!.displayName, iconURL: characterAvatarUrl ?? undefined })
             .setTimestamp();
 
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(

@@ -22,16 +22,8 @@ const modal: Component<ModalSubmitInteraction> = {
             return;
         }
 
-        const profile = await composeMcp(auth, 'campaign', 'QueryProfile');
-
-        if (!profile.data || profile.error) {
-            interaction.followUp({
-                embeds: [createEmbed('error', '`' + profile.error!.errorMessage + '`')]
-            });
-            return;
-        }
-
-        const items = profile.data.profileChanges[0].profile.items;
+        const campaignProfile = await composeMcp(auth, 'campaign', 'QueryProfile');
+        const items = campaignProfile.profileChanges[0].profile.items;
 
         const workers = Object.entries(items)
             .filter(([, v]) => v.templateId.startsWith('Worker:') && v.attributes.squad_id)

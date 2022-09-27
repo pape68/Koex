@@ -6,6 +6,7 @@ import { Accounts, SlotData, SlotName } from '../typings/supabase';
 import createEmbed from '../utils/commands/createEmbed';
 import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
 import refreshAuthData from '../utils/commands/refreshAuthData';
+import { getAllAccounts } from '../utils/functions/database';
 import supabase from '../utils/functions/supabase';
 import defaultResponses from '../utils/helpers/defaultResponses';
 
@@ -14,21 +15,18 @@ const command: Command = {
     description: 'Logout from your active Epic Games account.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
+        // TODO: SELECT MENU TO LOGOUT FROM SPECIFIC ACCOUNTS
+
         await interaction.deferReply();
 
-        const { data: account } = await supabase
-            .from<Accounts>('accounts_test')
-            .select('*')
-            .match({ user_id: interaction.user.id })
-            .maybeSingle();
-
-        if (!account) {
-            await interaction.editReply(defaultResponses.loggedOut);
+        const accounts = await getAllAccounts(interaction.user.id, async (msg) => {
+            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
             return;
-        }
+        });
+
         let activeSlotIndex = 0;
         for (let i = 0; i < 5; i++) {
-            const auth: SlotData | null = account[('slot_' + i) as SlotName];
+            const auth: SlotData | null = accounts![('slot_' + i) as SlotName];
 
             if (activeSlotIndex === i) continue;
 

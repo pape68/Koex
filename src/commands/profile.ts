@@ -29,24 +29,14 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply();
 
-        const auth = await refreshAuthData(interaction.user.id);
-
-        if (!auth) {
-            await interaction.editReply(defaultResponses.loggedOut);
+        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
+            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
             return;
-        }
+        });
 
-        const profile = await composeMcp<CampaignProfileData>(auth, 'campaign', 'QueryPublicProfile');
+        const campaignProfile = await composeMcp<CampaignProfileData>(auth!, 'campaign', 'QueryPublicProfile');
 
-        if (!profile.data || profile.error) {
-            await interaction.editReply({
-                embeds: [createEmbed('error', '`' + profile.error!.errorMessage + '`')]
-            });
-            return;
-        }
-
-        const data = profile.data.profileChanges[0].profile;
-
+        const data = campaignProfile.profileChanges[0].profile;
         const { level, rewards_claimed_post_max_level, research_levels } = data.stats.attributes;
 
         const emojis = Object.values(data.items)
@@ -56,16 +46,8 @@ const command: Command = {
         const bannerUrl = await getBanner(interaction.user.id);
         const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
 
-        const profileMeta = await composeMcp(auth, 'metadata', 'QueryProfile');
-
-        if (!profileMeta.data || profileMeta.error) {
-            interaction.followUp({
-                embeds: [createEmbed('error', '`' + profile.error!.errorMessage + '`')]
-            });
-            return;
-        }
-
-        const metadata = profileMeta.data.profileChanges[0].profile;
+        const profileMetadata = await composeMcp(auth!, 'metadata', 'QueryProfile');
+        const metadata = profileMetadata.profileChanges[0].profile;
 
         const outposts = Object.values(metadata.items)
             .filter((v) => v.templateId.startsWith('Outpost:'))
@@ -79,7 +61,7 @@ const command: Command = {
 
         const embed = new EmbedBuilder()
             .setColor(Color.GRAY)
-            .setAuthor({ name: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
+            .setAuthor({ name: auth!.displayName, iconURL: characterAvatarUrl ?? undefined })
             .setDescription(emojis.length ? emojis.join(' ') : null)
             .addFields([
                 {
@@ -98,7 +80,7 @@ const command: Command = {
                 }
             ])
             .setThumbnail('attachment://buffer.png')
-            .setFooter({ text: `Account ID: ${auth.accountId}` })
+            .setFooter({ text: `Account ID: ${auth!.accountId}` })
             .setTimestamp();
 
         await interaction.editReply({ embeds: [embed], files: bannerUrl ? [attachment] : [] });

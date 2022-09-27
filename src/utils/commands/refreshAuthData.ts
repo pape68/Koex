@@ -2,19 +2,23 @@ import createOAuthData from '../../api/auth/createOAuthData';
 import { fortniteClient } from '../../constants';
 import { Accounts, SlotName } from '../../typings/supabase';
 import supabase from '../functions/supabase';
+import util from 'node:util';
+import { getAllAccounts } from '../functions/database';
 
-const refreshAuthData = async (userId: string, slotIdx?: number) => {
-    const { data: account } = await supabase
-        .from<Accounts>('accounts_test')
-        .select('*')
-        .match({ user_id: userId })
-        .maybeSingle();
+const refreshAuthData = async (userId: string, slotIdx?: number, cb?: (msg: string) => void) => {
+    const accounts = await getAllAccounts(userId);
 
-    if (!account) return null;
+    if (!accounts) {
+        if (cb) await util.promisify(cb)('You are not logged in. Please log in and try again.');
+        return null;
+    }
 
-    const oldAuth = account[('slot_' + (slotIdx ?? account.active_slot)) as SlotName];
+    const oldAuth = accounts[('slot_' + (slotIdx ?? accounts.active_slot)) as SlotName];
 
-    if (!oldAuth) return null;
+    if (!oldAuth) {
+        if (cb) await util.promisify(cb)('No data on your active account. Switch accounts or login again.');
+        return null;
+    }
 
     const newAuth = await createOAuthData(fortniteClient.name, {
         grant_type: 'device_auth',
@@ -22,8 +26,6 @@ const refreshAuthData = async (userId: string, slotIdx?: number) => {
         device_id: oldAuth.deviceId,
         secret: oldAuth.secret
     });
-
-    if (!newAuth) return null;
 
     const auth = {
         ...oldAuth,
@@ -33,7 +35,7 @@ const refreshAuthData = async (userId: string, slotIdx?: number) => {
 
     await supabase.from<Accounts>('accounts').upsert({
         user_id: userId,
-        ['slot_' + account.active_slot]: auth
+        ['slot_' + accounts.active_slot]: auth
     });
 
     return auth;

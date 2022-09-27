@@ -1,28 +1,32 @@
+import axios, { AxiosError } from 'axios';
+
 import { SlotData } from '../../typings/supabase';
-import sendEpicAPIRequest from '../../utils/functions/request';
+import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
 import { FortniteProfile, MCPOperation, McpResponse, ProfileAttributes } from '../../utils/helpers/operationResources';
-import { Endpoints } from '../types';
+import { Endpoints, EpicApiErrorData } from '../types';
 
 const composeMcp = async <T extends ProfileAttributes>(
     auth: SlotData,
     profile: keyof typeof FortniteProfile,
     operation: keyof typeof MCPOperation,
-    payload?: any
+    payload = {}
 ) => {
     const { url, params } = createMcpUrl(auth.accountId, 'client', operation, profile);
 
-    const headers = {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${auth.accessToken}`
+    const config = {
+        headers: {
+            Authorization: `Bearer ${auth.accessToken}`
+        },
+        params
     };
 
-    return await sendEpicAPIRequest<McpResponse<T>>({
-        method: 'POST',
-        url,
-        params,
-        headers,
-        data: payload ?? {}
-    });
+    try {
+        const { data } = await axios.post<McpResponse<T>>(url, payload, config);
+        return data;
+    } catch (err: any) {
+        const error: AxiosError = err;
+        throw new EpicGamesAPIError(error.response?.data as EpicApiErrorData, err.request, error.response?.status!);
+    }
 };
 
 const createMcpUrl = (

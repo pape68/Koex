@@ -1,4 +1,4 @@
-import { EmbedBuilder, HexColorString } from 'discord.js';
+import { codeBlock, EmbedBuilder, HexColorString } from 'discord.js';
 
 import { Color, Emoji } from '../../constants';
 
@@ -17,6 +17,17 @@ const emojis: Record<embedType, string> = {
 };
 
 const createEmbed = (type: embedType, description: string) => {
+    if (type === 'error') {
+        return new EmbedBuilder()
+            .setColor(Color.RED)
+            .setTitle(`${Emoji.CROSS} Hmm... That wasn't supposed to happen`)
+            .setDescription(codeBlock(description))
+            .setFields({
+                name: 'Need help?',
+                value: 'Talk to us in our [support server](https://discord.gg/koex).'
+            });
+    }
+
     return new EmbedBuilder().setColor(colors[type]).setDescription(`${emojis[type]} ${description}`);
 };
 

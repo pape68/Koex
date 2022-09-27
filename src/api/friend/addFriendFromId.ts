@@ -1,17 +1,22 @@
-import sendEpicAPIRequest from '../../utils/functions/request';
-import { Endpoints } from '../types';
+import axios, { AxiosError } from 'axios';
+import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
+
+import { Endpoints, EpicApiErrorData } from '../types';
 
 const addFriendFromId = async (accessToken: string, accountId: string, friendId: string) => {
-    const { error } = await sendEpicAPIRequest<any>({
-        method: 'POST',
-        url: `${Endpoints.addFriend}/${accountId}/friends/${friendId}`,
+    const config = {
         headers: {
-            'Content-Type': 'application/json',
             Authorization: `Bearer ${accessToken}`
         }
-    });
+    };
 
-    return error ?? null;
+    try {
+        await axios.post(`${Endpoints.addFriend}/${accountId}/friends/${friendId}`, {}, config);
+        return true;
+    } catch (err: any) {
+        const error: AxiosError = err;
+        throw new EpicGamesAPIError(error.response?.data as EpicApiErrorData, err.request, error.response?.status!);
+    }
 };
 
 export default addFriendFromId;

@@ -5,7 +5,6 @@ import { Component } from '../../interfaces/Component';
 import { SlotName } from '../../typings/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
 import refreshAuthData from '../../utils/commands/refreshAuthData';
-import defaultResponses from '../../utils/helpers/defaultResponses';
 
 const selectMenu: Component<SelectMenuInteraction> = {
     name: 'selectPreset',
@@ -14,14 +13,12 @@ const selectMenu: Component<SelectMenuInteraction> = {
 
         const slot = interaction.values[0];
 
-        const auth = await refreshAuthData(interaction.user.id);
-
-        if (!auth) {
-            await interaction.editReply(defaultResponses.loggedOut);
+        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
+            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
             return;
-        }
+        });
 
-        const presets = auth.survivorPresets;
+        const presets = auth!.survivorPresets;
 
         if (!presets) {
             await interaction.editReply({
@@ -39,14 +36,7 @@ const selectMenu: Component<SelectMenuInteraction> = {
             return;
         }
 
-        const skipTutorialRes = await composeMcp(auth, 'campaign', 'AssignWorkerToSquadBatch', preset);
-
-        if (skipTutorialRes.error) {
-            interaction.editReply({
-                embeds: [createEmbed('error', `Failed to apply preset **${preset.name}**.`)]
-            });
-        }
-
+        await composeMcp(auth!, 'campaign', 'AssignWorkerToSquadBatch', preset);
         await interaction.editReply({
             embeds: [createEmbed('success', `Using survivor preset **${preset.name}**.`)]
         });

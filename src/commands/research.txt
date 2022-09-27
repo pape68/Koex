@@ -1,0 +1,73 @@
+import { ApplicationCommandType, inlineCode } from 'discord.js';
+import composeMcp from '../api/mcp/composeMcp';
+import { EpicApiErrorData } from './../utils/functions/request';
+
+import { Command } from '../interfaces/Command';
+import createEmbed from '../utils/commands/createEmbed';
+import refreshAccountData from '../utils/commands/refreshAuthData';
+import { CampaignProfileData } from '../utils/helpers/operationResources';
+
+const command: Command = {
+    name: 'research',
+    description: 'temp.',
+    type: ApplicationCommandType.ChatInput,
+    execute: async (interaction) => {
+        await interaction.deferReply();
+
+        const auth = await refreshAccountData(interaction.user.id);
+
+        if (!auth) return;
+
+        const campaignProfile = await composeMcp<CampaignProfileData>(auth, 'campaign', 'QueryPublicProfile');
+        const data = campaignProfile.profileChanges[0].profile;
+
+        const { research_levels } = data.stats.attributes;
+
+        const stats: (keyof CampaignProfileData['research_levels'])[] = [
+            'fortitude',
+            'resistance',
+            'offense',
+            'technology'
+        ];
+
+        for (const stat of stats) {
+            if (!research_levels[stat]) {
+                research_levels[stat] = 0;
+            }
+
+            if (research_levels[stat] === 120) {
+                delete research_levels[stat];
+            }
+        }
+
+        for (const stat of stats) {
+            try {
+                for (var i = 0; i < 5; i++) {
+                    await composeMcp<CampaignProfileData>(auth, 'campaign', 'PurchaseResearchStatUpgrade', {
+                        statId: stat
+                    });
+
+                    research_levels[stat]! += 1;
+                }
+            } catch (err) {
+                await interaction.editReply({
+                    embeds: [createEmbed('error', inlineCode((err as EpicApiErrorData).errorMessage))]
+                });
+                return;
+            }
+        }
+
+        const message = Object.entries(research_levels)
+            .map(
+                ([k, v]) =>
+                    `• ${k.toUpperCase()}: ~~${
+                        research_levels[k as keyof CampaignProfileData['research_levels']]
+                    }~~ -> **${v}**`
+            )
+            .join('\n');
+
+        interaction.editReply(message);
+    }
+};
+
+export default command;

@@ -7,7 +7,7 @@ const event: Event = {
     execute: async (client, interaction: ComponentInteraction) => {
         if (interaction.isChatInputCommand()) return;
 
-        if (interaction.isButton() && interaction.user !== interaction.message?.interaction?.user) {
+        if (interaction.user !== interaction.message?.interaction?.user) {
             await interaction.reply({
                 embeds: [createEmbed('error', "This isn't for you.")],
                 ephemeral: true
@@ -19,22 +19,14 @@ const event: Event = {
 
         const component = client.components.get(interaction.customId) as Component<ComponentInteraction> | undefined;
 
-        if (!component) {
-            await interaction.reply({
-                embeds: [createEmbed('error', "Couldn't find this component.")],
-                ephemeral: true
+        try {
+            if (component) await component.execute(interaction);
+        } catch (err: any) {
+            console.log(err);
+            await interaction.editReply({
+                embeds: [createEmbed('error', err.message ?? 'An unknown error occurred')]
             });
-            return;
         }
-
-        return component.execute(interaction).catch((error) => {
-            console.error(error);
-            if (interaction.deferred || interaction.replied) return;
-            interaction.reply({
-                embeds: [createEmbed('error', 'An error occurred while running this component.')],
-                ephemeral: true
-            });
-        });
     }
 };
 

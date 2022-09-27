@@ -11,22 +11,14 @@ const event: Event = {
 
         const command = client.commands.get(interaction.commandName) as Command | undefined;
 
-        if (!command) {
-            await interaction.reply({
-                embeds: [createEmbed('error', "Couldn't find this command.")],
-                ephemeral: true
+        try {
+            if (command) await command.execute(interaction);
+        } catch (err: any) {
+            console.log(err);
+            await interaction.editReply({
+                embeds: [createEmbed('error', err.message ?? 'An unknown error occurred')]
             });
-            return;
         }
-
-        return command.execute(interaction).catch((error) => {
-            console.error(error);
-            if (interaction.deferred || interaction.replied) return;
-            interaction.reply({
-                embeds: [createEmbed('error', 'An error occurred while running this command.')],
-                ephemeral: true
-            });
-        });
     }
 };
 

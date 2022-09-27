@@ -34,6 +34,6 @@ interface FortniteClient {
 
 const client: FortniteClient['name'] = 'fortniteIOSGameClient';
 const [id, secret] = Buffer.from(AuthClients[client], 'base64').toString().split(':');
-export const fortniteClient: FortniteClient = { name: client, id, secret };
+export const fortniteClient = Object.freeze({ name: client, id, secret } as FortniteClient);
 
 export const isProd = process.env.NODE_ENV === 'production';

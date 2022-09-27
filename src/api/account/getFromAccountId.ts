@@ -28,7 +28,7 @@ export interface AccountData {
     cabinedModev: boolean;
 }
 
-const getFromDisplayName = async (accessToken: string, displayName: string) => {
+const getFromAccountId = async (accessToken: string, accountId: string) => {
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ const getFromDisplayName = async (accessToken: string, displayName: string) => {
     };
 
     try {
-        const { data } = await axios.get<AccountData>(`${Endpoints.accountdisplayName}/${displayName}`, config);
+        const { data } = await axios.get<AccountData>(`${Endpoints.accountId}/${accountId}`, config);
         return data;
     } catch (err: any) {
         const error: AxiosError = err;
@@ -45,4 +45,4 @@ const getFromDisplayName = async (accessToken: string, displayName: string) => {
     }
 };
 
-export default getFromDisplayName;
+export default getFromAccountId;

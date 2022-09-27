@@ -2,11 +2,12 @@ import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle, E
 
 import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
-import { Accounts, DupeWhitelist, SlotName } from '../typings/supabase';
+import { DupeWhitelist } from '../typings/supabase';
 import createEmbed from '../utils/commands/createEmbed';
 import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
+import refreshAuthData from '../utils/commands/refreshAuthData';
 import supabase from '../utils/functions/supabase';
-import defaultResponses from '../utils/helpers/defaultResponses';
+import { getWhitelistedUser } from '../utils/functions/database';
 
 const command: Command = {
     name: 'magic',
@@ -15,37 +16,20 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply();
 
-        const whitelist = await supabase
-            .from<DupeWhitelist>('dupe_whitelist')
-            .select('*')
-            .match({ user_id: interaction.user.id })
-            .maybeSingle();
+        const isWhitelisted = await getWhitelistedUser(interaction.user.id);
 
-        if (!whitelist.data) {
+        if (!isWhitelisted) {
             await interaction.editReply({
                 embeds: [createEmbed('error', `You don't have permission to use \`/${interaction.commandName}\`.`)]
             });
             return;
         }
 
-        const { data: account } = await supabase
-            .from<Accounts>('accounts_test')
-            .select('*')
-            .match({ user_id: interaction.user.id })
-            .maybeSingle();
-
-        if (!account) {
-            await interaction.followUp(defaultResponses.loggedOut);
-            return;
-        }
-
         const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
-        const auth = account[('slot_' + account.active_slot) as SlotName];
-
-        if (!auth) {
-            await interaction.editReply(defaultResponses.loggedOut);
+        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
+            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
             return;
-        }
+        });
 
         const embed = new EmbedBuilder()
             .setColor(Color.GRAY)

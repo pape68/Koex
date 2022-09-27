@@ -9,17 +9,15 @@ export interface AvatarResponse {
 }
 
 const getCharacterAvatar = async (userId: string) => {
-    const user = await refreshAuthData(userId);
-
-    if (!user) return null;
+    const auth = await refreshAuthData(userId, undefined, () => null);
 
     const { data } = await sendEpicAPIRequest<AvatarResponse[]>({
         method: 'GET',
         url: Endpoints.accountAvatars,
-        params: { accountIds: user.accountId },
+        params: { accountIds: auth!.accountId },
         headers: {
             'Content-Type': 'application/json',
-            Authorization: `bearer ${user.accessToken}`
+            Authorization: `bearer ${auth!.accessToken}`
         }
     });
 

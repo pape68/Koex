@@ -14,33 +14,19 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply();
 
-        const operationNamae = interaction.options.getString('operation')! as keyof typeof MCPOperation;
-        const profile = interaction.options.getString('profile')! as keyof typeof FortniteProfile;
+        const operationNamae = interaction.options.getString('operation', true) as keyof typeof MCPOperation;
+        const profile = interaction.options.getString('profile', true) as keyof typeof FortniteProfile;
         const payload = interaction.options.getString('payload');
 
-        const auth = await refreshAuthData(interaction.user.id);
-
-        if (!auth) {
-            await interaction.editReply(defaultResponses.loggedOut);
+        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
+            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
             return;
-        }
-
-        const operation = await composeMcp(auth, profile, operationNamae, payload ? JSON.parse(payload) : {});
-
-        if (operation.error) {
-            await interaction.editReply({
-                embeds: [createEmbed('error', '`' + operation.error!.errorMessage + '`')]
-            });
-            return;
-        }
-
-        const response = JSON.stringify(operation.data, null, 4);
-
-        const file = new AttachmentBuilder(Buffer.from(response), {
-            name: 'response.json'
         });
+        const data = await composeMcp(auth!, profile, operationNamae, payload ? JSON.parse(payload) : {});
+        const response = JSON.stringify(data, null, 4);
+        const file = new AttachmentBuilder(Buffer.from(response), { name: 'response.json' });
 
-        interaction.editReply(
+        await interaction.editReply(
             response.length < 128
                 ? {
                       embeds: [createEmbed('info', '`' + JSON + '`')]

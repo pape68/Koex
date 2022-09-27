@@ -13,23 +13,13 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
 
-        const auth = await refreshAuthData(interaction.user.id);
-
-        if (!auth) {
-            await interaction.editReply(defaultResponses.loggedOut);
+        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
+            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
             return;
-        }
+        });
 
-        const campaignWorkerSquad = await composeMcp(auth, 'campaign', 'UnassignAllSquads');
-
-        if (campaignWorkerSquad.error) {
-            interaction.followUp({
-                embeds: [createEmbed('error', '`' + campaignWorkerSquad.error!.errorMessage + '`')]
-            });
-            return;
-        }
-
-        interaction.editReply({
+        await composeMcp(auth!, 'campaign', 'UnassignAllSquads');
+        await interaction.editReply({
             embeds: [createEmbed('success', 'Cleared all survivor squads.')]
         });
     }

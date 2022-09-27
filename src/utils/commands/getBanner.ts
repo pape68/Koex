@@ -5,17 +5,13 @@ import { CampaignProfileData } from '../helpers/operationResources';
 import refreshAuthData from './refreshAuthData';
 
 const getBanner = async (userId: string) => {
-    const auth = await refreshAuthData(userId);
-
-    if (!auth) return null;
+    const auth = await refreshAuthData(userId, undefined, () => null);
 
     let bannerId = 'standardbanner1';
 
-    const profile = await composeMcp<CampaignProfileData>(auth, 'campaign', 'QueryProfile');
+    const campaignProfile = await composeMcp<CampaignProfileData>(auth!, 'campaign', 'QueryProfile');
 
-    if (!profile.data || profile.error) return null;
-
-    const items = profile.data.profileChanges[0].profile.items;
+    const items = campaignProfile.profileChanges[0].profile.items;
 
     bannerId = Object.values(items)
         .filter((v) => v.templateId.startsWith('CosmeticLocker:') && v)

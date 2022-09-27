@@ -1,3 +1,14 @@
+export interface EpicApiErrorData {
+    errorCode: string;
+    errorMessage: string;
+    messageVars: string[];
+    numericErrorCode: number;
+    originatingService: string;
+    intent: string;
+    message: string;
+    errorStatus?: number;
+}
+
 export enum EpicServices {
     ACCOUNT_SERVICE = 'https://account-public-service-prod03.ol.epicgames.com',
     AVATAR_SERVICE = 'https://avatar-service-prod.identity.live.on.epicgames.com',
@@ -55,31 +66,6 @@ export const AuthClients = Object.freeze({
     fortniteCNGameClient: btoa('efe3cbb938804c74b20e109d0efc1548:6e31bdbae6a44f258474733db74f39ba'),
     launcherAppClient2: btoa('34a02cf8f4414e29b15921876da36f9a:daafbccc737745039dffe53d94fc76cf')
 });
-
-export interface AccountData {
-    id: string;
-    displayName: string;
-    externalAuths?: any;
-    name?: string;
-    email?: string;
-    failedLoginAttempts?: number;
-    lastLogin?: Date;
-    numberOfdisplayNameChanges?: number;
-    ageGroup?: string;
-    headless?: boolean;
-    country?: string;
-    lastName?: string;
-    preferredLanguage?: string;
-    links?: any;
-    lastdisplayNameChange?: Date;
-    canUpdatedisplayName?: boolean;
-    tfaEnabled?: boolean;
-    emailVerified?: boolean;
-    minorVerified?: boolean;
-    minorExpected?: boolean;
-    minorStatus?: string;
-    cabinedModev: boolean;
-}
 
 export enum GrantType {
     authorization_code,

@@ -6,6 +6,7 @@ import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
 import refreshAuthData from '../utils/commands/refreshAuthData';
 import defaultResponses from '../utils/helpers/defaultResponses';
+import EpicGamesAPIError from '../utils/errors/EpicGamesAPIError';
 
 const command: Command = {
     name: 'friend',
@@ -16,14 +17,12 @@ const command: Command = {
 
         const displayName = interaction.options.getString('username')!;
 
-        const auth = await refreshAuthData(interaction.user.id);
-
-        if (!auth) {
-            await interaction.editReply(defaultResponses.loggedOut);
+        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
+            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
             return;
-        }
+        });
 
-        const friendData = await getFromDisplayName(auth.accessToken, displayName);
+        const friendData = await getFromDisplayName(auth!.accessToken, displayName);
 
         if (!friendData) {
             await interaction.editReply({
@@ -32,38 +31,30 @@ const command: Command = {
             return;
         }
 
-        const error = await addFriendFromId(auth.accessToken, auth.accountId, friendData.id);
+        try {
+            await addFriendFromId(auth!.accessToken, auth!.accountId, friendData.id);
+        } catch (err: any) {
+            const error: EpicGamesAPIError = err;
 
-        if (error) {
-            switch (error.numericErrorCode) {
-                case 1041:
-                    await interaction.editReply({
-                        embeds: [
-                            createEmbed('error', `You've sent too many friend requests in a short amount of time.`)
-                        ]
-                    });
-                    return;
-                // Common Errors
-                case 14009:
+            switch (error.code) {
+                case 'errors.com.epicgames.friends.duplicate_friendship':
                     await interaction.editReply({
                         embeds: [createEmbed('info', `You already have **${displayName}** on your friends list.`)]
                     });
                     return;
-                case 14014:
+                case 'errors.com.epicgames.friends.friend_request_already_sent':
                     await interaction.editReply({
                         embeds: [createEmbed('info', `You already sent a friend request to **${displayName}**.`)]
                     });
                     return;
-                case 14131:
+                case 'errors.com.epicgames.friends.incoming_friendships_limit_exceeded':
                     await interaction.editReply({
                         embeds: [createEmbed('error', `User **${displayName}** has too many incoming friend requests.`)]
                     });
                     return;
+                default:
+                    throw new Error(error.message);
             }
-
-            await interaction.editReply({
-                embeds: [createEmbed('error', `Failed to send friend request to user **${displayName}**.`)]
-            });
         }
 
         interaction.editReply({

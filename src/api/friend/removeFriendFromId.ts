@@ -1,17 +1,22 @@
-import sendEpicAPIRequest from '../../utils/functions/request';
-import { Endpoints } from '../types';
+import axios, { AxiosError } from 'axios';
 
-const deleteFriendFromId = async (accessToken: string, accountId: string, friendId: string) => {
-    const { error } = await sendEpicAPIRequest<any>({
-        method: 'DELETE',
-        url: `${Endpoints.addFriend}/${accountId}/friends/${friendId}`,
+import { Endpoints, EpicApiErrorData } from '../types';
+import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
+
+const removeFriendFromId = async (accessToken: string, accountId: string, friendId: string) => {
+    const config = {
         headers: {
-            'Content-Type': 'application/json',
             Authorization: `Bearer ${accessToken}`
         }
-    });
+    };
 
-    return error ?? null;
+    try {
+        await axios.delete(`${Endpoints.addFriend}/${accountId}/friends/${friendId}`, config);
+        return true;
+    } catch (err: any) {
+        const error: AxiosError = err;
+        throw new EpicGamesAPIError(error.response?.data as EpicApiErrorData, err.request, error.response?.status!);
+    }
 };
 
-export default deleteFriendFromId;
+export default removeFriendFromId;

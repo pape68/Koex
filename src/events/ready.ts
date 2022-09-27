@@ -9,7 +9,6 @@ import loadCommands from '../utils/handlers/loadCommands';
 import loadComponents from '../utils/handlers/loadComponents';
 
 export const event: Event<true> = {
-    name: 'ready',
     execute: async (client: ExtendedClient) => {
         const { username, discriminator } = client.user!;
 

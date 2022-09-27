@@ -2,8 +2,9 @@ import { ActionRowBuilder, ApplicationCommandType, EmbedBuilder, SelectMenuBuild
 
 import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
-import { Accounts, SlotData } from '../typings/supabase';
-import supabase from '../utils/functions/supabase';
+import { SlotData } from '../typings/supabase';
+import createEmbed from '../utils/commands/createEmbed';
+import { getAllAccounts } from '../utils/functions/database';
 import defaultResponses from '../utils/helpers/defaultResponses';
 
 const command: Command = {
@@ -13,18 +14,12 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
 
-        const { data: account, error } = await supabase
-            .from<Accounts>('accounts_test')
-            .select('*')
-            .match({ user_id: interaction.user.id })
-            .maybeSingle();
-
-        if (error) {
-            await interaction.editReply(defaultResponses.authError);
+        const accounts = await getAllAccounts(interaction.user.id, async (msg) => {
+            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
             return;
-        }
+        });
 
-        const options = Object.entries(account ?? {})
+        const options = Object.entries(accounts!)
             .filter(([k, v]) => k.startsWith('slot_') && !!v)
             .map(([k, v]) => {
                 const { displayName, accountId } = v as SlotData;
@@ -36,7 +31,7 @@ const command: Command = {
                 };
             });
 
-        if (!account || !options.length) {
+        if (!accounts || !options.length) {
             await interaction.editReply(defaultResponses.loggedOut);
             return;
         }

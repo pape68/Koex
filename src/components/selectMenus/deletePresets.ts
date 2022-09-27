@@ -14,14 +14,12 @@ const selectMenu: Component<SelectMenuInteraction> = {
 
         const slots = interaction.values;
 
-        const auth = await refreshAuthData(interaction.user.id);
-
-        if (!auth) {
-            await interaction.editReply(defaultResponses.loggedOut);
+        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
+            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
             return;
-        }
+        });
 
-        const presets = auth.survivorPresets;
+        const presets = auth!.survivorPresets;
 
         if (!presets) {
             await interaction.editReply({

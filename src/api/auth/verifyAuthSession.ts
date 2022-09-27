@@ -1,19 +1,22 @@
-import { UserData } from '../../typings/supabase';
-import sendEpicAPIRequest from '../../utils/functions/request';
-import { Endpoints } from '../types';
+import axios, { AxiosError } from 'axios';
+import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
+import { Endpoints, EpicApiErrorData } from '../types';
 
 const verifyAuthSession = async (accessToken: string) => {
-    const { error } = await sendEpicAPIRequest<UserData>({
-        method: 'GET',
-        url: Endpoints.oAuthTokenVerify,
+    const config = {
         headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/x-www-form-urlencoded'
         }
-    });
+    };
 
-    if (error?.errorCode === 'errors.com.epicgames.common.oauth.invalid_token') return false;
-    else return true;
+    try {
+        await axios.get(Endpoints.oAuthTokenVerify, config);
+        return true;
+    } catch (err: any) {
+        const error: AxiosError = err;
+        throw new EpicGamesAPIError(error.response?.data as EpicApiErrorData, err.request, error.response?.status!);
+    }
 };
 
 export default verifyAuthSession;

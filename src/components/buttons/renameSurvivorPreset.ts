@@ -5,22 +5,19 @@ import { Component } from '../../interfaces/Component';
 import { PresetData } from '../../typings/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
 import refreshAuthData from '../../utils/commands/refreshAuthData';
-import defaultResponses from '../../utils/helpers/defaultResponses';
 
 const button: Component<ButtonInteraction> = {
     name: 'renameSurvivorPreset',
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
 
-        const auth = await refreshAuthData(interaction.user.id);
-
-        if (!auth) {
-            await interaction.editReply(defaultResponses.loggedOut);
+        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
+            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
             return;
-        }
+        });
 
         let n = -1;
-        const options = Object.entries(auth.survivorPresets ?? {})
+        const options = Object.entries(auth!.survivorPresets ?? {})
             .filter(([k, v]) => k.startsWith('slot_') && !!v && (v as PresetData).name)
             .map(([, v]) => {
                 const { name } = v as PresetData;

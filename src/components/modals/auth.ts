@@ -7,8 +7,8 @@ import { Component } from '../../interfaces/Component';
 import { Accounts, SlotName } from '../../typings/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
 import getCharacterAvatar from '../../utils/commands/getCharacterAvatar';
+import { initializeAccounts } from '../../utils/functions/database';
 import supabase from '../../utils/functions/supabase';
-import defaultResponses from '../../utils/helpers/defaultResponses';
 
 const modal: Component<ModalSubmitInteraction> = {
     name: 'auth',
@@ -17,54 +17,38 @@ const modal: Component<ModalSubmitInteraction> = {
 
         const code = interaction.fields.getTextInputValue('code');
 
-        const oAuthData = await createOAuthData(fortniteClient.name, {
+        const auth = await createOAuthData(fortniteClient.name, {
             grant_type: 'authorization_code',
             code
         });
 
-        if (!oAuthData) {
-            await interaction.editReply(defaultResponses.authError);
-            return;
-        }
-
-        const accessToken = oAuthData.access_token;
-        const accountId = oAuthData.account_id;
-
-        const deviceAuth = await createDeviceAuth(accessToken, accountId);
-
-        if (!deviceAuth) {
-            await interaction.editReply(defaultResponses.authError);
-            return;
-        }
-
-        const { data: account } = await supabase
-            .from<Accounts>('accounts_test')
-            .upsert({ user_id: interaction.user.id })
-            .single();
-
-        if (!account) {
-            await interaction.editReply(
-                "This shouldn't be possible, so some weird shit happened. (Probably not the llama you're looking for.)"
-            );
-            return;
-        }
+        const deviceAuth = await createDeviceAuth(auth.access_token, auth.account_id);
+        const accounts = await initializeAccounts(interaction.user.id);
 
         for (let i = 0; i < 5; i++) {
-            const auth = account[('slot_' + i) as SlotName];
-
-            if (auth?.accountId === deviceAuth.accountId) {
+            if (i === 4) {
                 await interaction.editReply({
-                    embeds: [createEmbed('info', `Already logged into **${oAuthData.displayName}**.`)]
+                    embeds: [createEmbed('info', "Can't login to more than 5 accounts.")]
                 });
                 return;
             }
 
-            if (!auth) {
+            const account = accounts[('slot_' + i) as SlotName];
+
+            if (account?.accountId === deviceAuth.accountId) {
+                await interaction.editReply({
+                    embeds: [createEmbed('info', `Already logged into **${auth.displayName}**.`)]
+                });
+                return;
+            }
+
+            if (!account) {
+                // TODO: MIGRATE TO A FUNCTION FROM "functions/database.ts"
                 await supabase.from<Accounts>('accounts_test').upsert({
                     user_id: interaction.user.id,
                     ['slot_' + i]: {
-                        accessToken: oAuthData.access_token,
-                        displayName: oAuthData.displayName,
+                        accessToken: auth.access_token,
+                        displayName: auth.displayName,
                         ...deviceAuth
                     },
                     active_slot: i
@@ -76,18 +60,11 @@ const modal: Component<ModalSubmitInteraction> = {
                     embeds: [
                         new EmbedBuilder()
                             .setAuthor({
-                                name: `Welcome, ${oAuthData.displayName}`,
+                                name: `Welcome, ${auth.displayName}`,
                                 iconURL: characterAvatarUrl ?? undefined
                             })
                             .setColor(Color.GRAY)
                     ]
-                });
-                return;
-            }
-
-            if (i === 4) {
-                await interaction.editReply({
-                    embeds: [createEmbed('info', "Can't login to more than 5 accounts.")]
                 });
                 return;
             }

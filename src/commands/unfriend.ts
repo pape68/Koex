@@ -1,11 +1,12 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
 
-import deleteFriendFromId from '../api/friend/removeFriendFromId';
+import removeFriendFromId from '../api/friend/removeFriendFromId';
 import getFromDisplayName from '../api/account/getFromDisplayName';
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
 import refreshAuthData from '../utils/commands/refreshAuthData';
 import defaultResponses from '../utils/helpers/defaultResponses';
+import EpicGamesAPIError from '../utils/errors/EpicGamesAPIError';
 
 const command: Command = {
     name: 'unfriend',
@@ -16,14 +17,12 @@ const command: Command = {
 
         const displayName = interaction.options.getString('username')!;
 
-        const auth = await refreshAuthData(interaction.user.id);
-
-        if (!auth) {
-            await interaction.editReply(defaultResponses.loggedOut);
+        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
+            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
             return;
-        }
+        });
 
-        const friendData = await getFromDisplayName(auth.accessToken, displayName);
+        const friendData = await getFromDisplayName(auth!.accessToken, displayName);
 
         if (!friendData) {
             await interaction.editReply({
@@ -32,23 +31,20 @@ const command: Command = {
             return;
         }
 
-        const error = await deleteFriendFromId(auth.accessToken, auth.accountId, friendData.id);
+        try {
+            await removeFriendFromId(auth!.accessToken, auth!.accountId, friendData.id);
+        } catch (err: any) {
+            const error: EpicGamesAPIError = err;
 
-        if (error) {
-            console.log(error);
-            switch (error.numericErrorCode) {
-                // Common Errors
-                case 14004:
+            switch (error.code) {
+                case 'errors.com.epicgames.friends.friendship_not_found':
                     await interaction.editReply({
                         embeds: [createEmbed('info', `You don't have user **${displayName}** on your friends list.`)]
                     });
                     return;
+                default:
+                    throw new Error(error.message);
             }
-
-            await interaction.editReply({
-                embeds: [createEmbed('error', `Failed to remove user **${displayName}** from your friends list.`)]
-            });
-            return;
         }
 
         await interaction.editReply({

@@ -1,7 +1,5 @@
 import {
     ActionRowBuilder,
-    EmbedBuilder,
-    Message,
     ModalActionRowComponentBuilder,
     ModalBuilder,
     SelectMenuInteraction,
@@ -9,27 +7,22 @@ import {
     TextInputStyle
 } from 'discord.js';
 
-import { Color } from '../../constants';
 import { Component } from '../../interfaces/Component';
-import { Accounts, PresetData, SlotName } from '../../typings/supabase';
+import { SlotName } from '../../typings/supabase';
 import createEmbed from '../../utils/commands/createEmbed';
 import refreshAuthData from '../../utils/commands/refreshAuthData';
-import supabase from '../../utils/functions/supabase';
-import defaultResponses from '../../utils/helpers/defaultResponses';
 
 const selectMenu: Component<SelectMenuInteraction> = {
     name: 'renamePreset',
     execute: async (interaction) => {
         const slot = interaction.values[0];
 
-        const auth = await refreshAuthData(interaction.user.id);
-
-        if (!auth) {
-            await interaction.editReply(defaultResponses.loggedOut);
+        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
+            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
             return;
-        }
+        });
 
-        const presets = auth.survivorPresets;
+        const presets = auth!.survivorPresets;
 
         if (!presets) {
             await interaction.editReply({

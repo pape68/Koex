@@ -1,0 +1,70 @@
+import { ApplicationCommandOptionType, ApplicationCommandType, EmbedBuilder } from 'discord.js';
+
+import removeFriendFromId from '../api/friend/removeFriendFromId';
+import getFromDisplayName from '../api/account/getFromDisplayName';
+import { Command } from '../interfaces/Command';
+import createEmbed from '../utils/commands/createEmbed';
+import refreshAuthData from '../utils/commands/refreshAuthData';
+import defaultResponses from '../utils/helpers/defaultResponses';
+import getBlocklist from '../api/friend/getBlocklist';
+import getFromAccountId from '../api/account/getFromAccountId';
+import { Color } from '../constants';
+import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
+
+const command: Command = {
+    name: 'bl',
+    description: 'Remove a friend on Epic Games.',
+    type: ApplicationCommandType.ChatInput,
+    execute: async (interaction) => {
+        await interaction.deferReply({ ephemeral: true });
+        const auth = await refreshAuthData(interaction.user.id);
+
+        if (!auth) return;
+
+        try {
+            const blocklist = await getBlocklist(auth.accessToken, auth.accountId);
+
+            let displayNames: string[] = [];
+
+            for (const entry of blocklist) {
+                const account = await getFromAccountId(auth.accessToken, entry.accountId);
+                displayNames.push(account.displayName);
+            }
+
+            const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
+
+            const embed = new EmbedBuilder()
+                .setTitle('Blocklist')
+                .setColor(Color.YELLOW)
+                .setDescription('` - `' + displayNames.join('\n` - ` '))
+                .setFooter({ text: auth.displayName, iconURL: characterAvatarUrl ?? undefined });
+
+            interaction.editReply({ embeds: [embed] });
+        } catch (err) {
+            console.log(err);
+        }
+
+        // if (error) {
+        //     console.log(error);
+        //     switch (error.numericErrorCode) {
+        //         // Common Errors
+        //         case 14004:
+        //             await interaction.editReply({
+        //                 embeds: [createEmbed('info', `You don't have user **${displayName}** on your friends list.`)]
+        //             });
+        //             return;
+        //     }
+
+        //     await interaction.editReply({
+        //         embeds: [createEmbed('error', `Failed to remove user **${displayName}** from your friends list.`)]
+        //     });
+        //     return;
+        // }
+
+        // await interaction.editReply({
+        //     embeds: [createEmbed('success', `Removed user **${displayName}** from your friends list.`)]
+        // });
+    }
+};
+
+export default command;
