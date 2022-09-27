@@ -9,7 +9,7 @@ const event: Event = {
 
         if (interaction.user !== interaction.message?.interaction?.user) {
             await interaction.reply({
-                embeds: [createEmbed('error', "This isn't for you.")],
+                embeds: [createEmbed('info', "This isn't for you.")],
                 ephemeral: true
             });
             return;
