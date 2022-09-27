@@ -11,7 +11,7 @@ import { getWhitelistedUser } from '../utils/functions/database';
 
 const command: Command = {
     name: 'magic',
-    description: 'Abracadabra! 🪄',
+    description: '🔮',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply();
@@ -19,7 +19,7 @@ const command: Command = {
         const isWhitelisted = await getWhitelistedUser(interaction.user.id);
 
         if (!isWhitelisted) {
-            await interaction.editReply('(∩｀-´)⊃━☆ﾟ.*･｡ﾟ')
+            await interaction.editReply('Abracadabra
             return;
         }
 
