@@ -1,7 +1,7 @@
 export type Accounts = {
     user_id: string;
     auths: Auth[];
-    active_account_id: string;
+    active_account_id: string | null;
 };
 
 export type Auth = {
