@@ -1,12 +1,12 @@
 import axios, { AxiosError } from 'axios';
 
-import { Auth } from './../../typings/supabase.d';
+import { BearerAuth } from '../../utils/commands/createAuthData';
 import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
 import { FortniteProfile, MCPOperation, McpResponse, ProfileAttributes } from '../../utils/helpers/operationResources';
 import { Endpoints, EpicGamesAPIErrorData } from '../types';
 
 const composeMcp = async <T extends ProfileAttributes>(
-    auth: Required<Auth>,
+    auth: BearerAuth,
     profile: keyof typeof FortniteProfile,
     operation: keyof typeof MCPOperation,
     payload = {}

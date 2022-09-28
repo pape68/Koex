@@ -1,4 +1,4 @@
-import { Accounts, Auth, AutoDaily, DupeWhitelist } from './../../typings/supabase.d';
+import { Accounts, AccountAuth, AutoDaily, DupeWhitelist } from './../../typings/supabase.d';
 import supabase from './supabase';
 
 export const getAllAccounts = async (userId: string) => {
@@ -91,7 +91,7 @@ export const removeWhitelistedUser = async (userId: string) => {
     return data;
 };
 
-export const saveAuth = async (userId: string, auth: Auth) => {
+export const saveAuth = async (userId: string, auth: AccountAuth) => {
     const auths = await getAllAuths(userId);
 
     const { data, error } = await supabase
@@ -110,7 +110,7 @@ export const saveAuth = async (userId: string, auth: Auth) => {
     return data;
 };
 
-export const setAuths = async (userId: string, auths?: Auth[]) => {
+export const setAuths = async (userId: string, auths?: AccountAuth[]) => {
     const { data, error } = await supabase
         .from<Accounts>('accounts')
         .upsert({ user_id: userId, auths: auths ?? [] })

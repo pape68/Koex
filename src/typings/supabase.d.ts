@@ -1,24 +1,23 @@
-export type Accounts = {
-    user_id: string;
-    auths: Auth[];
-    active_account_id: string | null;
-};
-
-export type Auth = {
+export interface AccountAuth extends DeviceAuth {
     displayName: string;
-    accessToken?: string;
-} & DeviceAuth;
+}
 
-export type AutoDaily = {
+export interface Accounts {
     user_id: string;
-};
+    auths: AccountAuth[];
+    active_account_id: string | null;
+}
 
-export type DeviceAuth = {
+export interface AutoDaily {
+    user_id: string;
+}
+
+export interface DeviceAuth {
     accountId: string;
     deviceId: string;
     secret: string;
-};
+}
 
-export type DupeWhitelist = {
+export interface DupeWhitelist {
     user_id: string;
-};
+}

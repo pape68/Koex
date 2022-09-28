@@ -1,10 +1,9 @@
 import composeMcp from '../../api/mcp/composeMcp';
 import EpicGamesAPIError from '../errors/EpicGamesAPIError';
 import { CampaignProfileData } from '../helpers/operationResources';
-import { Auth } from './../../typings/supabase.d';
-import createAuthData from './createAuthData';
+import createAuthData, { BearerAuth } from './createAuthData';
 
-const toggleDupe = async (enable: boolean, userId: string, authOverride?: Required<Auth>) => {
+const toggleDupe = async (enable: boolean, userId: string, authOverride?: BearerAuth) => {
     const auth = authOverride ?? (await createAuthData(userId));
 
     if (!auth) throw new Error('Failed to create authorization data');

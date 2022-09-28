@@ -1,9 +1,14 @@
 import createOAuthData from '../../api/auth/createOAuthData';
 import { fortniteGameClient } from '../../constants';
 import { getAllAccounts } from '../functions/database';
-import { Auth } from '../../typings/supabase';
 
-const createAuthData = async (userId: string, accountId?: string): Promise<Required<Auth> | null> => {
+export interface BearerAuth {
+    accountId: string;
+    accessToken: string;
+    displayName: string;
+}
+
+const createAuthData = async (userId: string, accountId?: string): Promise<Required<BearerAuth> | null> => {
     const accounts = await getAllAccounts(userId);
 
     if (!accounts) return null;
@@ -20,9 +25,9 @@ const createAuthData = async (userId: string, accountId?: string): Promise<Requi
     });
 
     return {
-        ...auth,
-        displayName: oAuthData.displayName,
-        accessToken: oAuthData.access_token
+        accountId: oAuthData.account_id,
+        accessToken: oAuthData.access_token,
+        displayName: oAuthData.displayName
     };
 };
 
