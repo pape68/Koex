@@ -21,13 +21,14 @@ const command: Command = {
             return;
         }
 
-        const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
         const auth = await createAuthData(interaction.user.id);
 
         if (!auth) {
             await interaction.editReply({ embeds: [createEmbed('info', 'You are not logged in.')] });
             return;
         }
+
+        const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
 
         const embed = new EmbedBuilder()
             .setColor(Color.GRAY)
