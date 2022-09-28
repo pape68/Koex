@@ -1,5 +1,4 @@
 import composeMcp from '../../api/mcp/composeMcp';
-import EpicGamesAPIError from '../errors/EpicGamesAPIError';
 import { CampaignProfileData } from '../helpers/operationResources';
 import createAuthData, { BearerAuth } from './createAuthData';
 
@@ -31,22 +30,9 @@ const toggleDupe = async (enable: boolean, userId: string, authOverride?: Bearer
         throw new Error(`Dupe is already ${enable ? 'enabled' : 'disabled'}`);
     }
 
-    try {
-        await composeMcp<CampaignProfileData>(auth, 'theater0', 'StorageTransfer', {
-            transferOperations
-        });
-    } catch (err) {
-        console.log(err);
-    }
-
-    try {
-        await composeMcp<CampaignProfileData>(auth, 'theater0', 'StorageTransfer', {
-            transferOperations
-        });
-    } catch (err: any) {
-        const error: EpicGamesAPIError = err;
-        throw new Error(error.message);
-    }
+    await composeMcp<CampaignProfileData>(auth, 'theater0', 'StorageTransfer', {
+        transferOperations
+    });
 };
 
 export default toggleDupe;
