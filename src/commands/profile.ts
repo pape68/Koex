@@ -3,14 +3,20 @@ import { ApplicationCommandType, AttachmentBuilder, EmbedBuilder } from 'discord
 import composeMcp from '../api/mcp/composeMcp';
 import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
+import createAuthData from '../utils/commands/createAuthData';
 import createEmbed from '../utils/commands/createEmbed';
 import getBanner from '../utils/commands/getBanner';
 import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
-import createAuthData from '../utils/commands/createAuthData';
 import { CampaignProfileData } from '../utils/helpers/operationResources';
 import { Emoji } from './../constants';
 
-const outpostNames = ['Stonewood', 'Plankerton', 'Canny Valley', 'Twine Peaks'];
+type Outpost = 'Stonewood' | 'Plankerton' | 'Canny Valley' | 'Twine Peaks';
+const outposts: Partial<Record<string, Outpost>> = {
+    'Outpost:outpostcore_pve_01': 'Stonewood',
+    'Outpost:outpostcore_pve_02': 'Plankerton',
+    'Outpost:outpostcore_pve_03': 'Canny Valley',
+    'Outpost:outpostcore_pve_04': 'Twine Peaks'
+};
 
 const achievements: Partial<Record<string, keyof typeof Emoji>> = {
     'Quest:achievement_playwithothers': 'PLAYS_WELL_WITH_OTHERS',
@@ -49,12 +55,14 @@ const command: Command = {
 
         const profileMetadata = await composeMcp(auth, 'metadata', 'QueryProfile');
         const metadata = profileMetadata.profileChanges[0].profile;
+        console.log(JSON.stringify(metadata, null, 2));
 
-        const outposts = Object.values(metadata.items)
-            .filter((v) => v.templateId.startsWith('Outpost:'))
-            .map((v, i) => `${outpostNames[i]}: \`${v.attributes.level}\``);
+        const outpostLevels = Object.values(metadata.items)
+            .filter((v) => Object.keys(outposts).includes(v.templateId))
+            .sort((a, b) => a.templateId.localeCompare(b.templateId))
+            .map((v) => `**${outposts[v.templateId]}**: \`${v.attributes.level}\``);
 
-        const research = Object.entries(research_levels).map(
+        const researchLevels = Object.entries(research_levels).map(
             ([k, v]) => `${Emoji[k.toUpperCase() as keyof typeof Emoji]} \`${v}\``
         );
 
@@ -72,11 +80,11 @@ const command: Command = {
                 },
                 {
                     name: 'SSDs',
-                    value: outposts.join('\n')
+                    value: outpostLevels.join('\n')
                 },
                 {
                     name: 'Research',
-                    value: research.join(' '),
+                    value: researchLevels.join(' '),
                     inline: true
                 }
             ])
