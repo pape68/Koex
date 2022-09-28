@@ -4,7 +4,7 @@ import { Command } from '../interfaces/Command';
 import createAuthData from '../utils/commands/createAuthData';
 import createEmbed from '../utils/commands/createEmbed';
 import toggleDupe from '../utils/commands/toggleDupe';
-import { getAllAuths } from '../utils/functions/database';
+import { getAllAccounts } from '../utils/functions/database';
 
 const command: Command = {
     name: 'force-stop-magic',
@@ -22,9 +22,9 @@ const command: Command = {
 
         const userId = interaction.options.getString('user-id', true);
 
-        const auths = await getAllAuths(userId);
+        const accounts = await getAllAccounts(userId);
 
-        if (!auths.length) {
+        if (!accounts || !accounts.auths.length) {
             await interaction.editReply({
                 embeds: [createEmbed('info', `\`${userId}\` is not logged into any accounts.`)]
             });
@@ -33,29 +33,29 @@ const command: Command = {
 
         const fields: APIEmbedField[] = [];
 
-        for (const oldAuth of auths) {
-            const newAuth = await createAuthData(userId, oldAuth.accountId);
+        for (const auth of accounts.auths) {
+            const bearerAuth = await createAuthData(userId, auth.accountId);
 
-            if (!newAuth) {
+            if (!bearerAuth) {
                 fields.push({
-                    name: oldAuth.displayName,
+                    name: auth.displayName,
                     value: 'Failed to create authorization data'
                 });
                 continue;
             }
 
             try {
-                await toggleDupe(false, userId, newAuth);
+                await toggleDupe(false, userId, bearerAuth);
             } catch (err: any) {
                 fields.push({
-                    name: newAuth.displayName,
+                    name: bearerAuth.displayName,
                     value: err.message ?? 'An unknown error occurred'
                 });
                 continue;
             }
 
             fields.push({
-                name: newAuth.displayName,
+                name: bearerAuth.displayName,
                 value: 'No issues occurred'
             });
         }

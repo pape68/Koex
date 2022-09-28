@@ -91,16 +91,17 @@ export const removeWhitelistedUser = async (userId: string) => {
     return data;
 };
 
-export const saveAuth = async (userId: string, auth: AccountAuth) => {
-    const auths = await getAllAuths(userId);
+export const saveAccount = async (userId: string, auth: AccountAuth) => {
+    const accounts = await getAllAccounts(userId);
+
+    const auths = [auth];
+    if (accounts && accounts.auths.length) {
+        auths.push(...accounts.auths);
+    }
 
     const { data, error } = await supabase
         .from<Accounts>('accounts')
-        .upsert({
-            user_id: userId,
-            auths: [...auths, auth],
-            active_account_id: auth.accountId
-        })
+        .upsert({ user_id: userId, auths, active_account_id: auth.accountId })
         .single();
 
     if (error) {
@@ -110,10 +111,14 @@ export const saveAuth = async (userId: string, auth: AccountAuth) => {
     return data;
 };
 
-export const setAuths = async (userId: string, auths?: AccountAuth[]) => {
+export const setAccounts = async (
+    userId: string,
+    auths: AccountAuth[] = [],
+    active_account_id: string | null = null
+) => {
     const { data, error } = await supabase
         .from<Accounts>('accounts')
-        .upsert({ user_id: userId, auths: auths ?? [], active_account_id: auths ? auths[0].accountId : null })
+        .upsert({ user_id: userId, auths, active_account_id })
         .single();
 
     if (error) {

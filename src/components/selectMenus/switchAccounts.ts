@@ -3,7 +3,7 @@ import { SelectMenuInteraction } from 'discord.js';
 import { Component } from '../../interfaces/Component';
 import createEmbed from '../../utils/commands/createEmbed';
 import createAuthData from '../../utils/commands/createAuthData';
-import { saveAuth } from '../../utils/functions/database';
+import { saveAccount } from '../../utils/functions/database';
 import createDeviceAuth from '../../api/auth/createDeviceAuth';
 
 const selectMenu: Component<SelectMenuInteraction> = {
@@ -22,7 +22,7 @@ const selectMenu: Component<SelectMenuInteraction> = {
 
         const deviceAuth = await createDeviceAuth(auth.accessToken, auth.accountId);
 
-        await saveAuth(interaction.user.id, {
+        await saveAccount(interaction.user.id, {
             displayName: auth.displayName,
             accountId: auth.accountId,
             deviceId: deviceAuth.deviceId,

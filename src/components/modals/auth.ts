@@ -5,7 +5,7 @@ import createOAuthData from '../../api/auth/createOAuthData';
 import { fortniteGameClient } from '../../constants';
 import { Component } from '../../interfaces/Component';
 import createEmbed from '../../utils/commands/createEmbed';
-import { getAllAuths, saveAuth } from '../../utils/functions/database';
+import { getAllAccounts, getAllAuths, saveAccount } from '../../utils/functions/database';
 
 const modal: Component<ModalSubmitInteraction> = {
     name: 'auth',
@@ -20,24 +20,24 @@ const modal: Component<ModalSubmitInteraction> = {
         });
 
         const deviceAuth = await createDeviceAuth(oAuthData.access_token, oAuthData.account_id);
-        const auths = await getAllAuths(interaction.user.id);
+        const accounts = await getAllAccounts(interaction.user.id);
 
-        if (auths.length === 5) {
+        if (accounts && accounts.auths.length === 5) {
             await interaction.editReply({
                 embeds: [createEmbed('info', `You already have 5 accounts saved.`)]
             });
             return;
         }
 
-        const isSaved = auths.filter((auth) => auth.accountId === deviceAuth.accountId);
-        if (isSaved.length) {
+        const isSaved = accounts?.auths.filter((auth) => auth.accountId === deviceAuth.accountId);
+        if (isSaved?.length) {
             await interaction.editReply({
                 embeds: [createEmbed('info', `You already have the account **${oAuthData.displayName}** saved.`)]
             });
             return;
         }
 
-        await saveAuth(interaction.user.id, { ...deviceAuth, displayName: oAuthData.displayName });
+        await saveAccount(interaction.user.id, { ...deviceAuth, displayName: oAuthData.displayName });
         await interaction.editReply({
             embeds: [createEmbed('success', `Successfully saved the account **${oAuthData.displayName}**.`)]
         });

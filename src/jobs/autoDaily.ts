@@ -4,9 +4,10 @@ import composeMcp from '../api/mcp/composeMcp';
 import { Color } from '../constants';
 import { ExtendedClient } from '../interfaces/ExtendedClient';
 import createAuthData from '../utils/commands/createAuthData';
-import { getAllAuths, getAllAutoDailyUsers } from '../utils/functions/database';
+import { getAllAccounts, getAllAuths, getAllAutoDailyUsers } from '../utils/functions/database';
 import { CampaignProfileData } from '../utils/helpers/operationResources';
 import rewardData from '../utils/helpers/rewards.json' assert { type: 'json' };
+import createEmbed from '../utils/commands/createEmbed';
 
 const startAutoDailyJob = async (client: ExtendedClient) => {
     const users = await getAllAutoDailyUsers();
@@ -25,22 +26,35 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
 
     for (const user of users) {
         setTimeout(async () => {
-            const auths = await getAllAuths(user.user_id);
+            const accounts = await getAllAccounts(user.user_id);
 
             const fields: APIEmbedField[] = [];
 
-            for (const oldAuth of auths) {
-                const newAuth = await createAuthData(user.user_id, oldAuth.accountId);
+            if (!accounts || !accounts.auths) {
+                await webhookClient.send({
+                    ...webhookOptions,
+                    content: `<@!${user.user_id}>`,
+                    embeds: [createEmbed('info', 'You have been logged out.')]
+                });
+                return;
+            }
 
-                if (!newAuth) {
+            for (const auth of accounts.auths) {
+                const bearerAuth = await createAuthData(user.user_id, auth.accountId);
+
+                if (!bearerAuth) {
                     fields.push({
-                        name: oldAuth.displayName,
+                        name: auth.displayName,
                         value: 'Failed to retrieve authorization data.'
                     });
                     return;
                 }
 
-                const campaignProfile = await composeMcp<CampaignProfileData>(newAuth, 'campaign', 'ClaimLoginReward');
+                const campaignProfile = await composeMcp<CampaignProfileData>(
+                    bearerAuth,
+                    'campaign',
+                    'ClaimLoginReward'
+                );
 
                 const rewards = campaignProfile.profileChanges[0].profile.stats.attributes.daily_rewards as Required<
                     CampaignProfileData['daily_rewards']
@@ -49,7 +63,7 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
                 const { totalDaysLoggedIn } = rewards;
 
                 fields.push({
-                    name: `${newAuth.displayName}'s Reward ${
+                    name: `${bearerAuth.displayName}'s Reward ${
                         campaignProfile.notifications[0].items?.length === 0 ? '(Already Claimed)' : ''
                     }`,
                     value: `\`${totalDaysLoggedIn}\` **${(rewardData as any)[totalDaysLoggedIn % 336]}**`
