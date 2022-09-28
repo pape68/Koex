@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
-import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
 
-import { Endpoints, EpicApiErrorData } from '../types';
+import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
+import { Endpoints, EpicGamesAPIErrorData } from '../types';
 
 interface DeviceAuthResponse {
     accountId: string;
@@ -29,7 +29,11 @@ const createDeviceAuth = async (accessToken: string, accountId: string) => {
         };
     } catch (err: any) {
         const error: AxiosError = err;
-        throw new EpicGamesAPIError(error.response?.data as EpicApiErrorData, err.request, error.response?.status!);
+        throw new EpicGamesAPIError(
+            error.response?.data as EpicGamesAPIErrorData,
+            err.request,
+            error.response?.status!
+        );
     }
 };
 

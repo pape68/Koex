@@ -2,13 +2,13 @@ import { ApplicationCommandOptionType, ApplicationCommandType, EmbedBuilder, API
 
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
-import refreshAuthData from '../utils/commands/refreshAuthData';
+import createAuthData from '../utils/commands/createAuthData';
 import toggleDupe from '../utils/commands/toggleDupe';
 import { getAllAccounts } from '../utils/functions/database';
 
 const command: Command = {
     name: 'force-stop-magic',
-    description: '🔮',
+    description: 'No more abracadabra...',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
@@ -22,33 +22,33 @@ const command: Command = {
 
         const userId = interaction.options.getString('user-id', true);
 
-        const accounts = await getAllAccounts(userId);
-
-        const slots = Object.entries(accounts ?? {})
-            .filter(([k, v]) => k.startsWith('slot_') && v != null)
-            .map(([k, v]) => ({ idx: parseInt(k.split('_')[1]), data: v }));
+        const { auths } = await getAllAccounts(userId);
 
         const fields: APIEmbedField[] = [];
 
-        for (const slot of slots) {
-            console.log(slot, slots);
-            const auth = await refreshAuthData(userId, slot.idx, async (msg) => {
-                await interaction.editReply({ embeds: [createEmbed('info', msg)] });
-                return;
-            });
+        for (const oldAuth of auths) {
+            const newAuth = await createAuthData(userId, oldAuth.accountId);
+
+            if (!newAuth) {
+                fields.push({
+                    name: oldAuth.displayName,
+                    value: 'Failed to create authorization data'
+                });
+                continue;
+            }
 
             try {
-                await toggleDupe(false, userId, auth);
+                await toggleDupe(false, userId, newAuth);
             } catch (err: any) {
                 fields.push({
-                    name: auth!.displayName,
+                    name: newAuth.displayName,
                     value: err.message ?? 'An unknown error occurred'
                 });
                 continue;
             }
 
             fields.push({
-                name: auth!.displayName,
+                name: newAuth.displayName,
                 value: 'No issues occurred'
             });
         }

@@ -1,63 +1,37 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
 
-import { PostgrestResponse } from '@supabase/supabase-js';
 import { Command } from '../interfaces/Command';
-import { DupeWhitelist } from '../typings/supabase';
 import createEmbed from '../utils/commands/createEmbed';
-import supabase from '../utils/functions/supabase';
+import { getWhitelistedUser, removeWhitelistedUser, saveWhitelistedUser } from '../utils/functions/database';
 
 const command: Command = {
     name: 'whitelist',
-    description: 'Adds a user to the bot whitelist.',
+    description: 'Toggle whitelist status for a user.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
 
-        if (!['951989622236397590', '569212600785567777'].includes(interaction.user.id)) {
-            await interaction.editReply({
-                embeds: [createEmbed('info', 'You do not have permission to use this command.')]
-            });
-            return;
+        const userId = interaction.options.getString('user-id', true);
+
+        const isWhitelisted = await getWhitelistedUser(userId);
+
+        switch (isWhitelisted) {
+            case true:
+                await removeWhitelistedUser(userId);
+                break;
+            case false:
+                await saveWhitelistedUser(userId);
+                break;
         }
 
-        const userId = interaction.options.getString('user-id')!;
-        const state = interaction.options.getString('change')!;
-
-        let whitelist: PostgrestResponse<DupeWhitelist>;
-
-        switch (state) {
-            case 'add':
-                whitelist = await supabase.from<DupeWhitelist>('dupe_whitelist').upsert({
-                    user_id: userId
-                });
-
-                if (whitelist.error) {
-                    await interaction.editReply({
-                        embeds: [createEmbed('error', 'Failed to update whitelist.')]
-                    });
-                    return;
-                }
-
-                await interaction.editReply({
-                    embeds: [createEmbed('info', `Added ID \`${userId}\` to the whitelist.`)]
-                });
-                return;
-            case 'remove':
-                whitelist = await supabase.from<DupeWhitelist>('dupe_whitelist').delete().match({
-                    user_id: userId
-                });
-
-                if (whitelist.error) {
-                    await interaction.editReply({
-                        embeds: [createEmbed('error', 'Failed to update whitelist.')]
-                    });
-                    return;
-                }
-
-                await interaction.editReply({
-                    embeds: [createEmbed('info', `Removed ID \`${userId}\` from the whitelist.`)]
-                });
-        }
+        await interaction.editReply({
+            embeds: [
+                createEmbed(
+                    'success',
+                    `Toggled whitelist status for \`${userId}\` to **${isWhitelisted ? 'Off' : 'On'}**.`
+                )
+            ]
+        });
     },
     options: [
         {
@@ -65,22 +39,6 @@ const command: Command = {
             description: 'The ID of the target user.',
             required: true,
             type: ApplicationCommandOptionType.String
-        },
-        {
-            name: 'change',
-            description: 'Add or remove the whitelist.',
-            required: true,
-            type: ApplicationCommandOptionType.String,
-            choices: [
-                {
-                    name: 'Add',
-                    value: 'add'
-                },
-                {
-                    name: 'Remove',
-                    value: 'remove'
-                }
-            ]
         }
     ]
 };

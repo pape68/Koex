@@ -2,14 +2,18 @@ import Jimp from 'jimp';
 
 import composeMcp from '../../api/mcp/composeMcp';
 import { CampaignProfileData } from '../helpers/operationResources';
-import refreshAuthData from './refreshAuthData';
+import createAuthData from './createAuthData';
 
 const getBanner = async (userId: string) => {
-    const auth = await refreshAuthData(userId, undefined, () => null);
+    const auth = await createAuthData(userId);
+
+    if (!auth) {
+        throw new Error('Failed to create authorization data');
+    }
 
     let bannerId = 'standardbanner1';
 
-    const campaignProfile = await composeMcp<CampaignProfileData>(auth!, 'campaign', 'QueryProfile');
+    const campaignProfile = await composeMcp<CampaignProfileData>(auth, 'campaign', 'QueryProfile');
 
     const items = campaignProfile.profileChanges[0].profile.items;
 

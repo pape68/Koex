@@ -9,14 +9,14 @@ import {
 
 import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
-import { fortniteClient } from './../constants';
+import { fortniteGameClient } from './../constants';
 
 const command: Command = {
     name: 'login',
     description: 'Login to a new Epic Games account.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
-        const baseUrl = `https://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fredirect%3FclientId%3D${fortniteClient.id}%26responseType%3Dcode%0A`;
+        const baseUrl = `https://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fredirect%3FclientId%3D${fortniteGameClient._id}%26responseType%3Dcode%0A`;
 
         const file = new AttachmentBuilder(process.cwd() + '/assets/authCode.png');
 

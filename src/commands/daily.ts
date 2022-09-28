@@ -1,15 +1,13 @@
 import { ApplicationCommandType, EmbedBuilder } from 'discord.js';
+
 import composeMcp from '../api/mcp/composeMcp';
-
 import { Command } from '../interfaces/Command';
-import defaultResponses from '../utils/helpers/defaultResponses';
-
 import { Color } from '../constants';
-import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
-import rewardData from '../utils/helpers/rewards.json' assert { type: 'json' };
-import { CampaignProfileData } from '../utils/helpers/operationResources';
 import createEmbed from '../utils/commands/createEmbed';
-import refreshAuthData from '../utils/commands/refreshAuthData';
+import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
+import createAuthData from '../utils/commands/createAuthData';
+import { CampaignProfileData } from '../utils/helpers/operationResources';
+import rewardData from '../utils/helpers/rewards.json' assert { type: 'json' };
 
 const command: Command = {
     name: 'daily',
@@ -18,12 +16,14 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply();
 
-        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
-            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
-            return;
-        });
+        const auth = await createAuthData(interaction.user.id);
 
-        const campaignProfile = await composeMcp<CampaignProfileData>(auth!, 'campaign', 'ClaimLoginReward');
+        if (!auth) {
+            await interaction.editReply({ embeds: [createEmbed('info', 'You are not logged in.')] });
+            return;
+        }
+
+        const campaignProfile = await composeMcp<CampaignProfileData>(auth, 'campaign', 'ClaimLoginReward');
         const rewards = campaignProfile.profileChanges[0].profile.stats.attributes.daily_rewards as Required<
             CampaignProfileData['daily_rewards']
         >;
@@ -56,7 +56,7 @@ const command: Command = {
                     value: rewardValues.slice(2).join('\n')
                 }
             ])
-            .setFooter({ text: auth!.displayName, iconURL: characterAvatarUrl ?? undefined })
+            .setFooter({ text: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
             .setTimestamp(new Date(rewards.lastClaimDate));
 
         await interaction.editReply({ embeds: [embed] });

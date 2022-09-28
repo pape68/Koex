@@ -1,11 +1,10 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
 
-import addFriendFromId from '../api/friend/addFriendFromId';
 import getFromDisplayName from '../api/account/getFromDisplayName';
+import addFriendFromId from '../api/friend/addFriendFromId';
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
-import refreshAuthData from '../utils/commands/refreshAuthData';
-import defaultResponses from '../utils/helpers/defaultResponses';
+import createAuthData from '../utils/commands/createAuthData';
 import EpicGamesAPIError from '../utils/errors/EpicGamesAPIError';
 
 const command: Command = {
@@ -17,12 +16,14 @@ const command: Command = {
 
         const displayName = interaction.options.getString('username')!;
 
-        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
-            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
-            return;
-        });
+        const auth = await createAuthData(interaction.user.id);
 
-        const friendData = await getFromDisplayName(auth!.accessToken, displayName);
+        if (!auth) {
+            await interaction.editReply({ embeds: [createEmbed('info', 'You are not logged in.')] });
+            return;
+        }
+
+        const friendData = await getFromDisplayName(auth.accessToken, displayName);
 
         if (!friendData) {
             await interaction.editReply({
@@ -32,7 +33,7 @@ const command: Command = {
         }
 
         try {
-            await addFriendFromId(auth!.accessToken, auth!.accountId, friendData.id);
+            await addFriendFromId(auth.accessToken, auth.accountId, friendData.id);
         } catch (err: any) {
             const error: EpicGamesAPIError = err;
 

@@ -3,9 +3,8 @@ import { ApplicationCommandOptionType, ApplicationCommandType, AttachmentBuilder
 import composeMcp from '../api/mcp/composeMcp';
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
-import refreshAuthData from '../utils/commands/refreshAuthData';
-import defaultResponses from '../utils/helpers/defaultResponses';
-import { MCPOperation, FortniteProfile } from '../utils/helpers/operationResources';
+import createAuthData from '../utils/commands/createAuthData';
+import { FortniteProfile, MCPOperation } from '../utils/helpers/operationResources';
 
 const command: Command = {
     name: 'compose-mcp',
@@ -18,11 +17,14 @@ const command: Command = {
         const profile = interaction.options.getString('profile', true) as keyof typeof FortniteProfile;
         const payload = interaction.options.getString('payload');
 
-        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
-            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
+        const auth = await createAuthData(interaction.user.id);
+
+        if (!auth) {
+            await interaction.editReply({ embeds: [createEmbed('info', 'You are not logged in.')] });
             return;
-        });
-        const data = await composeMcp(auth!, profile, operationNamae, payload ? JSON.parse(payload) : {});
+        }
+
+        const data = await composeMcp(auth, profile, operationNamae, payload ? JSON.parse(payload) : {});
         const response = JSON.stringify(data, null, 4);
         const file = new AttachmentBuilder(Buffer.from(response), { name: 'response.json' });
 

@@ -2,8 +2,8 @@ import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle } 
 
 import createExchangeCode from '../api/auth/createExchangeCode';
 import { Command } from '../interfaces/Command';
+import createAuthData from '../utils/commands/createAuthData';
 import createEmbed from '../utils/commands/createEmbed';
-import refreshAuthData from '../utils/commands/refreshAuthData';
 
 const command: Command = {
     name: 'account-page',
@@ -12,12 +12,14 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
 
-        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
-            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
-            return;
-        });
+        const auth = await createAuthData(interaction.user.id);
 
-        const exchangeCode = await createExchangeCode(auth!.accessToken);
+        if (!auth) {
+            await interaction.editReply({ embeds: [createEmbed('info', 'You are not logged in.')] });
+            return;
+        }
+
+        const exchangeCode = await createExchangeCode(auth.accessToken);
         const url = 'https://epicgames.com/id/exchange?exchangeCode=' + exchangeCode;
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
             new ButtonBuilder().setLabel('Epic Games').setURL(url).setStyle(ButtonStyle.Link)

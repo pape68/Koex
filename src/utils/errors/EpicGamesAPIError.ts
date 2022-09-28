@@ -1,5 +1,6 @@
 import { AxiosRequestConfig } from 'axios';
-import { EpicApiErrorData } from '../functions/request';
+
+import { EpicGamesAPIErrorData } from '../../api/types';
 
 class EpicGamesAPIError extends Error {
     public method: string;
@@ -9,7 +10,7 @@ class EpicGamesAPIError extends Error {
     public request?: any;
     public status: number;
 
-    constructor(error: EpicApiErrorData, request: AxiosRequestConfig, status: number) {
+    constructor(error: EpicGamesAPIErrorData, request: AxiosRequestConfig, status: number) {
         super();
         this.name = 'EpicGamesAPIError';
         this.message = error.errorMessage;

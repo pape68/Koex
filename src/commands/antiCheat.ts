@@ -5,7 +5,7 @@ import calderaRequest from '../api/caldera/calderaRequest';
 import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
 import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
-import refreshAuthData from '../utils/commands/refreshAuthData';
+import createAuthData from '../utils/commands/createAuthData';
 import createEmbed from '../utils/commands/createEmbed';
 
 const command: Command = {
@@ -15,13 +15,15 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply();
 
-        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
-            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
-            return;
-        });
+        const auth = await createAuthData(interaction.user.id);
 
-        const exchangeCode = await createExchangeCode(auth!.accessToken);
-        const caldera = await calderaRequest(auth!.accountId, exchangeCode);
+        if (!auth) {
+            await interaction.editReply({ embeds: [createEmbed('info', 'You are not logged in.')] });
+            return;
+        }
+
+        const exchangeCode = await createExchangeCode(auth.accessToken);
+        const caldera = await calderaRequest(auth.accountId, exchangeCode);
         const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
 
         const embed = new EmbedBuilder()
@@ -30,7 +32,7 @@ const command: Command = {
                 name: 'Anti-Cheat',
                 value: `Your current anti-cheat provider is **${caldera.provider}**.`
             })
-            .setFooter({ text: auth!.displayName, iconURL: characterAvatarUrl ?? undefined })
+            .setFooter({ text: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
             .setTimestamp();
 
         await interaction.editReply({ embeds: [embed] });

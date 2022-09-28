@@ -1,4 +1,4 @@
-import { ApplicationCommandType, EmbedBuilder, AttachmentBuilder } from 'discord.js';
+import { ApplicationCommandType, AttachmentBuilder, EmbedBuilder } from 'discord.js';
 
 import composeMcp from '../api/mcp/composeMcp';
 import { Color } from '../constants';
@@ -6,8 +6,7 @@ import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
 import getBanner from '../utils/commands/getBanner';
 import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
-import refreshAuthData from '../utils/commands/refreshAuthData';
-import defaultResponses from '../utils/helpers/defaultResponses';
+import createAuthData from '../utils/commands/createAuthData';
 import { CampaignProfileData } from '../utils/helpers/operationResources';
 import { Emoji } from './../constants';
 
@@ -29,12 +28,14 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply();
 
-        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
-            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
-            return;
-        });
+        const auth = await createAuthData(interaction.user.id);
 
-        const campaignProfile = await composeMcp<CampaignProfileData>(auth!, 'campaign', 'QueryPublicProfile');
+        if (!auth) {
+            await interaction.editReply({ embeds: [createEmbed('info', 'You are not logged in.')] });
+            return;
+        }
+
+        const campaignProfile = await composeMcp<CampaignProfileData>(auth, 'campaign', 'QueryPublicProfile');
 
         const data = campaignProfile.profileChanges[0].profile;
         const { level, rewards_claimed_post_max_level, research_levels } = data.stats.attributes;
@@ -46,7 +47,7 @@ const command: Command = {
         const bannerUrl = await getBanner(interaction.user.id);
         const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
 
-        const profileMetadata = await composeMcp(auth!, 'metadata', 'QueryProfile');
+        const profileMetadata = await composeMcp(auth, 'metadata', 'QueryProfile');
         const metadata = profileMetadata.profileChanges[0].profile;
 
         const outposts = Object.values(metadata.items)
@@ -61,7 +62,7 @@ const command: Command = {
 
         const embed = new EmbedBuilder()
             .setColor(Color.GRAY)
-            .setAuthor({ name: auth!.displayName, iconURL: characterAvatarUrl ?? undefined })
+            .setAuthor({ name: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
             .setDescription(emojis.length ? emojis.join(' ') : null)
             .addFields([
                 {
@@ -80,7 +81,7 @@ const command: Command = {
                 }
             ])
             .setThumbnail('attachment://buffer.png')
-            .setFooter({ text: `Account ID: ${auth!.accountId}` })
+            .setFooter({ text: `Account ID: ${auth.accountId}` })
             .setTimestamp();
 
         await interaction.editReply({ embeds: [embed], files: bannerUrl ? [attachment] : [] });

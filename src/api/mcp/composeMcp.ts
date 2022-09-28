@@ -1,12 +1,12 @@
 import axios, { AxiosError } from 'axios';
 
-import { SlotData } from '../../typings/supabase';
+import { Auth } from './../../typings/supabase.d';
 import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
 import { FortniteProfile, MCPOperation, McpResponse, ProfileAttributes } from '../../utils/helpers/operationResources';
-import { Endpoints, EpicApiErrorData } from '../types';
+import { Endpoints, EpicGamesAPIErrorData } from '../types';
 
 const composeMcp = async <T extends ProfileAttributes>(
-    auth: SlotData,
+    auth: Required<Auth>,
     profile: keyof typeof FortniteProfile,
     operation: keyof typeof MCPOperation,
     payload = {}
@@ -25,7 +25,11 @@ const composeMcp = async <T extends ProfileAttributes>(
         return data;
     } catch (err: any) {
         const error: AxiosError = err;
-        throw new EpicGamesAPIError(error.response?.data as EpicApiErrorData, err.request, error.response?.status!);
+        throw new EpicGamesAPIError(
+            error.response?.data as EpicGamesAPIErrorData,
+            err.request,
+            error.response?.status!
+        );
     }
 };
 

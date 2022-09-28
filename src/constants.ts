@@ -26,14 +26,8 @@ export enum Emoji {
     TALENTED_BUILDER = '<:KX_TalentedBuilder:1020554382959464460>'
 }
 
-interface FortniteClient {
-    name: keyof typeof AuthClients;
-    id: string;
-    secret: string;
-}
-
-const client: FortniteClient['name'] = 'fortniteIOSGameClient';
-const [id, secret] = Buffer.from(AuthClients[client], 'base64').toString().split(':');
-export const fortniteClient = Object.freeze({ name: client, id, secret } as FortniteClient);
+const client: keyof typeof AuthClients = 'fortniteIOSGameClient';
+const [_id, _secret] = Buffer.from(AuthClients[client], 'base64').toString().split(':');
+export const fortniteGameClient = Object.freeze({ _name: client, _id, _secret });
 
 export const isProd = process.env.NODE_ENV === 'production';

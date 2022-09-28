@@ -2,11 +2,9 @@ import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle, E
 
 import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
-import { DupeWhitelist } from '../typings/supabase';
+import createAuthData from '../utils/commands/createAuthData';
 import createEmbed from '../utils/commands/createEmbed';
 import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
-import refreshAuthData from '../utils/commands/refreshAuthData';
-import supabase from '../utils/functions/supabase';
 import { getWhitelistedUser } from '../utils/functions/database';
 
 const command: Command = {
@@ -19,15 +17,17 @@ const command: Command = {
         const isWhitelisted = await getWhitelistedUser(interaction.user.id);
 
         if (!isWhitelisted) {
-            await interaction.editReply('(∩｀-´)⊃━☆ﾟ.*･｡ﾟ')
+            await interaction.editReply('(∩｀-´)⊃━☆ﾟ.*･｡ﾟ');
             return;
         }
 
         const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
-        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
-            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
+        const auth = await createAuthData(interaction.user.id);
+
+        if (!auth) {
+            await interaction.editReply({ embeds: [createEmbed('info', 'You are not logged in.')] });
             return;
-        });
+        }
 
         const embed = new EmbedBuilder()
             .setColor(Color.GRAY)
@@ -37,7 +37,7 @@ const command: Command = {
                     value: 'Click the buttons below to toggle the dupe.'
                 }
             ])
-            .setFooter({ text: auth!.displayName, iconURL: characterAvatarUrl ?? undefined })
+            .setFooter({ text: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
             .setTimestamp();
 
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(

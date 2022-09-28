@@ -1,33 +1,29 @@
-import util from 'node:util';
-
-import errorMessages from '../helpers/errorMessages';
-import { Accounts, DupeWhitelist, SlotData } from './../../typings/supabase.d';
+import { Accounts, Auth, AutoDaily, DupeWhitelist } from './../../typings/supabase.d';
 import supabase from './supabase';
 
-export const getAllAccounts = async (userId: string, cb?: (msg: string) => void) => {
+export const getAllAccounts = async (userId: string) => {
     const { data, error } = await supabase
-        .from<Accounts>('accounts_test')
+        .from<Accounts>('accounts')
         .select('*')
         .match({ user_id: userId })
         .maybeSingle();
 
     if (error) {
-        throw new Error(errorMessages.databaseReadError);
+        throw new Error(error.message);
     }
 
     if (!data) {
-        if (cb) await util.promisify(cb)('You are not logged in. Please log in and try again.');
-        return null;
+        throw new Error('Sorry your account data was not found');
     }
 
-    return Object.fromEntries(Object.entries(data).filter(([_, v]) => v != null)) as Accounts;
+    return data;
 };
 
 export const getAllAutoDailyUsers = async () => {
-    const { data, error } = await supabase.from<Accounts>('auto_daily').select('*');
+    const { data, error } = await supabase.from<AutoDaily>('auto_daily').select('*');
 
     if (error) {
-        throw new Error(errorMessages.databaseReadError);
+        throw new Error(error.message);
     }
 
     return data;
@@ -35,13 +31,13 @@ export const getAllAutoDailyUsers = async () => {
 
 export const getAutoDailyEnabled = async (userId: string) => {
     const { data, error } = await supabase
-        .from<Accounts>('auto_daily')
+        .from<AutoDaily>('auto_daily')
         .select('*')
         .match({ user_id: userId })
         .maybeSingle();
 
     if (error) {
-        throw new Error(errorMessages.databaseReadError);
+        throw new Error(error.message);
     }
 
     return !!data;
@@ -55,74 +51,80 @@ export const getWhitelistedUser = async (userId: string) => {
         .maybeSingle();
 
     if (error) {
-        throw new Error(errorMessages.databaseReadError);
+        throw new Error(error.message);
     }
 
     return !!data;
 };
 
-export const saveAutoDailyUser = async (userId: string) => {
-    const { data, error } = await supabase.from<Accounts>('auto_daily').upsert({ user_id: userId }).single();
-
-    if (error) {
-        throw new Error(errorMessages.databaseReadError);
-    }
-
-    return data;
-};
-
 export const removeAutoDailyUser = async (userId: string) => {
-    const { data, error } = await supabase.from<Accounts>('auto_daily').delete().match({ user_id: userId }).single();
+    const { data, error } = await supabase.from<AutoDaily>('auto_daily').delete().match({ user_id: userId }).single();
 
     if (error) {
-        throw new Error(errorMessages.databaseReadError);
+        throw new Error(error.message);
     }
 
     return data;
 };
 
-export const initializeAccounts = async (userId: string) => {
-    const { data, error } = await supabase.from<Accounts>('accounts_test').upsert({ user_id: userId }).single();
+export const removeWhitelistedUser = async (userId: string) => {
+    const { data, error } = await supabase
+        .from<DupeWhitelist>('dupe_whitelist')
+        .delete()
+        .match({ user_id: userId })
+        .single();
 
     if (error) {
-        throw new Error(errorMessages.databaseWriteError);
+        throw new Error(error.message);
     }
 
     return data;
 };
 
-export const saveAccount = async (userId: string, slotIdx: number, account: Partial<SlotData>) => {
+export const saveAuth = async (userId: string, auth: Auth) => {
     const accounts = await getAllAccounts(userId);
 
     const { data, error } = await supabase
-        .from<Accounts>('accounts_test')
+        .from<Accounts>('accounts')
         .upsert({
             user_id: userId,
-            ...accounts,
-            ['slot_' + slotIdx]: account,
-            active_slot: slotIdx
+            auths: [...accounts!.auths, auth],
+            active_account_id: auth.accountId
         })
         .single();
 
     if (error) {
-        throw new Error(errorMessages.databaseWriteError);
+        throw new Error(error.message);
     }
 
     return data;
 };
 
-export const deleteAccount = async (userId: string, slotIdx: number) => {
-    const { data, error } = await supabase
-        .from<Accounts>('accounts_test')
-        .upsert({
-            user_id: userId,
-            ['slot_' + slotIdx]: null,
-            active_slot: slotIdx
-        })
-        .single();
+export const setAuths = async (userId: string, auths: Auth[] = []) => {
+    const { data, error } = await supabase.from<Accounts>('accounts').upsert({ user_id: userId, auths }).single();
 
     if (error) {
-        throw new Error(errorMessages.databaseWriteError);
+        throw new Error(error.message);
+    }
+
+    return data.auths;
+};
+
+export const saveAutoDailyUser = async (userId: string) => {
+    const { data, error } = await supabase.from<AutoDaily>('auto_daily').upsert({ user_id: userId }).single();
+
+    if (error) {
+        throw new Error(error.message);
+    }
+
+    return data;
+};
+
+export const saveWhitelistedUser = async (userId: string) => {
+    const { data, error } = await supabase.from<DupeWhitelist>('dupe_whitelist').upsert({ user_id: userId }).single();
+
+    if (error) {
+        throw new Error(error.message);
     }
 
     return data;

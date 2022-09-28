@@ -4,7 +4,7 @@ import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
 import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
-import refreshAuthData from '../utils/commands/refreshAuthData';
+import createAuthData from '../utils/commands/createAuthData';
 
 const command: Command = {
     name: 'who',
@@ -13,10 +13,12 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply();
 
-        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
-            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
+        const auth = await createAuthData(interaction.user.id);
+
+        if (!auth) {
+            await interaction.editReply({ embeds: [createEmbed('info', 'You are not logged in.')] });
             return;
-        });
+        }
 
         const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
 
@@ -24,7 +26,7 @@ const command: Command = {
             embeds: [
                 new EmbedBuilder()
                     .setAuthor({
-                        name: `Hello, ${auth!.displayName}`,
+                        name: `Hello, ${auth.displayName}`,
                         iconURL: characterAvatarUrl ?? undefined
                     })
                     .setColor(Color.GRAY)

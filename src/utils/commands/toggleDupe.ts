@@ -1,17 +1,15 @@
 import composeMcp from '../../api/mcp/composeMcp';
-import { SlotData } from '../../typings/supabase';
 import EpicGamesAPIError from '../errors/EpicGamesAPIError';
 import { CampaignProfileData } from '../helpers/operationResources';
-import refreshAuthData from './refreshAuthData';
+import { Auth } from './../../typings/supabase.d';
+import createAuthData from './createAuthData';
 
-const toggleDupe = async (enable: boolean, userId: string, authOverride?: SlotData | null) => {
-    const auth =
-        authOverride ??
-        (await refreshAuthData(userId, undefined, async (msg) => {
-            throw new Error(msg);
-        }));
+const toggleDupe = async (enable: boolean, userId: string, authOverride?: Required<Auth>) => {
+    const auth = authOverride ?? (await createAuthData(userId));
 
-    const targetProfile = await composeMcp(auth!, enable ? 'theater0' : 'outpost0', 'QueryProfile');
+    if (!auth) throw new Error('Failed to create authorization data');
+
+    const targetProfile = await composeMcp(auth, enable ? 'theater0' : 'outpost0', 'QueryProfile');
 
     const itemTypes = [
         'Weapon:buildingitemdata_wall',
@@ -35,7 +33,7 @@ const toggleDupe = async (enable: boolean, userId: string, authOverride?: SlotDa
     }
 
     try {
-        await composeMcp<CampaignProfileData>(auth!, 'theater0', 'StorageTransfer', {
+        await composeMcp<CampaignProfileData>(auth, 'theater0', 'StorageTransfer', {
             transferOperations
         });
     } catch (err) {
@@ -43,7 +41,7 @@ const toggleDupe = async (enable: boolean, userId: string, authOverride?: SlotDa
     }
 
     try {
-        await composeMcp<CampaignProfileData>(auth!, 'theater0', 'StorageTransfer', {
+        await composeMcp<CampaignProfileData>(auth, 'theater0', 'StorageTransfer', {
             transferOperations
         });
     } catch (err: any) {

@@ -3,29 +3,31 @@ import composeMcp from '../api/mcp/composeMcp';
 
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
-import refreshAuthData from '../utils/commands/refreshAuthData';
+import createAuthData from '../utils/commands/createAuthData';
 import { PublicProfileData } from '../utils/helpers/operationResources';
 
 const command: Command = {
-    name: 'homebase-name',
+    name: 'homebasename',
     description: 'Change your Save the World Homebase name.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply();
 
-        const newName = interaction.options.getString('change', true);
+        const change = interaction.options.getString('change', true);
 
-        const auth = await refreshAuthData(interaction.user.id, undefined, async (msg) => {
-            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
+        const auth = await createAuthData(interaction.user.id);
+
+        if (!auth) {
+            await interaction.editReply({ embeds: [createEmbed('info', 'You are not logged in.')] });
             return;
-        });
+        }
 
-        const publicProfile = await composeMcp<PublicProfileData>(auth!, 'common_public', 'QueryProfile');
+        const publicProfile = await composeMcp<PublicProfileData>(auth, 'common_public', 'QueryProfile');
         const oldName = publicProfile.profileChanges[0].profile.stats.attributes.homebase_name;
 
-        await composeMcp<PublicProfileData>(auth!, 'common_public', 'SetHomebaseName', { homebaseName: newName });
+        await composeMcp<PublicProfileData>(auth, 'common_public', 'SetHomebaseName', { homebaseName: change });
         await interaction.editReply({
-            embeds: [createEmbed('success', `Changed Homebase name from **${oldName}** to **${newName}**.`)]
+            embeds: [createEmbed('success', `Changed Homebase name from **${oldName}** to **${change}**.`)]
         });
     },
     options: [

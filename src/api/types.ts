@@ -1,4 +1,4 @@
-export interface EpicApiErrorData {
+export interface EpicGamesAPIErrorData {
     errorCode: string;
     errorMessage: string;
     messageVars: string[];

@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
+
 import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
-import { Endpoints, EpicApiErrorData } from '../types';
+import { Endpoints, EpicGamesAPIErrorData } from '../types';
 
 const verifyAuthSession = async (accessToken: string) => {
     const config = {
@@ -15,7 +16,11 @@ const verifyAuthSession = async (accessToken: string) => {
         return true;
     } catch (err: any) {
         const error: AxiosError = err;
-        throw new EpicGamesAPIError(error.response?.data as EpicApiErrorData, err.request, error.response?.status!);
+        throw new EpicGamesAPIError(
+            error.response?.data as EpicGamesAPIErrorData,
+            err.request,
+            error.response?.status!
+        );
     }
 };
 

@@ -1,8 +1,8 @@
 import axios, { AxiosError } from 'axios';
 import qs from 'qs';
-import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
 
-import { AuthClients, Endpoints, EpicApiErrorData, GrantData } from '../types';
+import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
+import { AuthClients, Endpoints, EpicGamesAPIErrorData, GrantData } from '../types';
 
 interface OAuthDataResponse {
     access_token: string;
@@ -36,7 +36,11 @@ const createOAuthData = async (client: keyof typeof AuthClients, grant: GrantDat
         return data;
     } catch (err: any) {
         const error: AxiosError = err;
-        throw new EpicGamesAPIError(error.response?.data as EpicApiErrorData, err.request, error.response?.status!);
+        throw new EpicGamesAPIError(
+            error.response?.data as EpicGamesAPIErrorData,
+            err.request,
+            error.response?.status!
+        );
     }
 };
 

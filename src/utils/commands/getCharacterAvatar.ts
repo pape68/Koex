@@ -1,6 +1,7 @@
-import { Endpoints } from '../../api/types';
-import sendEpicAPIRequest from '../functions/request';
-import refreshAuthData from './refreshAuthData';
+import axios, { AxiosError } from 'axios';
+import { Endpoints, EpicGamesAPIErrorData } from '../../api/types';
+import EpicGamesAPIError from '../errors/EpicGamesAPIError';
+import createAuthData from './createAuthData';
 
 export interface AvatarResponse {
     accountId: string;
@@ -9,23 +10,34 @@ export interface AvatarResponse {
 }
 
 const getCharacterAvatar = async (userId: string) => {
-    const auth = await refreshAuthData(userId, undefined, () => null);
+    const auth = await createAuthData(userId);
 
-    const { data } = await sendEpicAPIRequest<AvatarResponse[]>({
-        method: 'GET',
-        url: Endpoints.accountAvatars,
-        params: { accountIds: auth!.accountId },
+    if (!auth) throw new Error('Failed to create authorization data');
+
+    const config = {
         headers: {
-            'Content-Type': 'application/json',
-            Authorization: `bearer ${auth!.accessToken}`
+            Authorization: `Bearer ${auth.accessToken}`
+        },
+        params: {
+            accountIds: auth.accountId
         }
-    });
+    };
 
-    let cosmeticId = 'CID_884_ATHENA_COMMANDO_F_CHONERAMIREZ';
+    try {
+        const { data } = await axios.get<AvatarResponse[]>(Endpoints.accountAvatars, config);
+        let cosmeticId = 'CID_884_ATHENA_COMMANDO_F_CHONERAMIREZ';
 
-    if (data) cosmeticId = data[0].avatarId.replace('ATHENACHARACTER:', '');
+        if (data) cosmeticId = data[0].avatarId.replace('ATHENACHARACTER:', '');
 
-    return `https://fortnite-api.com/images/cosmetics/br/${cosmeticId}/icon.png`;
+        return `https://fortnite-api.com/images/cosmetics/br/${cosmeticId}/icon.png`;
+    } catch (err: any) {
+        const error: AxiosError = err;
+        throw new EpicGamesAPIError(
+            error.response?.data as EpicGamesAPIErrorData,
+            err.request,
+            error.response?.status!
+        );
+    }
 };
 
 export default getCharacterAvatar;

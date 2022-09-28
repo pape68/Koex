@@ -1,74 +1,52 @@
-import { ApplicationCommandType, EmbedBuilder } from 'discord.js';
+import { ActionRowBuilder, ApplicationCommandType, EmbedBuilder, SelectMenuBuilder } from 'discord.js';
 
 import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
-import { Accounts, SlotData, SlotName } from '../typings/supabase';
 import createEmbed from '../utils/commands/createEmbed';
-import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
-import refreshAuthData from '../utils/commands/refreshAuthData';
 import { getAllAccounts } from '../utils/functions/database';
-import supabase from '../utils/functions/supabase';
-import defaultResponses from '../utils/helpers/defaultResponses';
 
 const command: Command = {
     name: 'logout',
     description: 'Logout from your active Epic Games account.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
-        // TODO: SELECT MENU TO LOGOUT FROM SPECIFIC ACCOUNTS
+        await interaction.deferReply({ ephemeral: true });
 
-        await interaction.deferReply();
+        const { auths } = await getAllAccounts(interaction.user.id);
 
-        const accounts = await getAllAccounts(interaction.user.id, async (msg) => {
-            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
+        if (!auths.length) {
+            await interaction.editReply({ embeds: [createEmbed('info', 'You are not logged into any accounts.')] });
             return;
-        });
+        }
 
-        let activeSlotIndex = 0;
-        for (let i = 0; i < 5; i++) {
-            const auth: SlotData | null = accounts![('slot_' + i) as SlotName];
+        const options = auths.map((a) => ({
+            label: a.displayName,
+            description: a.accountId,
+            value: a.accountId
+        }));
 
-            if (activeSlotIndex === i) continue;
+        if (!options.length) {
+            await interaction.editReply({ embeds: [createEmbed('info', 'You are not logged in.')] });
+            return;
+        }
 
-            if (auth) {
-                activeSlotIndex = i;
-                break;
+        const embed = new EmbedBuilder().setColor(Color.BLUE).addFields([
+            {
+                name: 'Logout from Accounts',
+                value: `Use the select menu below to logout from accounts.`
             }
-        }
+        ]);
 
-        const auth = await refreshAuthData(interaction.user.id);
+        const row = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+            new SelectMenuBuilder()
+                .setPlaceholder('Account')
+                .setCustomId('logoutAccount')
+                .setMaxValues(options.length)
+                .setMinValues(1)
+                .setOptions(options)
+        );
 
-        if (!auth) {
-            await interaction.editReply(defaultResponses.loggedOut);
-            return;
-        }
-
-        const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
-
-        try {
-            await supabase.from<Accounts>('accounts_test').upsert({
-                user_id: interaction.user.id,
-                ['slot_' + activeSlotIndex]: null,
-                active_slot: activeSlotIndex
-            });
-        } catch (error) {
-            await interaction.editReply({
-                embeds: [createEmbed('error', `Failed to logout of **${auth.displayName}**.`)]
-            });
-            return;
-        } finally {
-            await interaction.editReply({
-                embeds: [
-                    new EmbedBuilder()
-                        .setAuthor({
-                            name: `Goodbye, ${auth.displayName}`,
-                            iconURL: characterAvatarUrl ?? undefined
-                        })
-                        .setColor(Color.GRAY)
-                ]
-            });
-            return;
-        }
+        await interaction.editReply({ embeds: [embed], components: [row] });
     }
 };
 
