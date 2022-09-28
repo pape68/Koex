@@ -105,7 +105,7 @@ export const setAuths = async (userId: string, newAuths?: Auth[]) => {
 
     const { data, error } = await supabase
         .from<Accounts>('accounts')
-        .upsert({ user_id: userId, auths: newAuths ?? oldAuths})
+        .upsert({ user_id: userId, auths: newAuths ?? oldAuths ?? [] })
         .single();
 
     if (error) {
