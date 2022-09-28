@@ -4,7 +4,7 @@ import composeMcp from '../api/mcp/composeMcp';
 import { Color } from '../constants';
 import { ExtendedClient } from '../interfaces/ExtendedClient';
 import createAuthData from '../utils/commands/createAuthData';
-import { getAllAccounts, getAllAutoDailyUsers } from '../utils/functions/database';
+import { getAllAuths, getAllAutoDailyUsers } from '../utils/functions/database';
 import { CampaignProfileData } from '../utils/helpers/operationResources';
 import rewardData from '../utils/helpers/rewards.json' assert { type: 'json' };
 
@@ -25,7 +25,7 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
 
     for (const user of users) {
         setTimeout(async () => {
-            const { auths } = await getAllAccounts(user.user_id);
+            const auths = await getAllAuths(user.user_id);
 
             const fields: APIEmbedField[] = [];
 

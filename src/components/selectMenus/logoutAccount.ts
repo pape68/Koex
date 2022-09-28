@@ -2,7 +2,7 @@ import { SelectMenuInteraction } from 'discord.js';
 
 import { Component } from '../../interfaces/Component';
 import createEmbed from '../../utils/commands/createEmbed';
-import { getAllAccounts, setAuths } from '../../utils/functions/database';
+import { getAllAuths, setAuths } from '../../utils/functions/database';
 
 const selectMenu: Component<SelectMenuInteraction> = {
     name: 'logoutAccount',
@@ -11,7 +11,7 @@ const selectMenu: Component<SelectMenuInteraction> = {
 
         const accountIds = interaction.values;
 
-        const { auths } = await getAllAccounts(interaction.user.id);
+        const auths = await getAllAuths(interaction.user.id);
 
         if (!auths.length) {
             await interaction.editReply({ embeds: [createEmbed('info', 'You are not logged into any accounts.')] });

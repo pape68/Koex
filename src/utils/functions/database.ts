@@ -12,10 +12,6 @@ export const getAllAccounts = async (userId: string) => {
         throw new Error(error.message);
     }
 
-    if (!data) {
-        throw new Error('Sorry your account data was not found');
-    }
-
     return data;
 };
 
@@ -32,7 +28,6 @@ export const getAllAuths = async (userId: string) => {
 
     return data ? data.auths : [];
 };
-
 
 export const getAllAutoDailyUsers = async () => {
     const { data, error } = await supabase.from<AutoDaily>('auto_daily').select('*');
@@ -116,11 +111,9 @@ export const saveAuth = async (userId: string, auth: Auth) => {
 };
 
 export const setAuths = async (userId: string, auths?: Auth[]) => {
-    const accounts = await getAllAccounts(userId);
-
     const { data, error } = await supabase
         .from<Accounts>('accounts')
-        .upsert({ user_id: userId, auths: auths ? accounts ? [...accounts.auths, ...auths] : auths : [] })
+        .upsert({ user_id: userId, auths: auths ?? [] })
         .single();
 
     if (error) {

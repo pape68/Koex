@@ -1,10 +1,10 @@
-import { ApplicationCommandOptionType, ApplicationCommandType, EmbedBuilder, APIEmbedField } from 'discord.js';
+import { APIEmbedField, ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
 
 import { Command } from '../interfaces/Command';
-import createEmbed from '../utils/commands/createEmbed';
 import createAuthData from '../utils/commands/createAuthData';
+import createEmbed from '../utils/commands/createEmbed';
 import toggleDupe from '../utils/commands/toggleDupe';
-import { getAllAccounts } from '../utils/functions/database';
+import { getAllAuths } from '../utils/functions/database';
 
 const command: Command = {
     name: 'force-stop-magic',
@@ -22,7 +22,7 @@ const command: Command = {
 
         const userId = interaction.options.getString('user-id', true);
 
-        const { auths } = await getAllAccounts(userId);
+        const auths = await getAllAuths(userId);
 
         const fields: APIEmbedField[] = [];
 

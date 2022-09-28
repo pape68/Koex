@@ -6,6 +6,8 @@ import { Auth } from '../../typings/supabase';
 const createAuthData = async (userId: string, accountId?: string): Promise<Required<Auth> | null> => {
     const accounts = await getAllAccounts(userId);
 
+    if (!accounts) return null;
+
     const auth = accounts.auths.find((a) => a.accountId === (accountId ?? accounts.active_account_id));
 
     if (!auth) return null;

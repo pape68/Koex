@@ -4,8 +4,8 @@ import createDeviceAuth from '../../api/auth/createDeviceAuth';
 import createOAuthData from '../../api/auth/createOAuthData';
 import { fortniteGameClient } from '../../constants';
 import { Component } from '../../interfaces/Component';
-import { setAuths, saveAuth } from '../../utils/functions/database';
 import createEmbed from '../../utils/commands/createEmbed';
+import { getAllAuths, saveAuth } from '../../utils/functions/database';
 
 const modal: Component<ModalSubmitInteraction> = {
     name: 'auth',
@@ -20,7 +20,7 @@ const modal: Component<ModalSubmitInteraction> = {
         });
 
         const deviceAuth = await createDeviceAuth(oAuthData.access_token, oAuthData.account_id);
-        const auths = await setAuths(interaction.user.id);
+        const auths = await getAllAuths(interaction.user.id);
 
         if (auths.length === 5) {
             await interaction.editReply({
