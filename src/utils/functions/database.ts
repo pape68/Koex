@@ -100,10 +100,12 @@ export const saveAuth = async (userId: string, auth: Auth) => {
     return data;
 };
 
-export const setAuths = async (userId: string, auths: Auth[] = []) => {
+export const setAuths = async (userId: string, newAuths?: Auth[]) => {
+    const { auths: oldAuths } = await getAllAccounts(userId);
+
     const { data, error } = await supabase
         .from<Accounts>('accounts')
-        .upsert({ user_id: userId, auths, active_account_id: !auths.length ? null : auths[auths.length - 1].accountId })
+        .upsert({ user_id: userId, auths: newAuths ?? oldAuths})
         .single();
 
     if (error) {
