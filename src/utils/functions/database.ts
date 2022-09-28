@@ -113,7 +113,7 @@ export const saveAuth = async (userId: string, auth: AccountAuth) => {
 export const setAuths = async (userId: string, auths?: AccountAuth[]) => {
     const { data, error } = await supabase
         .from<Accounts>('accounts')
-        .upsert({ user_id: userId, auths: auths ?? [] })
+        .upsert({ user_id: userId, auths: auths ?? [], active_account_id: auths ? auths[0].accountId : null })
         .single();
 
     if (error) {
