@@ -32,11 +32,7 @@ const getCharacterAvatar = async (userId: string) => {
         return `https://fortnite-api.com/images/cosmetics/br/${cosmeticId}/icon.png`;
     } catch (err: any) {
         const error: AxiosError = err;
-        throw new EpicGamesAPIError(
-            error.response?.data as EpicGamesAPIErrorData,
-            err.request,
-            error.response?.status!
-        );
+        throw new EpicGamesAPIError(error.response?.data as EpicGamesAPIErrorData, err.request, error.response?.status);
     }
 };
 

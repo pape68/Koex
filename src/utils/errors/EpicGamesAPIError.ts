@@ -8,9 +8,9 @@ class EpicGamesAPIError extends Error {
     public code: string;
     public messageVars: string[];
     public request?: any;
-    public status: number;
+    public status?: number;
 
-    constructor(error: EpicGamesAPIErrorData, request: AxiosRequestConfig, status: number) {
+    constructor(error: EpicGamesAPIErrorData, request: AxiosRequestConfig, status?: number) {
         super();
         this.name = 'EpicGamesAPIError';
         this.message = error.errorMessage;

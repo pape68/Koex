@@ -382,7 +382,7 @@ export interface PublicProfileData {
 
 export type ProfileAttributes = AthenaProfileData | CampaignProfileData | CoreProfileData | PublicProfileData;
 
-export interface McpResponse<T extends ProfileAttributes> {
+export interface MCPResponse<T extends ProfileAttributes> {
     profileRevision: number;
     profileId: string;
     profileChangesBaseRevision: number;

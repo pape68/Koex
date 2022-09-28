@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 
 import { BearerAuth } from '../../utils/commands/createAuthData';
 import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
-import { FortniteProfile, MCPOperation, McpResponse, ProfileAttributes } from '../../utils/helpers/operationResources';
+import { FortniteProfile, MCPOperation, MCPResponse, ProfileAttributes } from '../../utils/helpers/operationResources';
 import { Endpoints, EpicGamesAPIErrorData } from '../types';
 
 const composeMcp = async <T extends ProfileAttributes>(
@@ -21,15 +21,11 @@ const composeMcp = async <T extends ProfileAttributes>(
     };
 
     try {
-        const { data } = await axios.post<McpResponse<T>>(url, payload, config);
+        const { data } = await axios.post<MCPResponse<T>>(url, payload, config);
         return data;
     } catch (err: any) {
         const error: AxiosError = err;
-        throw new EpicGamesAPIError(
-            error.response?.data as EpicGamesAPIErrorData,
-            err.request,
-            error.response?.status!
-        );
+        throw new EpicGamesAPIError(error.response?.data as EpicGamesAPIErrorData, err.request, error.response?.status);
     }
 };
 
