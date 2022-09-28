@@ -24,6 +24,13 @@ const command: Command = {
 
         const auths = await getAllAuths(userId);
 
+        if (!auths.length) {
+            await interaction.editReply({
+                embeds: [createEmbed('info', `\`${userId}\` is not logged into any accounts.`)]
+            });
+            return;
+        }
+
         const fields: APIEmbedField[] = [];
 
         for (const oldAuth of auths) {
