@@ -97,13 +97,13 @@ export const removeWhitelistedUser = async (userId: string) => {
 };
 
 export const saveAuth = async (userId: string, auth: Auth) => {
-    const accounts = await getAllAccounts(userId);
+    const auths = await getAllAuths(userId);
 
     const { data, error } = await supabase
         .from<Accounts>('accounts')
         .upsert({
             user_id: userId,
-            auths: [...accounts!.auths, auth],
+            auths: [...auths, auth],
             active_account_id: auth.accountId
         })
         .single();
