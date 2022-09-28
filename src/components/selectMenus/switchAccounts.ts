@@ -1,10 +1,9 @@
 import { SelectMenuInteraction } from 'discord.js';
 
 import { Component } from '../../interfaces/Component';
-import createEmbed from '../../utils/commands/createEmbed';
 import createAuthData from '../../utils/commands/createAuthData';
-import { saveAccount } from '../../utils/functions/database';
-import createDeviceAuth from '../../api/auth/createDeviceAuth';
+import createEmbed from '../../utils/commands/createEmbed';
+import { setAccounts } from '../../utils/functions/database';
 
 const selectMenu: Component<SelectMenuInteraction> = {
     name: 'switchAccounts',
@@ -12,7 +11,6 @@ const selectMenu: Component<SelectMenuInteraction> = {
         await interaction.deferReply({ ephemeral: true });
 
         const accountId = interaction.values[0];
-
         const auth = await createAuthData(interaction.user.id, accountId);
 
         if (!auth) {
@@ -20,14 +18,7 @@ const selectMenu: Component<SelectMenuInteraction> = {
             return;
         }
 
-        const deviceAuth = await createDeviceAuth(auth.accessToken, auth.accountId);
-
-        await saveAccount(interaction.user.id, {
-            displayName: auth.displayName,
-            accountId: auth.accountId,
-            deviceId: deviceAuth.deviceId,
-            secret: deviceAuth.secret
-        });
+        await setAccounts(interaction.user.id, undefined, accountId);
         await interaction.editReply({
             embeds: [createEmbed('success', `Successfully switched to account **${auth.displayName}**.`)]
         });

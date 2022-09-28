@@ -25,7 +25,11 @@ const selectMenu: Component<SelectMenuInteraction> = {
             accounts.auths.splice(idx, 1);
         }
 
-        await setAccounts(interaction.user.id, accounts.auths);
+        await setAccounts(
+            interaction.user.id,
+            accounts.auths,
+            accounts.auths.length ? accounts.auths[0].accountId : null
+        );
         await interaction.editReply({
             embeds: [createEmbed('success', `Successfully removed account(s): **${displayNames.join('**, **')}**.`)]
         });

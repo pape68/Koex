@@ -111,11 +111,7 @@ export const saveAccount = async (userId: string, auth: AccountAuth) => {
     return data;
 };
 
-export const setAccounts = async (
-    userId: string,
-    auths: AccountAuth[] = [],
-    active_account_id: string | null = null
-) => {
+export const setAccounts = async (userId: string, auths?: AccountAuth[], active_account_id?: string | null) => {
     const { data, error } = await supabase
         .from<Accounts>('accounts')
         .upsert({ user_id: userId, auths, active_account_id })
