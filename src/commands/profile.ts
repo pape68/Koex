@@ -42,6 +42,8 @@ const command: Command = {
         }
 
         const campaignProfile = await composeMcp<CampaignProfileData>(auth, 'campaign', 'QueryPublicProfile');
+        const ress = JSON.stringify(campaignProfile, null, 2);
+        const file = new AttachmentBuilder(Buffer.from(ress), { name: 'response.json' });
 
         const data = campaignProfile.profileChanges[0].profile;
         const { level, rewards_claimed_post_max_level, research_levels } = data.stats.attributes;
@@ -55,7 +57,6 @@ const command: Command = {
 
         const profileMetadata = await composeMcp(auth, 'metadata', 'QueryProfile');
         const metadata = profileMetadata.profileChanges[0].profile;
-        console.log(JSON.stringify(metadata, null, 2));
 
         const outpostLevels = Object.values(metadata.items)
             .filter((v) => Object.keys(outposts).includes(v.templateId))
@@ -92,7 +93,7 @@ const command: Command = {
             .setFooter({ text: `Account ID: ${auth.accountId}` })
             .setTimestamp();
 
-        await interaction.editReply({ embeds: [embed], files: bannerUrl ? [attachment] : [] });
+        await interaction.editReply({ embeds: [embed], files: bannerUrl ? [attachment, file] : [file] });
     }
 };
 

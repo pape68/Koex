@@ -94,10 +94,8 @@ export const removeWhitelistedUser = async (userId: string) => {
 export const saveAccount = async (userId: string, auth: AccountAuth) => {
     const accounts = await getAllAccounts(userId);
 
-    const auths = [auth];
-    if (accounts && accounts.auths.length) {
-        auths.push(...accounts.auths);
-    }
+    const auths: AccountAuth[] = accounts?.auths.length ? accounts.auths : [];
+    auths.push(auth);
 
     const { data, error } = await supabase
         .from<Accounts>('accounts')
