@@ -4,13 +4,13 @@ import glob from 'glob';
 
 import { Command } from '../../interfaces/Command';
 import { ExtendedClient } from '../../interfaces/ExtendedClient';
-import { isProd } from './../../constants';
+import { IS_PROD } from './../../constants';
 import registerInteractions from './registerInteractions';
 
 const loadCommands = async (client: ExtendedClient) => {
     const commands: Command[] = [];
 
-    const files = glob.sync(`${isProd ? 'dist' : 'src'}/commands/**/*.{js,ts}`);
+    const files = glob.sync(`${IS_PROD ? 'dist' : 'src'}/commands/**/*.{js,ts}`);
 
     for (const file of files) {
         const path = join(process.cwd(), file);

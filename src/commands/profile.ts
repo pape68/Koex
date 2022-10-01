@@ -42,8 +42,6 @@ const command: Command = {
         }
 
         const campaignProfile = await composeMcp<CampaignProfileData>(auth, 'campaign', 'QueryPublicProfile');
-        const ress = JSON.stringify(campaignProfile, null, 2);
-        const file = new AttachmentBuilder(Buffer.from(ress), { name: 'response.json' });
 
         const data = campaignProfile.profileChanges[0].profile;
         const { level, rewards_claimed_post_max_level, research_levels } = data.stats.attributes;
@@ -67,7 +65,7 @@ const command: Command = {
             ([k, v]) => `${Emoji[k.toUpperCase() as keyof typeof Emoji]} \`${v}\``
         );
 
-        const attachment = new AttachmentBuilder(bannerUrl!, { name: 'buffer.png' });
+        const attachment = new AttachmentBuilder(bannerUrl, { name: 'buffer.png' });
 
         const embed = new EmbedBuilder()
             .setColor(Color.GRAY)
@@ -93,7 +91,7 @@ const command: Command = {
             .setFooter({ text: `Account ID: ${auth.accountId}` })
             .setTimestamp();
 
-        await interaction.editReply({ embeds: [embed], files: bannerUrl ? [attachment, file] : [file] });
+        await interaction.editReply({ embeds: [embed], files: [attachment] });
     }
 };
 

@@ -9,12 +9,10 @@ const button: Component<ButtonInteraction> = {
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
 
-        try {
-            await toggleDupe(true, interaction.user.id);
-        } catch (err: any) {
-            await interaction.editReply({ embeds: [createEmbed('info', err.message ?? 'An unknown error occurred')] });
+        await toggleDupe(true, interaction.user.id, async (msg) => {
+            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
             return;
-        }
+        });
 
         await interaction.editReply({ embeds: [createEmbed('success', 'Successfully enabled the dupe.')] });
     }

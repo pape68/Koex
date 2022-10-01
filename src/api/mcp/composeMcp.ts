@@ -1,9 +1,9 @@
 import axios, { AxiosError } from 'axios';
 
 import { BearerAuth } from '../../utils/commands/createAuthData';
-import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
 import { FortniteProfile, MCPOperation, MCPResponse, ProfileAttributes } from '../../utils/helpers/operationResources';
-import { Endpoints, EpicGamesAPIErrorData } from '../types';
+import { EpicGamesEndpoints } from '../utils/helpers/constants';
+import EpicGamesAPIError, { EpicGamesAPIErrorData } from '../utils/errors/EpicGamesAPIError';
 
 const composeMcp = async <T extends ProfileAttributes>(
     auth: BearerAuth,
@@ -35,7 +35,7 @@ const createMcpUrl = (
     operation: keyof typeof MCPOperation,
     profile: keyof typeof FortniteProfile
 ) => ({
-    url: `${Endpoints.mcp}/${accountId}/${route}/${operation.toString()}`,
+    url: `${EpicGamesEndpoints.mcp}/${accountId}/${route}/${operation.toString()}`,
     params: { profileId: profile.toString() }
 });
 

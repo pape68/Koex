@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 
-import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
-import { Endpoints, EpicGamesAPIErrorData } from '../types';
+import { EpicGamesEndpoints } from '../utils/helpers/constants';
+import EpicGamesAPIError, { EpicGamesAPIErrorData } from '../utils/errors/EpicGamesAPIError';
 
 interface DeviceAuthResponse {
     accountId: string;
@@ -18,7 +18,7 @@ const createDeviceAuth = async (accessToken: string, accountId: string) => {
 
     try {
         const { data } = await axios.post<DeviceAuthResponse>(
-            `${Endpoints.oAuthDeviceAuth}/${accountId}/deviceAuth`,
+            `${EpicGamesEndpoints.oAuthDeviceAuth}/${accountId}/deviceAuth`,
             {},
             config
         );

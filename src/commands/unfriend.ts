@@ -5,7 +5,7 @@ import removeFriendFromId from '../api/friend/removeFriendFromId';
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
 import createAuthData from '../utils/commands/createAuthData';
-import EpicGamesAPIError from '../utils/errors/EpicGamesAPIError';
+import EpicGamesAPIError from '../api/utils/errors/EpicGamesAPIError';
 
 const command: Command = {
     name: 'unfriend',

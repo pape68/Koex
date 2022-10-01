@@ -34,28 +34,23 @@ const command: Command = {
         const fields: APIEmbedField[] = [];
 
         for (const auth of accounts.auths) {
-            const bearerAuth = await createAuthData(userId, auth.accountId);
-
-            if (!bearerAuth) {
+            try {
+                await toggleDupe(false, userId, (msg) => {
+                    fields.push({
+                        name: auth.displayName,
+                        value: msg
+                    });
+                });
+            } catch (error) {
                 fields.push({
                     name: auth.displayName,
-                    value: 'Failed to create authorization data'
-                });
-                continue;
-            }
-
-            try {
-                await toggleDupe(false, userId, bearerAuth);
-            } catch (err: any) {
-                fields.push({
-                    name: bearerAuth.displayName,
-                    value: err.message ?? 'An unknown error occurred'
+                    value: String(error)
                 });
                 continue;
             }
 
             fields.push({
-                name: bearerAuth.displayName,
+                name: auth.displayName,
                 value: 'No issues occurred'
             });
         }

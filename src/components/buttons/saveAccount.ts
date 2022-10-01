@@ -1,21 +1,20 @@
 import {
     ActionRowBuilder,
-    ApplicationCommandType,
     AttachmentBuilder,
     ButtonBuilder,
+    ButtonInteraction,
     ButtonStyle,
     EmbedBuilder
 } from 'discord.js';
+import { Color, FORTNITE_GAME_CLIENT } from '../../constants';
 
-import { Color } from '../constants';
-import { Command } from '../interfaces/Command';
-import { FORTNITE_GAME_CLIENT } from './../constants';
+import { Component } from '../../interfaces/Component';
 
-const command: Command = {
-    name: 'login',
-    description: 'Login to a new Epic Games account.',
-    type: ApplicationCommandType.ChatInput,
+const button: Component<ButtonInteraction> = {
+    name: 'saveAccount',
     execute: async (interaction) => {
+        await interaction.deferReply();
+
         const baseUrl = `https://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fredirect%3FclientId%3D${FORTNITE_GAME_CLIENT._id}%26responseType%3Dcode%0A`;
 
         const file = new AttachmentBuilder(process.cwd() + '/assets/authCode.png');
@@ -39,8 +38,8 @@ const command: Command = {
             new ButtonBuilder().setLabel('Submit Code').setStyle(ButtonStyle.Primary).setCustomId('submitCode')
         );
 
-        await interaction.reply({ embeds: [embed], components: [row], files: [file] });
+        await interaction.editReply({ embeds: [embed], components: [row], files: [file] });
     }
 };
 
-export default command;
+export default button;

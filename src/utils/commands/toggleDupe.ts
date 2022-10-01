@@ -1,11 +1,21 @@
+import util from 'node:util';
+
 import composeMcp from '../../api/mcp/composeMcp';
+import { getWhitelistedUser } from '../functions/database';
 import { CampaignProfileData } from '../helpers/operationResources';
-import createAuthData, { BearerAuth } from './createAuthData';
+import createAuthData from './createAuthData';
 
-const toggleDupe = async (enable: boolean, userId: string, authOverride?: BearerAuth) => {
-    const auth = authOverride ?? (await createAuthData(userId));
+const toggleDupe = async (enable: boolean, userId: string, cb?: (msg: string) => void) => {
+    const isWhitelisted = await getWhitelistedUser(userId);
 
-    if (!auth) throw new Error('Failed to create authorization data');
+    if (!isWhitelisted) throw new Error('(∩｀-´)⊃━☆ﾟ.*･｡ﾟ');
+
+    const auth = await createAuthData(userId);
+
+    if (!auth) {
+        if (cb) await util.promisify(cb)('You have been logged out.');
+        throw new Error('Failed to create authorization data');
+    }
 
     const targetProfile = await composeMcp(auth, enable ? 'theater0' : 'outpost0', 'QueryProfile');
 
@@ -27,7 +37,8 @@ const toggleDupe = async (enable: boolean, userId: string, authOverride?: Bearer
         }));
 
     if (!transferOperations.length) {
-        throw new Error(`Dupe is already ${enable ? 'enabled' : 'disabled'}`);
+        if (cb) await util.promisify(cb)(`Dupe is already ${enable ? 'enabled' : 'disabled'}`);
+        return;
     }
 
     await composeMcp<CampaignProfileData>(auth, 'theater0', 'StorageTransfer', {

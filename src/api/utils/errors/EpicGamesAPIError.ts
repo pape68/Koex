@@ -1,6 +1,15 @@
 import { AxiosRequestConfig } from 'axios';
 
-import { EpicGamesAPIErrorData } from '../../api/types';
+export interface EpicGamesAPIErrorData {
+    errorCode: string;
+    errorMessage: string;
+    messageVars: string[];
+    numericErrorCode: number;
+    originatingService: string;
+    intent: string;
+    message: string;
+    errorStatus?: number;
+}
 
 class EpicGamesAPIError extends Error {
     public method: string;

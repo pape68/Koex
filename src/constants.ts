@@ -1,5 +1,3 @@
-import { AuthClients } from './api/types';
-
 export enum Color {
     RED = '#FA4459',
     ORANGE = '#F8602C',
@@ -26,8 +24,11 @@ export enum Emoji {
     TALENTED_BUILDER = '<:KX_TalentedBuilder:1020554382959464460>'
 }
 
-const client: keyof typeof AuthClients = 'fortniteIOSGameClient';
-const [_id, _secret] = Buffer.from(AuthClients[client], 'base64').toString().split(':');
-export const fortniteGameClient = Object.freeze({ _name: client, _id, _secret });
+const [_id, _secret] = ['3446cd72694c4a4485d81b77adbb2141', '9209d4a5e25a457fb9b07489d313b41a'];
+export const FORTNITE_GAME_CLIENT = Object.freeze({
+    _name: 'fortniteIOSGameClient',
+    _id,
+    _secret
+});
 
-export const isProd = process.env.NODE_ENV === 'production';
+export const IS_PROD = process.env.NODE_ENV === 'production';

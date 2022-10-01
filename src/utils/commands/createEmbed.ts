@@ -1,4 +1,4 @@
-import { codeBlock, EmbedBuilder, HexColorString } from 'discord.js';
+import { APIEmbed, EmbedBuilder, EmbedFooterOptions, HexColorString } from 'discord.js';
 
 import { Color, Emoji } from '../../constants';
 
@@ -16,19 +16,22 @@ const emojis: Record<embedType, string> = {
     success: Emoji.CHECK
 };
 
-const createEmbed = (type: embedType, description: string) => {
+const createEmbed = (type: embedType, description: string, data?: APIEmbed) => {
+    const baseEmbed = new EmbedBuilder().setColor(colors[type]);
+
+    if (data) Object.assign(baseEmbed, data);
+
     if (type === 'error') {
-        return new EmbedBuilder()
-            .setColor(Color.RED)
+        return baseEmbed
             .setTitle(`${Emoji.CROSS} Hmm... That wasn't supposed to happen`)
-            .setDescription(codeBlock(description))
+            .setDescription(description)
             .setFields({
                 name: 'Need help?',
                 value: 'Talk to us in our [support server](https://discord.gg/koex).'
             });
     }
 
-    return new EmbedBuilder().setColor(colors[type]).setDescription(`${emojis[type]} ${description}`);
+    return baseEmbed.setDescription(`${emojis[type]} ${description}`);
 };
 
 export default createEmbed;

@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 
-import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
-import { Endpoints, EpicGamesAPIErrorData } from '../types';
+import { EpicGamesEndpoints } from '../utils/helpers/constants';
+import EpicGamesAPIError, { EpicGamesAPIErrorData } from '../utils/errors/EpicGamesAPIError';
 
 interface ExchangeCodeResponse {
     expiresInSeconds: number;
@@ -17,7 +17,7 @@ const createExchangeCode = async (accessToken: string) => {
     };
 
     try {
-        const { data } = await axios.get<ExchangeCodeResponse>(Endpoints.oAuthTokenExchange, config);
+        const { data } = await axios.get<ExchangeCodeResponse>(EpicGamesEndpoints.oAuthTokenExchange, config);
         return data.code;
     } catch (err: any) {
         const error: AxiosError = err;

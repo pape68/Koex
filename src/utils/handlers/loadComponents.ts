@@ -2,12 +2,12 @@ import { join } from 'node:path';
 
 import glob from 'glob';
 
-import { isProd } from '../../constants';
+import { IS_PROD } from '../../constants';
 import { Component, ComponentInteraction } from '../../interfaces/Component';
 import { ExtendedClient } from '../../interfaces/ExtendedClient';
 
 const loadComponents = async (client: ExtendedClient) => {
-    const files = glob.sync(`${isProd ? 'dist' : 'src'}/components/**/*.{js,ts}`);
+    const files = glob.sync(`${IS_PROD ? 'dist' : 'src'}/components/**/*.{js,ts}`);
 
     for (const file of files) {
         const path = join(process.cwd(), file);

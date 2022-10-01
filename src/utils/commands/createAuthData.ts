@@ -1,5 +1,5 @@
 import createOAuthData from '../../api/auth/createOAuthData';
-import { fortniteGameClient } from '../../constants';
+import { FORTNITE_GAME_CLIENT } from '../../constants';
 import { getAllAccounts } from '../functions/database';
 
 export interface BearerAuth {
@@ -8,7 +8,7 @@ export interface BearerAuth {
     displayName: string;
 }
 
-const createAuthData = async (userId: string, accountId?: string): Promise<Required<BearerAuth> | null> => {
+const createAuthData = async (userId: string, accountId?: string): Promise<BearerAuth | null> => {
     const accounts = await getAllAccounts(userId);
 
     if (!accounts) return null;
@@ -17,7 +17,7 @@ const createAuthData = async (userId: string, accountId?: string): Promise<Requi
 
     if (!auth) return null;
 
-    const oAuthData = await createOAuthData(fortniteGameClient._name, {
+    const oAuthData = await createOAuthData(FORTNITE_GAME_CLIENT._name, {
         grant_type: 'device_auth',
         account_id: auth.accountId,
         device_id: auth.deviceId,

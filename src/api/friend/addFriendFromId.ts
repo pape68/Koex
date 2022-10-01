@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 
-import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
-import { Endpoints, EpicGamesAPIErrorData } from '../types';
+import { EpicGamesEndpoints } from '../utils/helpers/constants';
+import EpicGamesAPIError, { EpicGamesAPIErrorData } from '../utils/errors/EpicGamesAPIError';
 
 const addFriendFromId = async (accessToken: string, accountId: string, friendId: string) => {
     const config = {
@@ -11,7 +11,7 @@ const addFriendFromId = async (accessToken: string, accountId: string, friendId:
     };
 
     try {
-        await axios.post(`${Endpoints.addFriend}/${accountId}/friends/${friendId}`, {}, config);
+        await axios.post(`${EpicGamesEndpoints.friends}/${accountId}/friends/${friendId}`, {}, config);
         return true;
     } catch (err: any) {
         const error: AxiosError = err;

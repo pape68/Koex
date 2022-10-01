@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios';
+import qs from 'qs';
 
 import { EpicGamesEndpoints } from '../utils/helpers/constants';
 import EpicGamesAPIError, { EpicGamesAPIErrorData } from '../utils/errors/EpicGamesAPIError';
@@ -28,19 +29,22 @@ export interface AccountData {
     cabinedModev: boolean;
 }
 
-const getFromDisplayName = async (accessToken: string, displayName: string) => {
+const getFromAccountIds = async (accessToken: string, accountIds: string[]) => {
     const config = {
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${accessToken}`
+        },
+        params: {
+            accountId: accountIds
+        },
+        paramsSerializer: (params: any) => {
+            return qs.stringify(params, { indices: false });
         }
     };
 
     try {
-        const { data } = await axios.get<AccountData>(
-            `${EpicGamesEndpoints.accountDisplayName}/${displayName}`,
-            config
-        );
+        const { data } = await axios.get<AccountData[]>(EpicGamesEndpoints.accountId, config);
         return data;
     } catch (err: any) {
         const error: AxiosError = err;
@@ -48,4 +52,4 @@ const getFromDisplayName = async (accessToken: string, displayName: string) => {
     }
 };
 
-export default getFromDisplayName;
+export default getFromAccountIds;

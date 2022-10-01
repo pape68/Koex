@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 
-import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
-import { Endpoints, EpicGamesAPIErrorData } from '../types';
+import { EpicGamesEndpoints } from '../utils/helpers/constants';
+import EpicGamesAPIError, { EpicGamesAPIErrorData } from '../utils/errors/EpicGamesAPIError';
 
 export interface AccountData {
     id: string;
@@ -37,7 +37,7 @@ const getFromAccountId = async (accessToken: string, accountId: string) => {
     };
 
     try {
-        const { data } = await axios.get<AccountData>(`${Endpoints.accountId}/${accountId}`, config);
+        const { data } = await axios.get<AccountData>(`${EpicGamesEndpoints.accountId}/${accountId}`, config);
         return data;
     } catch (err: any) {
         const error: AxiosError = err;

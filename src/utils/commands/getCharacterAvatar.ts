@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
-import { Endpoints, EpicGamesAPIErrorData } from '../../api/types';
-import EpicGamesAPIError from '../errors/EpicGamesAPIError';
+
+import EpicGamesAPIError, { EpicGamesAPIErrorData } from '../../api/utils/errors/EpicGamesAPIError';
+import { EpicGamesEndpoints } from '../../api/utils/helpers/constants';
 import createAuthData from './createAuthData';
 
 export interface AvatarResponse {
@@ -24,7 +25,7 @@ const getCharacterAvatar = async (userId: string) => {
     };
 
     try {
-        const { data } = await axios.get<AvatarResponse[]>(Endpoints.accountAvatars, config);
+        const { data } = await axios.get<AvatarResponse[]>(EpicGamesEndpoints.accountAvatars, config);
         let cosmeticId = 'CID_884_ATHENA_COMMANDO_F_CHONERAMIREZ';
 
         if (data) cosmeticId = data[0].avatarId.replace('ATHENACHARACTER:', '');

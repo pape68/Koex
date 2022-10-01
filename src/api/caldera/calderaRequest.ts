@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 
-import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
-import { Endpoints, EpicGamesAPIErrorData } from '../types';
+import { EpicGamesEndpoints } from '../utils/helpers/constants';
+import EpicGamesAPIError, { EpicGamesAPIErrorData } from '../utils/errors/EpicGamesAPIError';
 
 interface CalderaResponse {
     jwt: string;
@@ -18,7 +18,7 @@ const calderaRequest = async (accountId: string, exchangeCode: string) => {
     };
 
     try {
-        const { data } = await axios.post<CalderaResponse>(Endpoints.caldera, body);
+        const { data } = await axios.post<CalderaResponse>(EpicGamesEndpoints.caldera, body);
         return data;
     } catch (err: any) {
         const error: AxiosError = err;

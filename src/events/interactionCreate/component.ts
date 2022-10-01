@@ -1,6 +1,10 @@
+import { EmbedBuilder, InteractionReplyOptions } from 'discord.js';
+
+import { Color, Emoji } from '../../constants';
 import { Component, ComponentInteraction } from '../../interfaces/Component';
 import { Event } from '../../interfaces/Event';
 import createEmbed from '../../utils/commands/createEmbed';
+import EpicGamesAPIError from '../../api/utils/errors/EpicGamesAPIError';
 
 const event: Event = {
     name: 'interactionCreate',
@@ -21,11 +25,22 @@ const event: Event = {
 
         try {
             if (component) await component.execute(interaction);
-        } catch (err: any) {
-            console.log(err);
-            await interaction.editReply({
-                embeds: [createEmbed('error', err.message ?? 'An unknown error occurred')]
-            });
+        } catch (error) {
+            const embed = new EmbedBuilder()
+                .setTitle(`${Emoji.CROSS} Oops. We've hit a roadblock.`)
+                .setColor(Color.RED)
+                .setDescription(
+                    `Please join our [support server](https://discord.gg/koex/) if the issue persists.\n\`\`\`${String(
+                        error
+                    )}\`\`\``
+                );
+
+            if (error instanceof EpicGamesAPIError) embed.setFooter({ text: error.code });
+
+            const res: InteractionReplyOptions = { embeds: [embed] };
+            if (interaction.deferred) interaction.editReply(res);
+            else if (interaction.replied) interaction.followUp(res);
+            else interaction.reply(res);
         }
     }
 };

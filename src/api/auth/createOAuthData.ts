@@ -1,8 +1,24 @@
 import axios, { AxiosError } from 'axios';
 import qs from 'qs';
 
-import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
-import { AuthClients, Endpoints, EpicGamesAPIErrorData, GrantData } from '../types';
+import { EpicGamesEndpoints } from '../utils/helpers/constants';
+import EpicGamesAPIError, { EpicGamesAPIErrorData } from '../utils/errors/EpicGamesAPIError';
+
+type GrantType =
+    | 'authorization_code'
+    | 'client_credentials'
+    | 'device_auth'
+    | 'device_code'
+    | 'exchange_code'
+    | 'external_auth'
+    | 'password'
+    | 'refresh_token'
+    | 'token_to_token';
+
+interface GrantData {
+    grant_type: GrantType;
+    [key: string]: string;
+}
 
 interface OAuthDataResponse {
     access_token: string;
@@ -23,16 +39,20 @@ interface OAuthDataResponse {
     device_id?: string;
 }
 
-const createOAuthData = async (client: keyof typeof AuthClients, grant: GrantData) => {
+const createOAuthData = async (clientToken: string, grant: GrantData) => {
     const config = {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Basic ${AuthClients[client]}`
+            Authorization: `Basic ${clientToken}`
         }
     };
 
     try {
-        const { data } = await axios.post<OAuthDataResponse>(Endpoints.oAuthTokenCreate, qs.stringify(grant), config);
+        const { data } = await axios.post<OAuthDataResponse>(
+            EpicGamesEndpoints.oAuthTokenCreate,
+            qs.stringify(grant),
+            config
+        );
         return data;
     } catch (err: any) {
         const error: AxiosError = err;

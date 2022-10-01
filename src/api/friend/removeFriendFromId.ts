@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 
-import { Endpoints, EpicGamesAPIErrorData } from '../types';
-import EpicGamesAPIError from '../../utils/errors/EpicGamesAPIError';
+import { EpicGamesEndpoints } from '../utils/helpers/constants';
+import EpicGamesAPIError, { EpicGamesAPIErrorData } from '../utils/errors/EpicGamesAPIError';
 
 const removeFriendFromId = async (accessToken: string, accountId: string, friendId: string) => {
     const config = {
@@ -11,7 +11,7 @@ const removeFriendFromId = async (accessToken: string, accountId: string, friend
     };
 
     try {
-        await axios.delete(`${Endpoints.addFriend}/${accountId}/friends/${friendId}`, config);
+        await axios.delete(`${EpicGamesEndpoints.friends}/${accountId}/friends/${friendId}`, config);
         return true;
     } catch (err: any) {
         const error: AxiosError = err;

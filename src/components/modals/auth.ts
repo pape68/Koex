@@ -2,7 +2,7 @@ import { ModalSubmitInteraction } from 'discord.js';
 
 import createDeviceAuth from '../../api/auth/createDeviceAuth';
 import createOAuthData from '../../api/auth/createOAuthData';
-import { fortniteGameClient } from '../../constants';
+import { FORTNITE_GAME_CLIENT } from '../../constants';
 import { Component } from '../../interfaces/Component';
 import createEmbed from '../../utils/commands/createEmbed';
 import { getAllAccounts, getAllAuths, saveAccount } from '../../utils/functions/database';
@@ -14,7 +14,7 @@ const modal: Component<ModalSubmitInteraction> = {
 
         const code = interaction.fields.getTextInputValue('code');
 
-        const oAuthData = await createOAuthData(fortniteGameClient._name, {
+        const oAuthData = await createOAuthData(FORTNITE_GAME_CLIENT._name, {
             grant_type: 'authorization_code',
             code
         });
