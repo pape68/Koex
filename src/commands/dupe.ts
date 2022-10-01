@@ -2,9 +2,9 @@ import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle, E
 
 import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
-import createAuthData from '../utils/commands/createAuthData';
+import createAuthData from '../utils/functions/createAuthData';
 import createEmbed from '../utils/commands/createEmbed';
-import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
+import getCharacterAvatar from '../utils/functions/getCharacterAvatar';
 import { getWhitelistedUser } from '../utils/functions/database';
 
 const command: Command = {

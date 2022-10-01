@@ -1,7 +1,7 @@
 import { SelectMenuInteraction } from 'discord.js';
 
 import { Component } from '../../interfaces/Component';
-import createAuthData from '../../utils/commands/createAuthData';
+import createAuthData from '../../utils/functions/createAuthData';
 import createEmbed from '../../utils/commands/createEmbed';
 import { setAccounts } from '../../utils/functions/database';
 

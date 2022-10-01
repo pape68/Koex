@@ -2,7 +2,7 @@ import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle } 
 
 import createExchangeCode from '../api/auth/createExchangeCode';
 import { Command } from '../interfaces/Command';
-import createAuthData from '../utils/commands/createAuthData';
+import createAuthData from '../utils/functions/createAuthData';
 import createEmbed from '../utils/commands/createEmbed';
 
 const command: Command = {

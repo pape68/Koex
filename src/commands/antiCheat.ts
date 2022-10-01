@@ -4,8 +4,8 @@ import createExchangeCode from '../api/auth/createExchangeCode';
 import calderaRequest from '../api/caldera/calderaRequest';
 import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
-import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
-import createAuthData from '../utils/commands/createAuthData';
+import getCharacterAvatar from '../utils/functions/getCharacterAvatar';
+import createAuthData from '../utils/functions/createAuthData';
 import createEmbed from '../utils/commands/createEmbed';
 
 const command: Command = {

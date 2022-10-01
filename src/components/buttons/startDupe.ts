@@ -1,7 +1,6 @@
 import { ButtonInteraction } from 'discord.js';
 
 import { Component } from '../../interfaces/Component';
-import createEmbed from '../../utils/commands/createEmbed';
 import toggleDupe from '../../utils/commands/toggleDupe';
 
 const button: Component<ButtonInteraction> = {
@@ -9,12 +8,9 @@ const button: Component<ButtonInteraction> = {
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
 
-        await toggleDupe(true, interaction.user.id, async (msg) => {
-            await interaction.editReply({ embeds: [createEmbed('info', msg)] });
-            return;
-        });
+        const res = await toggleDupe(true, interaction.user.id, undefined, false);
 
-        await interaction.editReply({ embeds: [createEmbed('success', 'Successfully enabled the dupe.')] });
+        await interaction.editReply({ embeds: [res] });
     }
 };
 

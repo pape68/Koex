@@ -4,7 +4,7 @@ import getFromDisplayName from '../api/account/getFromDisplayName';
 import removeFriendFromId from '../api/friend/removeFriendFromId';
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
-import createAuthData from '../utils/commands/createAuthData';
+import createAuthData from '../utils/functions/createAuthData';
 import EpicGamesAPIError from '../api/utils/errors/EpicGamesAPIError';
 
 const command: Command = {

@@ -28,7 +28,8 @@ const [_id, _secret] = ['3446cd72694c4a4485d81b77adbb2141', '9209d4a5e25a457fb9b
 export const FORTNITE_GAME_CLIENT = Object.freeze({
     _name: 'fortniteIOSGameClient',
     _id,
-    _secret
+    _secret,
+    _token: Buffer.from(_id + ':' + _secret).toString('base64')
 });
 
 export const IS_PROD = process.env.NODE_ENV === 'production';

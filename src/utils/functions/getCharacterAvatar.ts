@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 
 import EpicGamesAPIError, { EpicGamesAPIErrorData } from '../../api/utils/errors/EpicGamesAPIError';
 import { EpicGamesEndpoints } from '../../api/utils/helpers/constants';
-import createAuthData from './createAuthData';
+import createAuthData, { BearerAuth } from './createAuthData';
 
 export interface AvatarResponse {
     accountId: string;
@@ -10,8 +10,8 @@ export interface AvatarResponse {
     avatarId: string;
 }
 
-const getCharacterAvatar = async (userId: string) => {
-    const auth = await createAuthData(userId);
+const getCharacterAvatar = async (userId: string, authOverride?: BearerAuth) => {
+    const auth = authOverride ?? (await createAuthData(userId));
 
     if (!auth) throw new Error('Failed to create authorization data');
 

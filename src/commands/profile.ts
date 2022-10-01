@@ -3,10 +3,10 @@ import { ApplicationCommandType, AttachmentBuilder, EmbedBuilder } from 'discord
 import composeMcp from '../api/mcp/composeMcp';
 import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
-import createAuthData from '../utils/commands/createAuthData';
+import createAuthData from '../utils/functions/createAuthData';
 import createEmbed from '../utils/commands/createEmbed';
-import getBanner from '../utils/commands/getBanner';
-import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
+import getBanner from '../utils/functions/getBanner';
+import getCharacterAvatar from '../utils/functions/getCharacterAvatar';
 import { CampaignProfileData } from '../utils/helpers/operationResources';
 import { Emoji } from './../constants';
 

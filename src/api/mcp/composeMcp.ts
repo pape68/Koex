@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 
-import { BearerAuth } from '../../utils/commands/createAuthData';
+import { BearerAuth } from '../../utils/functions/createAuthData';
 import { FortniteProfile, MCPOperation, MCPResponse, ProfileAttributes } from '../../utils/helpers/operationResources';
 import { EpicGamesEndpoints } from '../utils/helpers/constants';
 import EpicGamesAPIError, { EpicGamesAPIErrorData } from '../utils/errors/EpicGamesAPIError';

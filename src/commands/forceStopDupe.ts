@@ -1,10 +1,11 @@
-import { APIEmbedField, ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
+import { APIEmbedField, ApplicationCommandOptionType, ApplicationCommandType, Embed, EmbedBuilder } from 'discord.js';
 
 import { Command } from '../interfaces/Command';
-import createAuthData from '../utils/commands/createAuthData';
+import createAuthData from '../utils/functions/createAuthData';
 import createEmbed from '../utils/commands/createEmbed';
 import toggleDupe from '../utils/commands/toggleDupe';
 import { getAllAccounts } from '../utils/functions/database';
+import getCharacterAvatar from '../utils/functions/getCharacterAvatar';
 
 const command: Command = {
     name: 'force-stop-magic',
@@ -31,33 +32,28 @@ const command: Command = {
             return;
         }
 
-        const fields: APIEmbedField[] = [];
+        const embeds: EmbedBuilder[] = [];
 
         for (const auth of accounts.auths) {
-            try {
-                await toggleDupe(false, userId, (msg) => {
-                    fields.push({
-                        name: auth.displayName,
-                        value: msg
-                    });
-                });
-            } catch (error) {
-                fields.push({
-                    name: auth.displayName,
-                    value: String(error)
-                });
+            const bearerAuth = await createAuthData(userId, auth.accountId);
+
+            const characterAvatarUrl = await getCharacterAvatar(userId, bearerAuth ?? undefined);
+
+            if (!bearerAuth) {
+                embeds.push(
+                    new EmbedBuilder()
+                        .setAuthor({ name: auth.displayName, iconURL: characterAvatarUrl })
+                        .setDescription(`Failed to create authorization data for \`${userId}\`.`)
+                );
                 continue;
             }
 
-            fields.push({
-                name: auth.displayName,
-                value: 'No issues occurred'
-            });
+            const res = await toggleDupe(false, interaction.user.id, bearerAuth, true);
+            embeds.push(res.setAuthor({ name: auth.displayName, iconURL: characterAvatarUrl }));
+            continue;
         }
 
-        await interaction.editReply({
-            embeds: [createEmbed('info', `Attempted to force stop dupe for \`${userId}\`.`).addFields(fields)]
-        });
+        await interaction.editReply({ embeds });
     },
     options: [
         {

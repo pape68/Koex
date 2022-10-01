@@ -3,7 +3,7 @@ import { ApplicationCommandOptionType, ApplicationCommandType, AttachmentBuilder
 import composeMcp from '../api/mcp/composeMcp';
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
-import createAuthData from '../utils/commands/createAuthData';
+import createAuthData from '../utils/functions/createAuthData';
 import { FortniteProfile, MCPOperation } from '../utils/helpers/operationResources';
 
 const command: Command = {

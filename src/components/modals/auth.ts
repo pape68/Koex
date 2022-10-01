@@ -14,7 +14,7 @@ const modal: Component<ModalSubmitInteraction> = {
 
         const code = interaction.fields.getTextInputValue('code');
 
-        const oAuthData = await createOAuthData(FORTNITE_GAME_CLIENT._name, {
+        const oAuthData = await createOAuthData(FORTNITE_GAME_CLIENT._token, {
             grant_type: 'authorization_code',
             code
         });

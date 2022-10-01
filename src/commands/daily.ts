@@ -4,8 +4,8 @@ import composeMcp from '../api/mcp/composeMcp';
 import { Command } from '../interfaces/Command';
 import { Color } from '../constants';
 import createEmbed from '../utils/commands/createEmbed';
-import getCharacterAvatar from '../utils/commands/getCharacterAvatar';
-import createAuthData from '../utils/commands/createAuthData';
+import getCharacterAvatar from '../utils/functions/getCharacterAvatar';
+import createAuthData from '../utils/functions/createAuthData';
 import { CampaignProfileData } from '../utils/helpers/operationResources';
 import rewardData from '../utils/helpers/rewards.json' assert { type: 'json' };
 

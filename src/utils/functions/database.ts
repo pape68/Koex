@@ -1,5 +1,8 @@
-import { Accounts, AccountAuth, AutoDaily, DupeWhitelist } from './../../typings/supabase.d';
-import supabase from './supabase';
+import { createClient } from '@supabase/supabase-js';
+
+import { AccountAuth, Accounts, AutoDaily, DupeWhitelist } from './../../typings/supabase.d';
+
+const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
 
 export const getAllAccounts = async (userId: string) => {
     const { data, error } = await supabase
@@ -141,3 +144,5 @@ export const saveWhitelistedUser = async (userId: string) => {
 
     return data;
 };
+
+export default supabase;

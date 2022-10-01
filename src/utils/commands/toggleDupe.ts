@@ -1,21 +1,23 @@
-import util from 'node:util';
-
+import { InteractionReplyOptions, MessageCreateOptions, EmbedBuilder } from 'discord.js';
 import composeMcp from '../../api/mcp/composeMcp';
+import createAuthData, { BearerAuth } from '../functions/createAuthData';
 import { getWhitelistedUser } from '../functions/database';
 import { CampaignProfileData } from '../helpers/operationResources';
-import createAuthData from './createAuthData';
+import createEmbed from './createEmbed';
 
-const toggleDupe = async (enable: boolean, userId: string, cb?: (msg: string) => void) => {
+const toggleDupe = async (
+    enable: boolean,
+    userId: string,
+    authOverride?: BearerAuth,
+    bypassWhitelist?: boolean
+): Promise<EmbedBuilder> => {
     const isWhitelisted = await getWhitelistedUser(userId);
 
-    if (!isWhitelisted) throw new Error('(∩｀-´)⊃━☆ﾟ.*･｡ﾟ');
+    if (!isWhitelisted && !bypassWhitelist) throw new Error('(∩ ^-^)⊃━☆ﾟ.*･｡ﾟ');
 
-    const auth = await createAuthData(userId);
+    const auth = authOverride ?? (await createAuthData(userId));
 
-    if (!auth) {
-        if (cb) await util.promisify(cb)('You have been logged out.');
-        throw new Error('Failed to create authorization data');
-    }
+    if (!auth) return createEmbed('info', `${authOverride ? 'User' : 'You'} been logged out.`);
 
     const targetProfile = await composeMcp(auth, enable ? 'theater0' : 'outpost0', 'QueryProfile');
 
@@ -36,14 +38,13 @@ const toggleDupe = async (enable: boolean, userId: string, cb?: (msg: string) =>
             newItemIdHint: 'molleja'
         }));
 
-    if (!transferOperations.length) {
-        if (cb) await util.promisify(cb)(`Dupe is already ${enable ? 'enabled' : 'disabled'}`);
-        return;
-    }
+    if (!transferOperations.length) return createEmbed('info', `Dupe is already ${enable ? 'enabled' : 'disabled'}.`);
 
     await composeMcp<CampaignProfileData>(auth, 'theater0', 'StorageTransfer', {
         transferOperations
     });
+
+    return createEmbed('success', `Successfully ${enable ? 'enabled' : 'disabled'} the dupe.`);
 };
 
 export default toggleDupe;
