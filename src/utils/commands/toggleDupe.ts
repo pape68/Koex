@@ -1,4 +1,5 @@
-import { InteractionReplyOptions, MessageCreateOptions, EmbedBuilder } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
+
 import composeMcp from '../../api/mcp/composeMcp';
 import createAuthData, { BearerAuth } from '../functions/createAuthData';
 import { getWhitelistedUser } from '../functions/database';
