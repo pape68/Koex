@@ -39,7 +39,7 @@ const selectMenu: Component<SelectMenuInteraction> = {
             const embed = new EmbedBuilder()
                 .setAuthor({ name: bearerAuth.displayName, iconURL: characterAvatarUrl })
                 .setColor(Color.RED)
-                .setDescription(`${interaction.user.toString()} **(${interaction.user.tag})** has logged in.`)
+                .setDescription(`${interaction.user.toString()} **(${interaction.user.tag})** has logged out.`)
                 .setThumbnail(interaction.user.displayAvatarURL())
                 .setFields(
                     {
