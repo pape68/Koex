@@ -1,4 +1,4 @@
-import { AxiosError } from 'axios';
+import * as Axios from 'axios';
 import { ApplicationCommandOptionType, ApplicationCommandType, EmbedBuilder } from 'discord.js';
 
 import { Emoji } from './../constants';
@@ -35,7 +35,7 @@ const command: Command = {
         try {
             cosmetic = await getCosmeticFromName(name);
         } catch (error) {
-            if (error instanceof AxiosError && error.response?.status === 404) {
+            if (error instanceof Axios.AxiosError && error.response?.status === 404) {
                 await interaction.editReply({
                     embeds: [createEmbed('info', `The cosmetic **${name}** does not exist.`)]
                 });
