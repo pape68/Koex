@@ -1,17 +1,16 @@
-import * as Axios from 'axios';
 import { ApplicationCommandOptionType, ApplicationCommandType, EmbedBuilder } from 'discord.js';
+import axios from 'axios';
 
-import { Emoji } from './../constants';
-import sendPartyPatch from '../api/party/sendPartyPatch';
 import getParty from '../api/party/getParty';
+import sendPartyPatch from '../api/party/sendPartyPatch';
 import EpicGamesAPIError from '../api/utils/errors/EpicGamesAPIError';
 import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
 import createAuthData from '../utils/functions/createAuthData';
 import getAvatar, { createCosmeticUrl } from '../utils/functions/getAvatar';
-import getCosmeticFromName from '../utils/functions/getCosmeticFromName';
-import { CosmeticData } from '../utils/functions/getCosmeticFromName';
+import getCosmeticFromName, { CosmeticData } from '../utils/functions/getCosmeticFromName';
+import { Emoji } from './../constants';
 
 const command: Command = {
     name: 'ghostequip',
@@ -35,7 +34,7 @@ const command: Command = {
         try {
             cosmetic = await getCosmeticFromName(name);
         } catch (error) {
-            if (error instanceof Axios.AxiosError && error.response?.status === 404) {
+            if (axios.isAxiosError(error) && error.response?.status === 404) {
                 await interaction.editReply({
                     embeds: [createEmbed('info', `The cosmetic **${name}** does not exist.`)]
                 });
