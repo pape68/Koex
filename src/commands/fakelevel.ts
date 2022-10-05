@@ -1,19 +1,18 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, AttachmentBuilder, EmbedBuilder } from 'discord.js';
-import { Emoji } from '../constants';
 
-import sendPartyPatch from '../api/party/sendPartyPatch';
+import { Emoji } from '../constants';
 import getParty from '../api/party/getParty';
+import sendPartyPatch from '../api/party/sendPartyPatch';
 import EpicGamesAPIError from '../api/utils/errors/EpicGamesAPIError';
 import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
 import createAuthData from '../utils/functions/createAuthData';
-import getAvatar, { createCosmeticUrl } from '../utils/functions/getAvatar';
-import getCosmeticFromName from '../utils/functions/getCosmeticFromName';
+import getAvatar from '../utils/functions/getAvatar';
 
 const command: Command = {
     name: 'fakelevel',
-    description: 'EA SPOTS.',
+    description: 'Set your Battle Royale level to any number. (Only visible to others)',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply();

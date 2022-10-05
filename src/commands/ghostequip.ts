@@ -15,7 +15,7 @@ import { CosmeticData } from '../utils/functions/getCosmeticFromName';
 
 const command: Command = {
     name: 'ghostequip',
-    description: 'EA SPOTS.',
+    description: 'Equip any cosmetic in the Battle Royale lobby. (Only visible to others)',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply();

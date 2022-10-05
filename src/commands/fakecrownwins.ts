@@ -12,7 +12,7 @@ import getAvatar from '../utils/functions/getAvatar';
 
 const command: Command = {
     name: 'fakecrownwins',
-    description: 'EA SPOTS.',
+    description: 'Set your Royal Royale count to any number. (Only visible to others)',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply();
