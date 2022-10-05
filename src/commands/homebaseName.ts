@@ -25,6 +25,13 @@ const command: Command = {
         const publicProfile = await composeMcp<PublicProfileData>(auth, 'common_public', 'QueryProfile');
         const oldName = publicProfile.profileChanges[0].profile.stats.attributes.homebase_name;
 
+        if (oldName === change) {
+            await interaction.editReply({
+                embeds: [createEmbed('success', `Homebase name is already set to **${oldName}**.`)]
+            });
+            return;
+        }
+
         await composeMcp<PublicProfileData>(auth, 'common_public', 'SetHomebaseName', { homebaseName: change });
         await interaction.editReply({
             embeds: [createEmbed('success', `Changed Homebase name from **${oldName}** to **${change}**.`)]

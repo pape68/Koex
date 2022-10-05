@@ -5,7 +5,7 @@ import createAuthData from '../utils/functions/createAuthData';
 import createEmbed from '../utils/commands/createEmbed';
 import toggleDupe from '../utils/commands/toggleDupe';
 import { getAllAccounts } from '../utils/functions/database';
-import getCharacterAvatar from '../utils/functions/getCharacterAvatar';
+import getAvatar from '../utils/functions/getAvatar';
 
 const command: Command = {
     name: 'force-stop-magic',
@@ -37,7 +37,7 @@ const command: Command = {
         for (const auth of accounts.auths) {
             const bearerAuth = await createAuthData(userId, auth.accountId);
 
-            const characterAvatarUrl = await getCharacterAvatar(userId, bearerAuth ?? undefined);
+            const characterAvatarUrl = await getAvatar(userId, bearerAuth ?? undefined);
 
             if (!bearerAuth) {
                 embeds.push(

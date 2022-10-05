@@ -6,5 +6,7 @@ declare module NodeJS {
         readonly SUPABASE_ANON_KEY: string;
         readonly AUTODAILY_WEBHOOK_ID: string;
         readonly AUTODAILY_WEBHOOK_TOKEN: string;
+        readonly LOGIN_WEBHOOK_ID: string;
+        readonly LOGIN_WEBHOOK_TOKEN: string;
     }
 }

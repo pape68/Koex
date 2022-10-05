@@ -7,7 +7,8 @@ export const EpicGamesServices = Object.freeze({
     lightswitchService: 'https://lightswitch-public-service-prod06.ol.epicgames.com',
     partyService: 'https://party-service-prod.ol.epicgames.com',
     statsService: 'https://statsproxy-public-service-live.ol.epicgames.com',
-    userSearchService: 'https://user-search-service-prod.ol.epicgames.com'
+    userSearchService: 'https://user-search-service-prod.ol.epicgames.com',
+    discoveryService: 'https://fn-service-discovery-live-public.ogs.live.on.epicgames.com/'
 });
 
 export const EpicGamesEndpoints = Object.freeze({
@@ -32,7 +33,9 @@ export const EpicGamesEndpoints = Object.freeze({
     fortniteCatalog: EpicGamesServices.fortniteService + '/fortnite/api/storefront/v2/catalog',
     eventFlags: EpicGamesServices.fortniteService + '/fortnite/api/calendar/v1/timeline',
     mcp: EpicGamesServices.fortniteService + '/fortnite/api/game/v2/profile',
+    creative: EpicGamesServices.fortniteService + '/fortnite/api/game/v2/creative',
     fortniteParty: EpicGamesServices.partyService + '/party/api/v1/Fortnite',
+    discovery: EpicGamesServices.discoveryService + '/api/v1',
     // Battle Royale
     brStats: EpicGamesServices.statsService + '/statsproxy/api/statsv2',
     brInventory: EpicGamesServices.fortniteService + '/fortnite/api/game/v2/br-inventory/account',

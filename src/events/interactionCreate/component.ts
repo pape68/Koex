@@ -25,12 +25,13 @@ const event: Event = {
 
         try {
             if (component) await component.execute(interaction);
+            console.info(`${interaction.user.tag} [${interaction.user.id}] used ${interaction.customId}.`);
         } catch (error) {
             const embed = new EmbedBuilder()
                 .setTitle(`${Emoji.CROSS} Oops. We've hit a roadblock.`)
                 .setColor(Color.RED)
                 .setDescription(
-                    `Please join our [support server](https://discord.gg/koex/) if the issue persists.\n\`\`\`${String(
+                    `Please join our [support server](https://discord.gg/koex) if the issue persists.\n\`\`\`${String(
                         error
                     )}\`\`\``
                 );

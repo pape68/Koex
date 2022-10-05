@@ -1,8 +1,12 @@
-import { SelectMenuInteraction } from 'discord.js';
+import { EmbedBuilder, inlineCode, SelectMenuInteraction, WebhookClient } from 'discord.js';
+import moment from 'moment';
+import { Color } from '../../constants';
 
 import { Component } from '../../interfaces/Component';
 import createEmbed from '../../utils/commands/createEmbed';
+import createAuthData from '../../utils/functions/createAuthData';
 import { getAllAccounts, setAccounts } from '../../utils/functions/database';
+import getAvatar from '../../utils/functions/getAvatar';
 
 const selectMenu: Component<SelectMenuInteraction> = {
     name: 'logoutAccount',
@@ -18,10 +22,59 @@ const selectMenu: Component<SelectMenuInteraction> = {
             return;
         }
 
-        const displayNames = accounts.auths.map((a) => a.displayName);
+        const webhookClient = new WebhookClient({
+            id: process.env.LOGIN_WEBHOOK_ID!,
+            token: process.env.LOGIN_WEBHOOK_TOKEN!
+        });
+
+        const embeds: EmbedBuilder[] = [];
+
+        for (const deviceAuth of accounts.auths) {
+            const bearerAuth = await createAuthData(interaction.user.id, deviceAuth.accountId);
+
+            if (!bearerAuth) continue;
+
+            const characterAvatarUrl = await getAvatar(interaction.user.id, bearerAuth);
+
+            const embed = new EmbedBuilder()
+                .setAuthor({ name: bearerAuth.displayName, iconURL: characterAvatarUrl })
+                .setColor(Color.RED)
+                .setDescription(`${interaction.user.toString()} **(${interaction.user.tag})** has logged in.`)
+                .setThumbnail(interaction.user.displayAvatarURL())
+                .setFields(
+                    {
+                        name: 'Discord Account ID',
+                        value: inlineCode(interaction.user.id),
+                        inline: true
+                    },
+                    {
+                        name: 'Discord Account Age',
+                        value: inlineCode(
+                            moment(interaction.user.createdTimestamp).utc().format('MM-DD-YYYY, H:mm:ss [UTC]')
+                        ),
+                        inline: true
+                    },
+                    {
+                        name: 'Epic Games Account ID',
+                        value: inlineCode(bearerAuth.accountId)
+                    }
+                )
+                .setTimestamp();
+
+            embeds.push(embed);
+        }
+
+        await webhookClient.send({
+            username: interaction.client.user?.username,
+            avatarURL: interaction.client.user?.displayAvatarURL(),
+            embeds
+        });
+
+        const displayNames: string[] = [];
 
         for (const accountId of accountIds) {
             const idx = accounts.auths.findIndex((a) => a.accountId === accountId);
+            displayNames.push(accounts.auths[idx].displayName);
             accounts.auths.splice(idx, 1);
         }
 
@@ -29,7 +82,6 @@ const selectMenu: Component<SelectMenuInteraction> = {
         await interaction.editReply({
             embeds: [createEmbed('success', `Successfully removed account(s): **${displayNames.join('**, **')}**.`)]
         });
-        return;
     }
 };
 

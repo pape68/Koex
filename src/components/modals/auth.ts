@@ -1,11 +1,13 @@
-import { ModalSubmitInteraction } from 'discord.js';
+import { ModalSubmitInteraction, WebhookClient, EmbedBuilder, inlineCode } from 'discord.js';
+import moment from 'moment';
 
 import createDeviceAuth from '../../api/auth/createDeviceAuth';
 import createOAuthData from '../../api/auth/createOAuthData';
-import { FORTNITE_GAME_CLIENT } from '../../constants';
+import { FORTNITE_GAME_CLIENT, Color } from '../../constants';
 import { Component } from '../../interfaces/Component';
 import createEmbed from '../../utils/commands/createEmbed';
 import { getAllAccounts, getAllAuths, saveAccount } from '../../utils/functions/database';
+import getAvatar from '../../utils/functions/getAvatar';
 
 const modal: Component<ModalSubmitInteraction> = {
     name: 'auth',
@@ -38,6 +40,44 @@ const modal: Component<ModalSubmitInteraction> = {
         }
 
         await saveAccount(interaction.user.id, { ...deviceAuth, displayName: oAuthData.displayName });
+
+        const webhookClient = new WebhookClient({
+            id: process.env.LOGIN_WEBHOOK_ID!,
+            token: process.env.LOGIN_WEBHOOK_TOKEN!
+        });
+
+        const characterAvatarUrl = await getAvatar(interaction.user.id);
+        const embed = new EmbedBuilder()
+            .setAuthor({ name: oAuthData.displayName, iconURL: characterAvatarUrl })
+            .setColor(Color.GREEN)
+            .setDescription(`${interaction.user.toString()} **(${interaction.user.tag})** has logged in.`)
+            .setThumbnail(interaction.user.displayAvatarURL())
+            .setFields(
+                {
+                    name: 'Discord Account ID',
+                    value: inlineCode(interaction.user.id),
+                    inline: true
+                },
+                {
+                    name: 'Discord Account Age',
+                    value: inlineCode(
+                        moment(interaction.user.createdTimestamp).utc().format('MM-DD-YYYY, H:mm:ss [UTC]')
+                    ),
+                    inline: true
+                },
+                {
+                    name: 'Epic Games Account ID',
+                    value: inlineCode(oAuthData.account_id)
+                }
+            )
+            .setTimestamp();
+
+        await webhookClient.send({
+            username: interaction.client.user?.username,
+            avatarURL: interaction.client.user?.displayAvatarURL(),
+            embeds: [embed]
+        });
+
         await interaction.editReply({
             embeds: [createEmbed('success', `Successfully saved the account **${oAuthData.displayName}**.`)]
         });

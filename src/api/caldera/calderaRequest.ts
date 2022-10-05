@@ -13,7 +13,7 @@ const calderaRequest = async (accountId: string, exchangeCode: string) => {
         account_id: accountId,
         exchange_code: exchangeCode,
         test_mode: false,
-        epic_app: 'fortntie',
+        epic_app: 'fortnite',
         nvidia: false
     };
 

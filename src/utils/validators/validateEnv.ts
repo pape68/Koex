@@ -8,7 +8,9 @@ const validateEnv = () => {
             SUPABASE_ANON_KEY: Joi.string().required(),
             SUPABASE_URL: Joi.string().required(),
             AUTODAILY_WEBHOOK_ID: Joi.string().required(),
-            AUTODAILY_WEBHOOK_TOKEN: Joi.string().required()
+            AUTODAILY_WEBHOOK_TOKEN: Joi.string().required(),
+            LOGIN_WEBHOOK_ID: Joi.string().required(),
+            LOGIN_WEBHOOK_TOKEN: Joi.string().required()
         })
         .unknown();
 

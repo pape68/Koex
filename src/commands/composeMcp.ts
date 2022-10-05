@@ -7,7 +7,7 @@ import createAuthData from '../utils/functions/createAuthData';
 import { FortniteProfile, MCPOperation } from '../utils/helpers/operationResources';
 
 const command: Command = {
-    name: 'compose-mcp',
+    name: 'composemcp',
     description: 'Compose an MCP operation.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
@@ -15,6 +15,7 @@ const command: Command = {
 
         const operationNamae = interaction.options.getString('operation', true) as keyof typeof MCPOperation;
         const profile = interaction.options.getString('profile', true) as keyof typeof FortniteProfile;
+        const route = interaction.options.getString('route', true);
         const payload = interaction.options.getString('payload');
 
         const auth = await createAuthData(interaction.user.id);
@@ -24,7 +25,7 @@ const command: Command = {
             return;
         }
 
-        const data = await composeMcp(auth, profile, operationNamae, payload ? JSON.parse(payload) : {});
+        const data = await composeMcp(auth, profile, operationNamae, payload ? JSON.parse(payload) : {}, route);
         const response = JSON.stringify(data, null, 4);
         const file = new AttachmentBuilder(Buffer.from(response), { name: 'response.json' });
 
@@ -50,6 +51,26 @@ const command: Command = {
             description: 'The Fortnite MCP profile.',
             required: true,
             type: ApplicationCommandOptionType.String
+        },
+        {
+            name: 'route',
+            description: 'The MCP URL route.',
+            required: true,
+            type: ApplicationCommandOptionType.String,
+            choices: [
+                {
+                    name: 'Client',
+                    value: 'client'
+                },
+                {
+                    name: 'Dedicated Server',
+                    value: 'dedicated_server'
+                },
+                {
+                    name: 'Public',
+                    value: 'public'
+                }
+            ]
         },
         {
             name: 'payload',

@@ -6,7 +6,7 @@ import { Command } from '../interfaces/Command';
 import createAuthData from '../utils/functions/createAuthData';
 import createEmbed from '../utils/commands/createEmbed';
 import getBanner from '../utils/functions/getBanner';
-import getCharacterAvatar from '../utils/functions/getCharacterAvatar';
+import getAvatar from '../utils/functions/getAvatar';
 import { CampaignProfileData } from '../utils/helpers/operationResources';
 import { Emoji } from './../constants';
 
@@ -51,7 +51,7 @@ const command: Command = {
             .map((v) => Emoji[achievements[v.templateId] as keyof typeof Emoji]);
 
         const bannerUrl = await getBanner(interaction.user.id);
-        const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
+        const characterAvatarUrl = await getAvatar(interaction.user.id);
 
         const profileMetadata = await composeMcp(auth, 'metadata', 'QueryProfile');
         const metadata = profileMetadata.profileChanges[0].profile;

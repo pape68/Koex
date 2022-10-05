@@ -16,13 +16,13 @@ const event: Event = {
 
         try {
             if (command) await command.execute(interaction);
-            // throw new Error('Test Error');
+            console.info(`${interaction.user.tag} [${interaction.user.id}] used ${interaction.commandName}.`);
         } catch (error) {
             const embed = new EmbedBuilder()
                 .setTitle(`${Emoji.CROSS} Oops. We've hit a roadblock.`)
                 .setColor(Color.RED)
                 .setDescription(
-                    `Please join our [support server](https://discord.gg/koex/) if the issue persists.\n\`\`\`${String(
+                    `Please join our [support server](https://discord.gg/koex) if the issue persists.\n\`\`\`${String(
                         error
                     )}\`\`\``
                 );

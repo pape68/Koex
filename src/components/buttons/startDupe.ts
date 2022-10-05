@@ -9,7 +9,6 @@ const button: Component<ButtonInteraction> = {
         await interaction.deferReply({ ephemeral: true });
 
         const res = await toggleDupe(true, interaction.user.id, undefined, false);
-
         await interaction.editReply({ embeds: [res] });
     }
 };

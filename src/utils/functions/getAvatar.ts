@@ -10,7 +10,7 @@ export interface AvatarResponse {
     avatarId: string;
 }
 
-const getCharacterAvatar = async (userId: string, authOverride?: BearerAuth) => {
+const getAvatar = async (userId: string, authOverride?: BearerAuth, cosmeticOverride?: string) => {
     const auth = authOverride ?? (await createAuthData(userId));
 
     if (!auth) throw new Error('Failed to create authorization data');
@@ -30,11 +30,14 @@ const getCharacterAvatar = async (userId: string, authOverride?: BearerAuth) => 
 
         if (data) cosmeticId = data[0].avatarId.replace('ATHENACHARACTER:', '');
 
-        return `https://fortnite-api.com/images/cosmetics/br/${cosmeticId}/icon.png`;
+        return createCosmeticUrl(cosmeticId);
     } catch (err: any) {
         const error: AxiosError = err;
         throw new EpicGamesAPIError(error.response?.data as EpicGamesAPIErrorData, err.request, error.response?.status);
     }
 };
 
-export default getCharacterAvatar;
+export const createCosmeticUrl = (cosmeticId: string) =>
+    `https://fortnite-api.com/images/cosmetics/br/${cosmeticId}/icon.png`;
+
+export default getAvatar;

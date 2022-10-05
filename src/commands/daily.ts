@@ -4,7 +4,7 @@ import composeMcp from '../api/mcp/composeMcp';
 import { Command } from '../interfaces/Command';
 import { Color } from '../constants';
 import createEmbed from '../utils/commands/createEmbed';
-import getCharacterAvatar from '../utils/functions/getCharacterAvatar';
+import getAvatar from '../utils/functions/getAvatar';
 import createAuthData from '../utils/functions/createAuthData';
 import { CampaignProfileData } from '../utils/helpers/operationResources';
 import rewardData from '../utils/helpers/rewards.json' assert { type: 'json' };
@@ -36,7 +36,7 @@ const command: Command = {
             rewardValues.push(`\`${nextLoginDay}\` **${(rewardData as any)[nextLoginDay % 336]}**`);
         }
 
-        const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
+        const characterAvatarUrl = await getAvatar(interaction.user.id);
 
         const embed = new EmbedBuilder()
             .setColor(Color.YELLOW)

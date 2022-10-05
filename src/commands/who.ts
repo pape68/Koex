@@ -3,7 +3,7 @@ import { ApplicationCommandType, EmbedBuilder } from 'discord.js';
 import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
 import createEmbed from '../utils/commands/createEmbed';
-import getCharacterAvatar from '../utils/functions/getCharacterAvatar';
+import getAvatar from '../utils/functions/getAvatar';
 import createAuthData from '../utils/functions/createAuthData';
 
 const command: Command = {
@@ -20,7 +20,7 @@ const command: Command = {
             return;
         }
 
-        const characterAvatarUrl = await getCharacterAvatar(interaction.user.id);
+        const characterAvatarUrl = await getAvatar(interaction.user.id);
 
         await interaction.editReply({
             embeds: [
