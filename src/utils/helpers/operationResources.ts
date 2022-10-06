@@ -73,7 +73,8 @@ export enum MCPOperation {
     DestroyWorldItems,
     StorageTransfer,
     PurchaseResearchStatUpgrade,
-    ClaimDifficultyIncreaseRewards
+    ClaimDifficultyIncreaseRewards,
+    SetItemArchivedStatusBatch
 }
 
 export interface AvatarResponseData {
