@@ -8,7 +8,7 @@ import createAuthData from '../utils/functions/createAuthData';
 
 const command: Command = {
     name: 'favorite',
-    description: "Retrieve's the bots latency.",
+    description: 'Favorite a playlist by ID.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply();
