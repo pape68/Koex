@@ -9,7 +9,7 @@ import createAuthData from '../utils/functions/createAuthData';
 import getPlaylistsFromName, { PlaylistData } from '../utils/functions/getPlaylistFromName';
 
 const command: Command = {
-    name: 'search',
+    name: 'playlist-info',
     description: 'Search through playlists by name.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
