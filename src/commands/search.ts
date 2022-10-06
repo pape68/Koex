@@ -47,7 +47,6 @@ const command: Command = {
         let isDisabled = false;
         try {
             const meta = await getMnemonicMeta(auth.accessToken, playlist.id.toLowerCase());
-            console.log(meta);
             isDisabled = meta.disabled;
         } catch (error) {
             if (error instanceof EpicGamesAPIError && error.code === 'errors.com.epicgames.links.link_disabled') {

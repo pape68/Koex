@@ -40,8 +40,6 @@ const command: Command = {
             update: cosmeticUpdate
         };
 
-        console.log(body);
-
         const party = await getParty(auth.accessToken, auth.accountId);
 
         if (!party.current.length) {
@@ -50,8 +48,7 @@ const command: Command = {
         }
 
         try {
-            const meta = await sendPartyPatch(auth.accessToken, auth.accountId, party.current[0].id, body);
-            console.log(meta);
+            await sendPartyPatch(auth.accessToken, auth.accountId, party.current[0].id, body);
         } catch (err: any) {
             const error: EpicGamesAPIError = err;
 
