@@ -20,14 +20,14 @@ const command: Command = {
             return;
         }
 
-        const characterAvatarUrl = await getAvatar(interaction.user.id);
+        const avatarUrl = await getAvatar(interaction.user.id);
 
         await interaction.editReply({
             embeds: [
                 new EmbedBuilder()
                     .setAuthor({
                         name: `Hello, ${auth.displayName}`,
-                        iconURL: characterAvatarUrl ?? undefined
+                        iconURL: avatarUrl
                     })
                     .setColor(Color.GRAY)
             ]

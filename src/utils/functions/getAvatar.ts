@@ -26,9 +26,9 @@ const getAvatar = async (userId: string, authOverride?: BearerAuth, cosmeticOver
 
     try {
         const { data } = await axios.get<AvatarResponse[]>(EpicGamesEndpoints.accountAvatars, config);
-        let cosmeticId = 'CID_884_ATHENA_COMMANDO_F_CHONERAMIREZ';
+        let cosmeticId = 'CID_001_Athena_Commando_F_Default';
 
-        if (data) cosmeticId = data[0].avatarId.replace('ATHENACHARACTER:', '');
+        if (data.length && data[0].avatarId.length) cosmeticId = data[0].avatarId.replace(/AthenaCharacter:/i, '');
 
         return createCosmeticUrl(cosmeticId);
     } catch (err: any) {

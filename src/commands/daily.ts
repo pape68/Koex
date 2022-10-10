@@ -36,7 +36,7 @@ const command: Command = {
             rewardValues.push(`\`${nextLoginDay}\` **${(rewardData as any)[nextLoginDay % 336]}**`);
         }
 
-        const characterAvatarUrl = await getAvatar(interaction.user.id);
+        const avatarUrl = await getAvatar(interaction.user.id);
 
         const embed = new EmbedBuilder()
             .setColor(Color.YELLOW)
@@ -56,7 +56,7 @@ const command: Command = {
                     value: rewardValues.slice(2).join('\n')
                 }
             ])
-            .setFooter({ text: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
+            .setFooter({ text: auth.displayName, iconURL: avatarUrl })
             .setTimestamp(new Date(rewards.lastClaimDate));
 
         await interaction.editReply({ embeds: [embed] });

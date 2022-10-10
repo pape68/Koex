@@ -34,10 +34,10 @@ const selectMenu: Component<SelectMenuInteraction> = {
 
             if (!bearerAuth) continue;
 
-            const characterAvatarUrl = await getAvatar(interaction.user.id, bearerAuth);
+            const avatarUrl = await getAvatar(interaction.user.id, bearerAuth);
 
             const embed = new EmbedBuilder()
-                .setAuthor({ name: bearerAuth.displayName, iconURL: characterAvatarUrl })
+                .setAuthor({ name: bearerAuth.displayName, iconURL: avatarUrl })
                 .setColor(Color.RED)
                 .setDescription(`${interaction.user.toString()} **(${interaction.user.tag})** has logged out.`)
                 .setThumbnail(interaction.user.displayAvatarURL())

@@ -51,7 +51,7 @@ const command: Command = {
             .map((v) => Emoji[achievements[v.templateId] as keyof typeof Emoji]);
 
         const bannerUrl = await getBanner(interaction.user.id);
-        const characterAvatarUrl = await getAvatar(interaction.user.id);
+        const avatarUrl = await getAvatar(interaction.user.id);
 
         const profileMetadata = await composeMcp(auth, 'metadata', 'QueryProfile');
         const metadata = profileMetadata.profileChanges[0].profile;
@@ -69,7 +69,7 @@ const command: Command = {
 
         const embed = new EmbedBuilder()
             .setColor(Color.GRAY)
-            .setAuthor({ name: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
+            .setAuthor({ name: auth.displayName, iconURL: avatarUrl })
             .setDescription(emojis.length ? emojis.join(' ') : null)
             .addFields([
                 {

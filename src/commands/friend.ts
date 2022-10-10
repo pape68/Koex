@@ -35,9 +35,10 @@ const command: Command = {
         try {
             await addFriendFromId(auth.accessToken, auth.accountId, friendData.id);
         } catch (err: any) {
-            const error: EpicGamesAPIError = err;
+            console.log(err);
+            if (!(err instanceof EpicGamesAPIError)) return;
 
-            switch (error.code) {
+            switch (err.code) {
                 case 'errors.com.epicgames.friends.duplicate_friendship':
                     await interaction.editReply({
                         embeds: [createEmbed('info', `You already have **${displayName}** on your friends list.`)]
@@ -53,12 +54,10 @@ const command: Command = {
                         embeds: [createEmbed('error', `User **${displayName}** has too many incoming friend requests.`)]
                     });
                     return;
-                default:
-                    throw new Error(error.message);
             }
         }
 
-        interaction.editReply({
+        await interaction.editReply({
             embeds: [createEmbed('success', `Sent friend request to user **${displayName}**.`)]
         });
     },

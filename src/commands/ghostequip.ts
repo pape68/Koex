@@ -101,14 +101,14 @@ const command: Command = {
         }
 
         const cosmeticIconUrl = createCosmeticUrl(cosmetic.id);
-        const characterAvatarUrl = await getAvatar(interaction.user.id);
+        const avatarUrl = await getAvatar(interaction.user.id);
 
         const embed = new EmbedBuilder()
             .setAuthor({ name: 'Ghost Equip' })
             .setDescription(`${Emoji.CHECK} Successfully equipped **${cosmetic.name}**.`)
             .setThumbnail(cosmeticIconUrl)
             .setColor(Color.GREEN)
-            .setFooter({ text: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
+            .setFooter({ text: auth.displayName, iconURL: avatarUrl })
             .setTimestamp();
 
         await interaction.editReply({

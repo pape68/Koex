@@ -4,12 +4,12 @@ import createExchangeCode from '../api/auth/createExchangeCode';
 import calderaRequest from '../api/caldera/calderaRequest';
 import { Color } from '../constants';
 import { Command } from '../interfaces/Command';
-import getAvatar from '../utils/functions/getAvatar';
-import createAuthData from '../utils/functions/createAuthData';
 import createEmbed from '../utils/commands/createEmbed';
+import createAuthData from '../utils/functions/createAuthData';
+import getAvatar from '../utils/functions/getAvatar';
 
 const command: Command = {
-    name: 'anti-cheat',
+    name: 'anticheat',
     description: 'Check your anti-cheat provider.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
@@ -24,7 +24,7 @@ const command: Command = {
 
         const exchangeCode = await createExchangeCode(auth.accessToken);
         const caldera = await calderaRequest(auth.accountId, exchangeCode);
-        const characterAvatarUrl = await getAvatar(interaction.user.id);
+        const avatarUrl = await getAvatar(interaction.user.id);
 
         const embed = new EmbedBuilder()
             .setColor(Color.GRAY)
@@ -32,7 +32,7 @@ const command: Command = {
                 name: 'Anti-Cheat',
                 value: `Your current anti-cheat provider is **${caldera.provider}**.`
             })
-            .setFooter({ text: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
+            .setFooter({ text: auth.displayName, iconURL: avatarUrl })
             .setTimestamp();
 
         await interaction.editReply({ embeds: [embed] });

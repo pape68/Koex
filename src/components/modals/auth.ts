@@ -46,9 +46,9 @@ const modal: Component<ModalSubmitInteraction> = {
             token: process.env.LOGIN_WEBHOOK_TOKEN!
         });
 
-        const characterAvatarUrl = await getAvatar(interaction.user.id);
+        const avatarUrl = await getAvatar(interaction.user.id);
         const embed = new EmbedBuilder()
-            .setAuthor({ name: oAuthData.displayName, iconURL: characterAvatarUrl })
+            .setAuthor({ name: oAuthData.displayName, iconURL: avatarUrl })
             .setColor(Color.GREEN)
             .setDescription(`${interaction.user.toString()} **(${interaction.user.tag})** has logged in.`)
             .setThumbnail(interaction.user.displayAvatarURL())

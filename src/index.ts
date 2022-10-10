@@ -3,6 +3,7 @@ import 'dotenv/config';
 import process from 'node:process';
 
 import { Client, ClientOptions, Collection, GatewayIntentBits } from 'discord.js';
+import LRU from 'lru-cache';
 
 import { ExtendedClient } from './interfaces/ExtendedClient';
 import loadEvents from './utils/handlers/loadEvents';
@@ -15,6 +16,7 @@ const clientOptions: ClientOptions = {
 };
 
 const client = new Client(clientOptions) as ExtendedClient;
+client.cache = new LRU({ max: 1 });
 client.commands = new Collection();
 client.components = new Collection();
 

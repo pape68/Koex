@@ -58,7 +58,7 @@ const command: Command = {
             }
         }
 
-        const characterAvatarUrl = await getAvatar(interaction.user.id);
+        const avatarUrl = await getAvatar(interaction.user.id);
         const thumbnail = new AttachmentBuilder(process.cwd() + '/assets/fortniteXp.png');
 
         const embed = new EmbedBuilder()
@@ -66,7 +66,7 @@ const command: Command = {
             .setDescription(`${Emoji.CHECK} Successfully set level to **${level}**.`)
             .setThumbnail('attachment://fortniteXp.png')
             .setColor(Color.GREEN)
-            .setFooter({ text: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
+            .setFooter({ text: auth.displayName, iconURL: avatarUrl })
             .setTimestamp();
 
         await interaction.editReply({ embeds: [embed], files: [thumbnail] });

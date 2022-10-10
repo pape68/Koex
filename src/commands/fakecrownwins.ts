@@ -71,14 +71,14 @@ const command: Command = {
             }
         }
 
-        const characterAvatarUrl = await getAvatar(interaction.user.id);
+        const avatarUrl = await getAvatar(interaction.user.id);
         const thumbnail = new AttachmentBuilder(process.cwd() + '/assets/fortniteCrown.png');
 
         const embed = new EmbedBuilder()
             .setAuthor({ name: 'Fake Crown Wins' })
             .setColor(Color.GREEN)
             .setDescription(`${Emoji.CHECK} Successfully set crowns to **${crowns}**.`)
-            .setFooter({ text: auth.displayName, iconURL: characterAvatarUrl ?? undefined })
+            .setFooter({ text: auth.displayName, iconURL: avatarUrl })
             .setThumbnail('attachment://fortniteCrown.png')
             .setTimestamp();
 

@@ -1,25 +1,13 @@
 import axios, { AxiosError } from 'axios';
 
-import { EpicGamesEndpoints } from '../utils/helpers/constants';
 import EpicGamesAPIError, { EpicGamesAPIErrorData } from '../utils/errors/EpicGamesAPIError';
-
-interface PendingFriendData {
-    accountId: string;
-    mutual: number;
-    favorite: boolean;
-    created: Date;
-}
-
-interface FriendData extends PendingFriendData {
-    groups: any[];
-    alias: string;
-    note: string;
-}
+import { EpicGamesEndpoints } from '../utils/helpers/constants';
+import { Friend, PartialFriend } from '../utils/helpers/interfaces';
 
 interface FriendSummaryResponse {
-    friends: FriendData[];
-    incoming: PendingFriendData[];
-    outgoing: PendingFriendData[];
+    friends: Friend[];
+    incoming: PartialFriend[];
+    outgoing: PartialFriend[];
     blocklist: { accountId: string }[];
     settings: {
         acceptInvites: 'string';

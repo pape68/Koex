@@ -1,0 +1,71 @@
+import { SelectMenuInteraction } from 'discord.js';
+
+import addFriendFromId from '../../api/friend/addFriendFromId';
+import getBlocklist from '../../api/friend/getBlocklist';
+import getIncomingRequests from '../../api/friend/getIncomingRequests';
+import getOutgoingRequests from '../../api/friend/getOutgoingRequests';
+import removeAllFriends from '../../api/friend/removeAllFriends';
+import removeFriendFromId from '../../api/friend/removeFriendFromId';
+import unblockUserFromId from '../../api/friend/unblockUserFromId';
+import { PartialFriend } from '../../api/utils/helpers/interfaces';
+import { Component } from '../../interfaces/Component';
+import createEmbed from '../../utils/commands/createEmbed';
+import createAuthData from '../../utils/functions/createAuthData';
+
+const selectMenu: Component<SelectMenuInteraction> = {
+    name: 'selectFriendAction',
+    execute: async (interaction) => {
+        await interaction.deferReply({ ephemeral: true });
+
+        const action = interaction.values[0];
+
+        const auth = await createAuthData(interaction.user.id);
+
+        if (!auth) {
+            await interaction.editReply({ embeds: [createEmbed('info', 'You are not logged in.')] });
+            return;
+        }
+
+        let users: PartialFriend[];
+        switch (action) {
+            case 'acceptAll':
+                users = await getIncomingRequests(auth.accessToken, auth.accountId);
+
+                for (const user of users) {
+                    await addFriendFromId(auth.accessToken, auth.accountId, user.accountId);
+                }
+                break;
+            case 'cancelAll':
+                users = await getOutgoingRequests(auth.accessToken, auth.accountId);
+
+                for (const user of users) {
+                    await removeFriendFromId(auth.accessToken, auth.accountId, user.accountId);
+                }
+                break;
+            case 'rejectAll':
+                users = await getIncomingRequests(auth.accessToken, auth.accountId);
+
+                for (const user of users) {
+                    await removeFriendFromId(auth.accessToken, auth.accountId, user.accountId);
+                }
+                break;
+            case 'removeAll':
+                await removeAllFriends(auth.accessToken, auth.accountId);
+                break;
+            case 'unblockAll':
+                users = await getBlocklist(auth.accessToken, auth.accountId);
+
+                for (const user of users) {
+                    await unblockUserFromId(auth.accessToken, auth.accountId, user.accountId);
+                }
+                break;
+        }
+
+        await interaction.editReply({
+            embeds: [createEmbed('success', `Successfully switched to account **${auth.displayName}**.`)]
+        });
+        return;
+    }
+};
+
+export default selectMenu;

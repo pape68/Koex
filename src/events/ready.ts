@@ -5,6 +5,7 @@ import cron from 'node-cron';
 import { Event } from '../interfaces/Event';
 import { ExtendedClient } from '../interfaces/ExtendedClient';
 import startAutoDailyJob from '../jobs/autoDaily';
+import { deleteCatalogCache } from '../jobs/clearCache';
 import loadCommands from '../utils/handlers/loadCommands';
 import loadComponents from '../utils/handlers/loadComponents';
 
@@ -24,6 +25,7 @@ export const event: Event<true> = {
         }, 60 * 1000);
 
         cron.schedule('0 0 * * *', async () => {
+            await deleteCatalogCache(client);
             await startAutoDailyJob(client);
         });
     }
