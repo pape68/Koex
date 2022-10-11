@@ -47,7 +47,7 @@ const generateCatalogImage = async () => {
 
     ctx.font = 'italic 30px "Burbank Black"';
     ctx.textAlign = 'right';
-    ctx.fillText(moment(new Date()).format('DD/MM/YYYY'), canvas.width - 50, 50);
+    ctx.fillText(moment(new Date()).format('MM/DD/YYYY'), canvas.width - 50, 50);
 
     ctx.font = 'italic 25px "Burbank Black"';
     ctx.fillText('discord.gg/Koex', canvas.width - 50, 80);

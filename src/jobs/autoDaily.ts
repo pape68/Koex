@@ -1,11 +1,11 @@
-import { APIEmbedField, EmbedBuilder, WebhookClient } from 'discord.js';
+import { APIEmbedField, codeBlock, EmbedBuilder, WebhookClient } from 'discord.js';
 
 import composeMcp from '../api/mcp/composeMcp';
 import { Color } from '../constants';
 import { ExtendedClient } from '../interfaces/ExtendedClient';
 import createAuthData from '../utils/functions/createAuthData';
 import { getAllAccounts, getAllAutoDailyUsers } from '../utils/functions/database';
-import { CampaignProfileData } from '../utils/helpers/operationResources';
+import { CampaignProfileData, MCPResponse } from '../utils/helpers/operationResources';
 import rewardData from '../utils/helpers/rewards.json' assert { type: 'json' };
 import createEmbed from '../utils/commands/createEmbed';
 
@@ -47,14 +47,20 @@ const startAutoDailyJob = async (client: ExtendedClient) => {
                         name: auth.displayName,
                         value: 'Failed to retrieve authorization data.'
                     });
-                    return;
+                    continue;
                 }
 
-                const campaignProfile = await composeMcp<CampaignProfileData>(
-                    bearerAuth,
-                    'campaign',
-                    'ClaimLoginReward'
-                );
+                let campaignProfile: MCPResponse<CampaignProfileData> | undefined = undefined;
+
+                try {
+                    campaignProfile = await composeMcp<CampaignProfileData>(bearerAuth, 'campaign', 'ClaimLoginReward');
+                } catch (error) {
+                    fields.push({
+                        name: auth.displayName,
+                        value: codeBlock(String(error))
+                    });
+                    continue;
+                }
 
                 const rewards = campaignProfile.profileChanges[0].profile.stats.attributes.daily_rewards as Required<
                     CampaignProfileData['daily_rewards']
