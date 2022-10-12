@@ -23,7 +23,7 @@ client.components = new Collection();
 validateEnv();
 
 client.login();
-loadEvents(client);
+await loadEvents(client);
 
 process.on('SIGINT', (signal) => {
     console.log(`Process ${process.pid} received a ${signal} signal`);

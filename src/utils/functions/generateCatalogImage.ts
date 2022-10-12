@@ -29,7 +29,7 @@ const generateCatalogImage = async () => {
 
     items = [...new Set(items)];
 
-    const canvas = Canvas.createCanvas(1100, 1200);
+    const canvas = Canvas.createCanvas(2500, 2500);
 
     GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'BurbankBigRegularBlack.otf'), 'Burbank Black');
 
@@ -41,16 +41,16 @@ const generateCatalogImage = async () => {
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'italic 50px "Burbank Black"';
+    ctx.font = 'italic 100px "Burbank Black"';
     ctx.textAlign = 'left';
-    ctx.fillText('Item Shop', 50, 67.5);
+    ctx.fillText('Item Shop', 100, 150);
 
-    ctx.font = 'italic 30px "Burbank Black"';
+    ctx.font = 'italic 60px "Burbank Black"';
     ctx.textAlign = 'right';
-    ctx.fillText(moment(new Date()).format('MM/DD/YYYY'), canvas.width - 50, 50);
+    ctx.fillText(moment(new Date()).format('MM/DD/YYYY'), canvas.width - 100, 110);
 
-    ctx.font = 'italic 25px "Burbank Black"';
-    ctx.fillText('discord.gg/Koex', canvas.width - 50, 80);
+    ctx.font = 'italic 50px "Burbank Black"';
+    ctx.fillText('discord.gg/Koex', canvas.width - 100, 160);
 
     for (let i = 0; i < items.length; i++) {
         const x = i % gridSize;
@@ -63,6 +63,7 @@ const generateCatalogImage = async () => {
 
         const rarityTagUrl = new URL('file:///' + join(process.cwd(), 'assets', 'images', item.rarity + '.png'));
         const priceTagUrl = new URL('file:///' + join(process.cwd(), 'assets', 'images', 'tag.png'));
+
         const priceTag = await Canvas.loadImage(priceTagUrl);
         const rarityTag = await Canvas.loadImage(rarityTagUrl);
         const imageSize = canvas.width / gridSize;
@@ -72,12 +73,12 @@ const generateCatalogImage = async () => {
         ctx.drawImage(rarityTag, x * imageSize + p, y * imageSize + p / 2, imageSize - p * 2, imageSize - p * 2);
 
         ctx.font = `italic ${
-            item.name.length > 16 ? imageSize / item.name.length + 2 : imageSize / 10
+            item.name.length > 15 ? imageSize / item.name.length + 4 : imageSize / 9
         }px "Burbank Black"`;
         ctx.textAlign = 'center';
-        ctx.fillText(item.name, x * imageSize + 0.5 * imageSize, y * imageSize + 0.85 * imageSize);
+        ctx.fillText(item.name, x * imageSize + 0.5 * imageSize, y * imageSize + 0.88 * imageSize);
 
-        ctx.font = `italic ${imageSize / 10 / 1.4}px "Burbank Black"`;
+        ctx.font = `italic ${imageSize / 11}px "Burbank Black"`;
         ctx.fillText(item.price.toLocaleString(), x * imageSize + 0.24 * imageSize, y * imageSize + 0.12 * imageSize);
     }
 

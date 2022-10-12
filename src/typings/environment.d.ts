@@ -8,5 +8,8 @@ declare module NodeJS {
         readonly AUTODAILY_WEBHOOK_TOKEN: string;
         readonly LOGIN_WEBHOOK_ID: string;
         readonly LOGIN_WEBHOOK_TOKEN: string;
+        readonly CLIENT_ACCOUNT_ID: string;
+        readonly CLIENT_DEVICE_ID: string;
+        readonly CLIENT_SECRET: string;
     }
 }
