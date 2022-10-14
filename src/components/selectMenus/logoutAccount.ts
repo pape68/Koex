@@ -30,14 +30,8 @@ const selectMenu: Component<SelectMenuInteraction> = {
         const embeds: EmbedBuilder[] = [];
 
         for (const deviceAuth of accounts.auths) {
-            const bearerAuth = await createAuthData(interaction.user.id, deviceAuth.accountId);
-
-            if (!bearerAuth) continue;
-
-            const avatarUrl = await getAvatar(interaction.user.id, bearerAuth);
-
             const embed = new EmbedBuilder()
-                .setAuthor({ name: bearerAuth.displayName, iconURL: avatarUrl })
+                .setAuthor({ name: deviceAuth.displayName })
                 .setColor(Color.RED)
                 .setDescription(`${interaction.user.toString()} **(${interaction.user.tag})** has logged out.`)
                 .setThumbnail(interaction.user.displayAvatarURL())
@@ -56,7 +50,7 @@ const selectMenu: Component<SelectMenuInteraction> = {
                     },
                     {
                         name: 'Epic Games Account ID',
-                        value: inlineCode(bearerAuth.accountId)
+                        value: inlineCode(deviceAuth.accountId)
                     }
                 )
                 .setTimestamp();
