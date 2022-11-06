@@ -14,6 +14,10 @@ const loadComponents = async (client: ExtendedClient) => {
         const url = new URL('file:///' + path);
         const interaction: Component<ComponentInteraction> = (await import(url.href)).default;
 
+        if (interaction.name.includes('-')) {
+            throw new Error('are you a retard');
+        }
+
         client.components.set(interaction.name, interaction);
     }
 };

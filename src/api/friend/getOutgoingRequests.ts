@@ -20,7 +20,7 @@ const getOutgoingRequests = async (accessToken: string, accountId: string) => {
         return data;
     } catch (err: any) {
         const error: AxiosError = err;
-        throw new EpicGamesAPIError(error.response?.data as EpicGamesAPIErrorData, err.request, error.response?.status);
+        throw new EpicGamesAPIError(err.request, error.response?.data as EpicGamesAPIErrorData, error.response?.status);
     }
 };
 

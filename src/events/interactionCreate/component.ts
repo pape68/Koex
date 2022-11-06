@@ -21,7 +21,9 @@ const event: Event = {
 
         if (['next', 'prev'].includes(interaction.customId)) return;
 
-        const component = client.components.get(interaction.customId) as Component<ComponentInteraction> | undefined;
+        const component = client.components.find((c) => interaction.customId.split('-')[0] === c.name) as
+            | Component<ComponentInteraction>
+            | undefined;
 
         try {
             if (component) await component.execute(interaction);
@@ -36,7 +38,7 @@ const event: Event = {
                     )}\`\`\``
                 );
 
-            if (error instanceof EpicGamesAPIError) embed.setFooter({ text: error.code });
+            if (error instanceof EpicGamesAPIError && error.code) embed.setFooter({ text: error.code });
 
             const res: InteractionReplyOptions = { embeds: [embed] };
             if (interaction.deferred) interaction.editReply(res);

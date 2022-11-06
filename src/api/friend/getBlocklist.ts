@@ -13,13 +13,13 @@ const getBlocklist = async (accessToken: string, accountId: string) => {
 
     try {
         const { data } = await axios.get<PartialFriend[]>(
-            `${EpicGamesEndpoints.friends}/${accountId}/incoming`,
+            `${EpicGamesEndpoints.friends}/${accountId}/blocklist`,
             config
         );
         return data;
     } catch (err: any) {
         const error: AxiosError = err;
-        throw new EpicGamesAPIError(error.response?.data as EpicGamesAPIErrorData, err.request, error.response?.status);
+        throw new EpicGamesAPIError(err.request, error.response?.data as EpicGamesAPIErrorData, error.response?.status);
     }
 };
 

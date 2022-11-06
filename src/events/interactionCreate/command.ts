@@ -27,7 +27,7 @@ const event: Event = {
                     )}\`\`\``
                 );
 
-            if (error instanceof EpicGamesAPIError) embed.setFooter({ text: error.code });
+            if (error instanceof EpicGamesAPIError && error.code) embed.setFooter({ text: error.code });
 
             const res: InteractionReplyOptions = { embeds: [embed] };
             if (interaction.deferred) interaction.editReply(res);

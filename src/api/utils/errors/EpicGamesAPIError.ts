@@ -14,20 +14,20 @@ export interface EpicGamesAPIErrorData {
 class EpicGamesAPIError extends Error {
     public method: string;
     public url: string;
-    public code: string;
+    public code?: string;
     public messageVars: string[];
     public request?: any;
     public status?: number;
 
-    constructor(error: EpicGamesAPIErrorData, request: AxiosRequestConfig, status?: number) {
+    constructor(request: AxiosRequestConfig, error?: EpicGamesAPIErrorData, status?: number) {
         super();
         this.name = 'EpicGamesAPIError';
-        this.message = error.errorMessage;
+        this.message = error?.errorMessage ?? 'Unknown EpicGamesAPIError';
 
         this.method = request.method?.toUpperCase() ?? 'GET';
         this.url = request.url ?? '';
-        this.code = error.errorCode;
-        this.messageVars = error.messageVars ?? [];
+        this.code = error?.errorCode;
+        this.messageVars = error?.messageVars ?? [];
         this.request = request;
         this.status = status;
     }

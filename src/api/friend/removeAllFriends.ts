@@ -18,8 +18,8 @@ const removeAllFriends = async (accessToken: string, accountId: string) => {
         if (!axios.isAxiosError(error)) throw new Error(error.message);
 
         throw new EpicGamesAPIError(
-            error.response?.data as EpicGamesAPIErrorData,
             error.request,
+            error.response?.data as EpicGamesAPIErrorData,
             error.response?.status
         );
     }
