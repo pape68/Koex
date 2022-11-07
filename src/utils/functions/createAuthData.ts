@@ -17,18 +17,22 @@ const createAuthData = async (userId: string, accountId?: string): Promise<Beare
 
     if (!auth) return null;
 
-    const oAuthData = await createOAuthData(FORTNITE_GAME_CLIENT._token, {
-        grant_type: 'device_auth',
-        account_id: auth.accountId,
-        device_id: auth.deviceId,
-        secret: auth.secret
-    });
+    try {
+        const oAuthData = await createOAuthData(FORTNITE_GAME_CLIENT._token, {
+            grant_type: 'device_auth',
+            account_id: auth.accountId,
+            device_id: auth.deviceId,
+            secret: auth.secret
+        });
 
-    return {
-        accountId: oAuthData.account_id,
-        accessToken: oAuthData.access_token,
-        displayName: oAuthData.displayName
-    };
+        return {
+            accountId: oAuthData.account_id,
+            accessToken: oAuthData.access_token,
+            displayName: oAuthData.displayName
+        };
+    } catch {
+        return null;
+    }
 };
 
 export default createAuthData;
