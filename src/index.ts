@@ -23,7 +23,10 @@ client.components = new Collection();
 validateEnv();
 
 client.login();
-await loadEvents(client);
+
+(async () => {
+    await loadEvents(client);
+})();
 
 process.on('SIGINT', (signal) => {
     console.log(`Process ${process.pid} received a ${signal} signal`);
@@ -36,10 +39,8 @@ process.on('exit', (code) => {
 
 process.on('uncaughtException', (err, origin) => {
     console.log('Uncaught Exception:', err, `\nOrigin: ${origin}`);
-    process.exit(1);
 });
 
 process.on('unhandledRejection', (reason: any, promise) => {
     console.log('Unhandled Rejection:', promise, `\nReason: ${reason.message}`);
-    process.exit(1);
 });

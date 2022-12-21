@@ -24,10 +24,10 @@ export const event: Event<true> = {
             });
         }, 60 * 1000);
 
-        cron.schedule('0 0 * * *', async () => {
-            await deleteCatalogCache(client);
+        // cron.schedule('0 0 * * *', async () => {
+            // await deleteCatalogCache(client);
             await startAutoDailyJob(client);
-        });
+        // });
     }
 };
 
