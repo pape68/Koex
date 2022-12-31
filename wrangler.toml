@@ -1,7 +1,0 @@
-main = "./src/index.ts"
-name = "koex"
-compatibility_date = "2022-11-13"
-
-account_id = "7c9670e2eaa63f2a7d0fe0466ac57292"
-route = "koex.cldoc507.workers.dev"
-node_compat = true
